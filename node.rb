@@ -6,8 +6,9 @@
 # (located in root directory of this project) for details.
 
 class Node
-  def initialize content = ''
+  def initialize content = '', &block
     @content = content
+    instance_eval &block if block_given?
   end
 
   def to_s
