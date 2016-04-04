@@ -6,7 +6,7 @@
 # (located in root directory of this project) for details.
 
 class Node
-  def initialize content
+  def initialize content = ''
     @content = content
   end
 
