@@ -7,5 +7,8 @@
 
 module Lextacular
   class TempGroupNode < GroupNode
+    def to_a
+      @children
+    end
   end
 end
