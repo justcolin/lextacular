@@ -16,13 +16,13 @@ def group_node_like klass
     content_2 = 'even more text!'
     content_3 = 'what?! more text?!'
 
-    basic_group_contents = [
-                             Lextacular::Node.new(content_1),
-                             Lextacular::Node.new(content_2)
-                           ]
+    basic_group_content = [
+                            Lextacular::Node.new(content_1),
+                            Lextacular::Node.new(content_2)
+                          ]
 
     empty_group  = klass.new
-    basic_group  = klass.new(*basic_group_contents)
+    basic_group  = klass.new(*basic_group_content)
     nested_group = klass.new(basic_group, content_3)
 
     group '#to_s' do
@@ -65,7 +65,7 @@ def group_node_like klass
       end
     end
 
-    yield basic_group, basic_group_contents
+    yield basic_group, basic_group_content
   end
 end
 
