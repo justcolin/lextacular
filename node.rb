@@ -5,17 +5,19 @@
 # terms of the three-clause BSD license. See LICENSE.txt
 # (located in root directory of this project) for details.
 
-class Node
-  def initialize content = '', &block
-    @content = content
-    instance_eval &block if block_given?
-  end
+module Lextacular
+  class Node
+    def initialize content = '', &block
+      @content = content
+      instance_eval &block if block_given?
+    end
 
-  def to_s
-    @content
-  end
+    def to_s
+      @content
+    end
 
-  def size
-    @content.size
+    def size
+      @content.size
+    end
   end
 end

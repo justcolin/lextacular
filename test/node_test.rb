@@ -8,40 +8,42 @@
 require './tet'
 require '../node'
 
-group Node do
-  empty_node = Node.new
-  content    = 'here is some text'
-  node       = Node.new(content)
+module Lextacular
+  group Node do
+    content    = 'here is some text'
+    empty_node = Node.new
+    node       = Node.new(content)
 
-  group '#to_s' do
-    assert 'returns the content' do
-      node.to_s == content
+    group '#to_s' do
+      assert 'returns the content' do
+        node.to_s == content
+      end
+
+      assert 'returns an empty string if initialized with nothing' do
+        empty_node.to_s == ''
+      end
     end
 
-    assert 'returns an empty string if initialized with nothing' do
-      empty_node.to_s == ''
-    end
-  end
+    group '#size' do
+      assert 'returns the size of the content' do
+        node.size == content.size
+      end
 
-  group '#size' do
-    assert 'returns the size of the content' do
-      node.size == content.size
+      assert 'returns 0 if initialized with nothing' do
+        empty_node.size.zero?
+      end
     end
 
-    assert 'returns 0 if initialized with nothing' do
-      empty_node.size.zero?
-    end
-  end
-
-  group '.new' do
-    assert 'given a block, evaluates it in the context of the object' do
-      node_with_method = Node.new do
-                           def returns_puppies
-                             :puppies
+    group '.new' do
+      assert 'given a block, evaluates it in the context of the object' do
+        node_with_method = Node.new do
+                             def returns_puppies
+                               :puppies
+                             end
                            end
-                         end
 
-      node_with_method.returns_puppies == :puppies
+        node_with_method.returns_puppies == :puppies
+      end
     end
   end
 end
