@@ -6,7 +6,7 @@
 # (located in root directory of this project) for details.
 
 require './tet'
-require '../node'
+require '../nodes'
 
 module Lextacular
   group Node do
@@ -44,6 +44,10 @@ module Lextacular
 
         node_with_method.returns_puppies == :puppies
       end
+    end
+
+    assert 'can not have its content splatted' do
+      [*node] == [node]
     end
   end
 end

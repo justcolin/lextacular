@@ -6,9 +6,7 @@
 # (located in root directory of this project) for details.
 
 require './tet'
-require '../node'
-require '../group_node'
-require '../temp_group_node'
+require '../nodes'
 
 def group_node_like klass
   group klass do
@@ -69,8 +67,10 @@ def group_node_like klass
   end
 end
 
-group_node_like Lextacular::GroupNode do
-
+group_node_like Lextacular::GroupNode do |basic_group, content|
+  assert 'can not have its content splatted' do
+    [*basic_group] == [basic_group]
+  end
 end
 
 group_node_like Lextacular::TempGroupNode do |basic_group, content|
