@@ -73,6 +73,8 @@ group_node_like Lextacular::GroupNode do
 
 end
 
-group_node_like Lextacular::TempGroupNode do
-
+group_node_like Lextacular::TempGroupNode do |basic_group, content|
+  assert 'can have its content splatted' do
+    [*basic_group] == [*content]
+  end
 end
