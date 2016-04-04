@@ -9,12 +9,17 @@ require './tet'
 require '../node'
 
 group Node do
-  content = 'here is some text'
-  node    = Node.new(content)
+  empty_node = Node.new
+  content    = 'here is some text'
+  node       = Node.new(content)
 
   group '#to_s' do
     assert 'returns the content' do
       node.to_s == content
+    end
+
+    assert 'returns an empty string if initialized with nothing' do
+      empty_node.to_s == ''
     end
   end
 end
