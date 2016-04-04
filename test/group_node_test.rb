@@ -9,15 +9,18 @@ require './tet'
 require '../node'
 require '../group_node'
 
-module Lextacular
-  group GroupNode do
+def group_node_like klass
+  group klass do
     content_1 = 'here is some text'
     content_2 = 'even more text!'
     content_3 = 'what?! more text?!'
 
-    empty_group  = GroupNode.new
-    group        = GroupNode.new(Node.new(content_1), Node.new(content_2))
-    nested_group = GroupNode.new(group, content_3)
+    empty_group  = klass.new
+    group        = klass.new(
+                     Lextacular::Node.new(content_1),
+                     Lextacular::Node.new(content_2)
+                   )
+    nested_group = klass.new(group, content_3)
 
     group '#to_s' do
       assert 'returns the content of the children concatenated together' do
@@ -49,7 +52,7 @@ module Lextacular
 
     group '.new' do
       assert 'evaluates block in the context of the object' do
-        group_with_method = GroupNode.new do
+        group_with_method = klass.new do
                              def returns_42
                                42
                              end
@@ -58,5 +61,11 @@ module Lextacular
         group_with_method.returns_42 == 42
       end
     end
+
+    yield
   end
+end
+
+group_node_like Lextacular::GroupNode do
+
 end
