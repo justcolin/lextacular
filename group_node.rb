@@ -14,5 +14,9 @@ module Lextacular
     def to_s
       @children.map(&:to_s).join
     end
+
+    def size
+      @children.map(&:size).inject(&:+) || 0
+    end
   end
 end
