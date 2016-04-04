@@ -16,20 +16,22 @@ def group_node_like klass
     content_2 = 'even more text!'
     content_3 = 'what?! more text?!'
 
+    basic_group_contents = [
+                             Lextacular::Node.new(content_1),
+                             Lextacular::Node.new(content_2)
+                           ]
+
     empty_group  = klass.new
-    group        = klass.new(
-                     Lextacular::Node.new(content_1),
-                     Lextacular::Node.new(content_2)
-                   )
-    nested_group = klass.new(group, content_3)
+    basic_group  = klass.new(*basic_group_contents)
+    nested_group = klass.new(basic_group, content_3)
 
     group '#to_s' do
       assert 'returns the content of the children concatenated together' do
-        group.to_s == content_1 + content_2
+        basic_group.to_s == content_1 + content_2
       end
 
       assert 'works with nested groups' do
-        nested_group.to_s == group.to_s + content_3
+        nested_group.to_s == basic_group.to_s + content_3
       end
 
       assert 'returns an empty string when initialized with nothing' do
@@ -39,11 +41,11 @@ def group_node_like klass
 
     group '#size' do
       assert 'returns the sum of the sizes of all the children' do
-        group.size == content_1.size + content_2.size
+        basic_group.size == content_1.size + content_2.size
       end
 
       assert 'works with nested groups' do
-        nested_group.size == group.size + content_3.size
+        nested_group.size == basic_group.size + content_3.size
       end
 
       assert 'returns 0 when initialized with nothing' do
@@ -63,7 +65,7 @@ def group_node_like klass
       end
     end
 
-    yield
+    yield basic_group, basic_group_contents
   end
 end
 
