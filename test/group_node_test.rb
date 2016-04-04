@@ -8,6 +8,7 @@
 require './tet'
 require '../node'
 require '../group_node'
+require '../temp_group_node'
 
 def group_node_like klass
   group klass do
@@ -67,5 +68,9 @@ def group_node_like klass
 end
 
 group_node_like Lextacular::GroupNode do
+
+end
+
+group_node_like Lextacular::TempGroupNode do
 
 end
