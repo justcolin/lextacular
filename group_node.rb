@@ -7,8 +7,9 @@
 
 module Lextacular
   class GroupNode
-    def initialize *children
+    def initialize *children, &block
       @children = children
+      instance_eval &block if block_given?
     end
 
     def to_s
