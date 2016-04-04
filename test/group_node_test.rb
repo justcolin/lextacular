@@ -46,5 +46,17 @@ module Lextacular
         empty_group.size == 0
       end
     end
+
+    group '.new' do
+      assert 'evaluates block in the context of the object' do
+        group_with_method = GroupNode.new do
+                             def returns_42
+                               42
+                             end
+                           end
+
+        group_with_method.returns_42 == 42
+      end
+    end
   end
 end
