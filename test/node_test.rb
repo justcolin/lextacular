@@ -32,4 +32,16 @@ group Node do
       empty_node.size.zero?
     end
   end
+
+  group '.new' do
+    assert 'given a block, evaluates it in the context of the object' do
+      node_with_method = Node.new do
+                           def returns_puppies
+                             :puppies
+                           end
+                         end
+
+      node_with_method.returns_puppies == :puppies
+    end
+  end
 end
