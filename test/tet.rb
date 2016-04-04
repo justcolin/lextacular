@@ -5,37 +5,52 @@
 # terms of the three-clause BSD license. See LICENSE.txt
 # (located in root directory of this project) for details.
 
-TET_SEPERATOR = '  :  '
-TET_GROUP     = []
-TET_MESSAGES  = []
+TET_DATA = {
+  seperator: ' : ',
+  group:     [],
+  messages:  [],
+  total:     0,
+  failed:    0
+}
 
 at_exit do
-  if TET_MESSAGES.empty?
-    puts " done!"
-  else
-    puts "\n\n" + TET_MESSAGES.unshift("Results:").join("\n\t")
-  end
+  puts "\n" unless TET_DATA[:total].zero?
+  puts TET_DATA[:messages].unshift(
+         "#{TET_DATA[:failed]} out of #{TET_DATA[:total]} failed"
+       ).join("\n\t")
 end
 
 def fail_message message
-  TET_MESSAGES << (TET_GROUP + [message]).join(TET_SEPERATOR)
+  TET_DATA[:messages] << (TET_DATA[:group] + [message]).join(TET_DATA[:seperator])
 end
 
-def assert description, result: :none
-  result = yield if result == :none
+def assert description
+  TET_DATA[:total] += 1
+  result     = begin
+                 yield
+               rescue StandardError => error
+                 description << " (error)" <<
+                                "\n\t\t" <<
+                                error.to_s <<
+                                "\n\t\t\t" <<
+                                error.backtrace.join("\n\t\t\t") <<
+                                ?\n
+                 false
+               end
 
-   if result
-     print ?.
-   else
-     fail_message description
-     print ?F
-   end
+  if result
+    print '.'
+  else
+    TET_DATA[:failed] += 1
+    fail_message description
+    print 'F'
+  end
 
   result
 end
 
 def deny description
-  assert description, result: !yield
+  assert(description) { !yield }
 end
 
 def err description, expect = StandardError
@@ -43,7 +58,7 @@ def err description, expect = StandardError
 
   begin
     yield
-    description += " (no error)"
+    description += " (expected error)"
   rescue StandardError => error
     if expect >= error.class
       result = true
@@ -52,13 +67,11 @@ def err description, expect = StandardError
     end
   end
 
-  assert description, result: result
-
-  nil
+  assert(description) { result }
 end
 
 def group name
-  TET_GROUP.push(name.to_s)
+  TET_DATA[:group].push(name.to_s)
   yield
-  TET_GROUP.pop
+  TET_DATA[:group].pop
 end
