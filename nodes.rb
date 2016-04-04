@@ -6,6 +6,7 @@
 # (located in root directory of this project) for details.
 
 module Lextacular
+  # A leaf in the abstract syntax tree
   class Node
     def initialize content = '', &block
       @content = content
@@ -35,6 +36,7 @@ module Lextacular
     end
   end
 
+  # A GroupNode that can be splatted into other nodes
   class TempGroupNode < GroupNode
     def to_a
       @children
