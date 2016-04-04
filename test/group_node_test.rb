@@ -51,18 +51,6 @@ def group_node_like klass
       end
     end
 
-    group '.new' do
-      assert 'evaluates block in the context of the object' do
-        group_with_method = klass.new do
-                             def returns_42
-                               42
-                             end
-                           end
-
-        group_with_method.returns_42 == 42
-      end
-    end
-
     yield basic_group, basic_group_content
   end
 end

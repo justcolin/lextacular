@@ -9,7 +9,6 @@ module Lextacular
   class Node
     def initialize content = '', &block
       @content = content
-      instance_eval &block if block_given?
     end
 
     def to_s
@@ -21,10 +20,10 @@ module Lextacular
     end
   end
 
+  # Wrapper around multiple ordered Nodes and GroupNodes
   class GroupNode
     def initialize *children, &block
       @children = children
-      instance_eval &block if block_given?
     end
 
     def to_s

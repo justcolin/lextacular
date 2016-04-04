@@ -34,18 +34,6 @@ module Lextacular
       end
     end
 
-    group '.new' do
-      assert 'evaluates block in the context of the object' do
-        node_with_method = Node.new do
-                             def returns_puppies
-                               :puppies
-                             end
-                           end
-
-        node_with_method.returns_puppies == :puppies
-      end
-    end
-
     assert 'can not have its content splatted' do
       [*node] == [node]
     end
