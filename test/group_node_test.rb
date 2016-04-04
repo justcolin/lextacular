@@ -47,7 +47,7 @@ def group_node_like klass
       end
 
       assert 'returns 0 when initialized with nothing' do
-        empty_group.size == 0
+        empty_group.size.zero?
       end
     end
 
