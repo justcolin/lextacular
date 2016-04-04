@@ -13,4 +13,8 @@ class Node
   def to_s
     @content
   end
+
+  def size
+    @content.size
+  end
 end
