@@ -5,27 +5,19 @@
 # terms of the three-clause BSD license. See LICENSE.txt
 # (located in root directory of this project) for details.
 
-TET_DATA = {
-  seperator: ' : ',
-  group:     [],
-  messages:  [],
-  total:     0,
-  failed:    0
-}
+TET_DATA = Struct.new(:seperator, :group, :messages, :total, :failed)
+                 .new(' : ',      [],     [],        0,      0)
 
 at_exit do
-  puts "\n" unless TET_DATA[:total].zero?
-  puts TET_DATA[:messages].unshift(
-         "#{TET_DATA[:failed]} out of #{TET_DATA[:total]} failed"
-       ).join("\n\t")
-end
+  puts "\n" unless TET_DATA.total.zero?
 
-def fail_message message
-  TET_DATA[:messages] << (TET_DATA[:group] + [message]).join(TET_DATA[:seperator])
+  puts TET_DATA.messages
+               .unshift("#{TET_DATA.failed} out of #{TET_DATA.total} failed")
+               .join("\n\t")
 end
 
 def assert description
-  TET_DATA[:total] += 1
+  TET_DATA.total += 1
   result     = begin
                  yield
                rescue StandardError => error
@@ -34,15 +26,21 @@ def assert description
                                 error.to_s <<
                                 "\n\t\t\t" <<
                                 error.backtrace.join("\n\t\t\t") <<
-                                ?\n
+                                "\n"
                  false
                end
 
   if result
     print '.'
   else
-    TET_DATA[:failed] += 1
-    fail_message description
+    TET_DATA.failed += 1
+    TET_DATA.messages
+            .push(
+              TET_DATA.group.join(TET_DATA.seperator) +
+              TET_DATA.seperator +
+              description
+            )
+
     print 'F'
   end
 
@@ -71,7 +69,7 @@ def err description, expect = StandardError
 end
 
 def group name
-  TET_DATA[:group].push(name.to_s)
+  TET_DATA.group.push(name.to_s)
   yield
-  TET_DATA[:group].pop
+  TET_DATA.group.pop
 end
