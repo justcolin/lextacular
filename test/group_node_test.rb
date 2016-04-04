@@ -32,5 +32,19 @@ module Lextacular
         empty_group.to_s == ''
       end
     end
+
+    group '#size' do
+      assert 'returns the sum of the sizes of all the children' do
+        group.size == content_1.size + content_2.size
+      end
+
+      assert 'works with nested groups' do
+        nested_group.size == group.size + content_3.size
+      end
+
+      assert 'returns 0 when initialized with nothing' do
+        empty_group.size == 0
+      end
+    end
   end
 end
