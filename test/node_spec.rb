@@ -22,4 +22,14 @@ group Node do
       empty_node.to_s == ''
     end
   end
+
+  group '#size' do
+    assert 'returns the size of the content' do
+      node.size == content.size
+    end
+
+    assert 'returns 0 if initialized with nothing' do
+      empty_node.size.zero?
+    end
+  end
 end
