@@ -12,10 +12,10 @@ module Lextacular
       @klass   = klass
     end
 
-    def match string
-      found = string.match(@pattern)
+    def match string, start_index = 0
+      found = string.match(@pattern, start_index)
 
-      @klass.new(found.to_s) if found && found.begin(0).zero?
+      @klass.new(found.to_s) if found && found.begin(0) == start_index
     end
   end
 end

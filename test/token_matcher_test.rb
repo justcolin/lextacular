@@ -6,27 +6,35 @@
 # (located in root directory of this project) for details.
 
 require './tet'
+require './mocks'
 require '../token'
 require '../matchers'
 
 module Lextacular
   group TokenMatcher do
     group '#match' do
+      pattern            = /hello/
       match_content      = 'hello'
       matching_string    = 'hello world'
       no_match_string    = 'goodbye for now'
       later_match_string = 'I say hello'
-      matcher            = TokenMatcher.new(/#{match_content}/, String)
+      starting_index     = 6
+
+      matcher = TokenMatcher.new(pattern, Token)
 
       group 'given a string that starts with a match' do
         assert 'returns instance of the class given at initialization' do
-          TokenMatcher.new(/#{match_content}/, String)
+          TokenMatcher.new(pattern, MockMatcherReturn)
                       .match(matching_string)
-                      .is_a?(String)
+                      .is_a?(MockMatcherReturn) &&
+
+          TokenMatcher.new(pattern, Token)
+                      .match(matching_string)
+                      .is_a?(Token)
         end
 
         assert 'return was given the matching string at initialization' do
-          TokenMatcher.new(/#{match_content}/, Token)
+          TokenMatcher.new(pattern, Token)
                       .match(matching_string)
                       .content
                       .==(match_content)
@@ -37,8 +45,18 @@ module Lextacular
         !matcher.match(no_match_string)
       end
 
-      assert 'given a string with a match after the start, returns falsy' do
-        !matcher.match(later_match_string)
+      group 'given a string with a match after the start' do
+        assert 'returns falsy when not given a starting index' do
+          !matcher.match(later_match_string)
+        end
+
+        assert 'returns falsy when given a wrong starting index' do
+          !matcher.match(later_match_string, starting_index - 1)
+        end
+
+        assert 'returns match when given the starting index of the match' do
+          matcher.match(later_match_string, starting_index)
+        end
       end
     end
   end
