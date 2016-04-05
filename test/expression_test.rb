@@ -55,6 +55,12 @@ def expression_like klass
       end
     end
 
+    group '#children' do
+      assert 'returns the children given when initialized' do
+        expression.children == expression_content
+      end
+    end
+
     yield expression, expression_content
   end
 end

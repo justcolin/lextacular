@@ -8,6 +8,8 @@
 module Lextacular
   # Wrapper around multiple ordered Tokens and Expression
   class Expression
+    attr_reader :children
+
     def initialize *children, &block
       @children = children
     end
