@@ -12,8 +12,8 @@ module Lextacular
       @children = children
     end
 
-    def to_s
-      @children.map(&:to_s).join
+    def content
+      @children.map(&:content).join
     end
 
     def size

@@ -19,17 +19,17 @@ module Lextacular
       matcher            = TokenMatcher.new(/#{match_content}/, String)
 
       group 'given a string that starts with a match' do
-        given_string = TokenMatcher.new(/#{match_content}/, String)
-        given_token  = TokenMatcher.new(/#{match_content}/, Token)
-
         assert 'returns instance of the class given at initialization' do
-          given_string.match(matching_string).is_a?(String) &&
-          given_token.match(matching_string).is_a?(Token)
+          TokenMatcher.new(/#{match_content}/, String)
+                      .match(matching_string)
+                      .is_a?(String)
         end
 
         assert 'return was given the matching string at initialization' do
-          given_string.match(matching_string).to_s == match_content &&
-          given_token.match(matching_string).to_s == match_content
+          TokenMatcher.new(/#{match_content}/, Token)
+                      .match(matching_string)
+                      .content
+                      .==(match_content)
         end
       end
 

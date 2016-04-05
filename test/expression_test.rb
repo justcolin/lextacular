@@ -22,19 +22,22 @@ def expression_like klass
 
     empty_expression  = klass.new
     expression        = klass.new(*expression_content)
-    nested_expression = klass.new(expression, content_3)
+    nested_expression = klass.new(
+                          expression,
+                          Lextacular::Token.new(content_3)
+                        )
 
-    group '#to_s' do
+    group '#content' do
       assert 'returns the content of the children concatenated together' do
-        expression.to_s == content_1 + content_2
+        expression.content == content_1 + content_2
       end
 
       assert 'works with nested groups' do
-        nested_expression.to_s == expression.to_s + content_3
+        nested_expression.content == expression.content + content_3
       end
 
       assert 'returns an empty string when initialized with nothing' do
-        empty_expression.to_s == ''
+        empty_expression.content == ''
       end
     end
 
