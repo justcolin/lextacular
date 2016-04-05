@@ -34,6 +34,17 @@ module Lextacular
       end
     end
 
+    group '#==' do
+      assert 'returns true if self or a Token with the same content' do
+        token == token && token == Token.new(content)
+      end
+
+      assert 'returns false if given anything else' do
+        !(token == Token.new('something else')) &&
+        !(token == content)
+      end
+    end
+
     assert 'can not have its content splatted' do
       [*token] == [token]
     end

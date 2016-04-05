@@ -61,6 +61,18 @@ def expression_like klass
       end
     end
 
+    group '#==' do
+      assert 'returns true if self or a expression with the same content' do
+        expression == expression &&
+        expression == klass.new(*expression_content)
+      end
+
+      assert 'returns false if given anything else' do
+        !(expression == klass.new('something else')) &&
+        !(expression == expression_content)
+      end
+    end
+
     yield expression, expression_content
   end
 end

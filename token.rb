@@ -17,5 +17,9 @@ module Lextacular
     def size
       @content.size
     end
+
+    def == other
+      other.is_a?(self.class) && other.content == @content
+    end
   end
 end
