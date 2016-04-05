@@ -6,11 +6,15 @@
 # (located in root directory of this project) for details.
 
 module Lextacular
-  class TokenMatcher
+  module MatcherInit
     def initialize pattern, klass
       @pattern = pattern
       @klass   = klass
     end
+  end
+
+  class TokenMatcher
+    include MatcherInit
 
     def match string, start_index = 0
       found = string.match(@pattern, start_index)
