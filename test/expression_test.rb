@@ -6,63 +6,64 @@
 # (located in root directory of this project) for details.
 
 require './tet'
-require '../nodes'
+require '../token'
+require '../expression'
 
-def group_node_like klass
+def expression_like klass
   group klass do
     content_1 = 'here is some text'
     content_2 = 'even more text!'
     content_3 = 'what?! more text?!'
 
-    basic_group_content = [
-                            Lextacular::Node.new(content_1),
-                            Lextacular::Node.new(content_2)
-                          ]
+    expression_content = [
+                           Lextacular::Token.new(content_1),
+                           Lextacular::Token.new(content_2)
+                         ]
 
-    empty_group  = klass.new
-    basic_group  = klass.new(*basic_group_content)
-    nested_group = klass.new(basic_group, content_3)
+    empty_expression  = klass.new
+    expression        = klass.new(*expression_content)
+    nested_expression = klass.new(expression, content_3)
 
     group '#to_s' do
       assert 'returns the content of the children concatenated together' do
-        basic_group.to_s == content_1 + content_2
+        expression.to_s == content_1 + content_2
       end
 
       assert 'works with nested groups' do
-        nested_group.to_s == basic_group.to_s + content_3
+        nested_expression.to_s == expression.to_s + content_3
       end
 
       assert 'returns an empty string when initialized with nothing' do
-        empty_group.to_s == ''
+        empty_expression.to_s == ''
       end
     end
 
     group '#size' do
       assert 'returns the sum of the sizes of all the children' do
-        basic_group.size == content_1.size + content_2.size
+        expression.size == content_1.size + content_2.size
       end
 
       assert 'works with nested groups' do
-        nested_group.size == basic_group.size + content_3.size
+        nested_expression.size == expression.size + content_3.size
       end
 
       assert 'returns 0 when initialized with nothing' do
-        empty_group.size.zero?
+        empty_expression.size.zero?
       end
     end
 
-    yield basic_group, basic_group_content
+    yield expression, expression_content
   end
 end
 
-group_node_like Lextacular::GroupNode do |basic_group, content|
+expression_like Lextacular::Expression do |expression, content|
   assert 'can not have its content splatted' do
-    [*basic_group] == [basic_group]
+    [*expression] == [expression]
   end
 end
 
-group_node_like Lextacular::TempGroupNode do |basic_group, content|
+expression_like Lextacular::TempExpression do |expression, content|
   assert 'can have its content splatted' do
-    [*basic_group] == [*content]
+    [*expression] == [*content]
   end
 end

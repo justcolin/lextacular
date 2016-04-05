@@ -6,23 +6,8 @@
 # (located in root directory of this project) for details.
 
 module Lextacular
-  # A leaf in the abstract syntax tree
-  class Node
-    def initialize content = '', &block
-      @content = content
-    end
-
-    def to_s
-      @content
-    end
-
-    def size
-      @content.size
-    end
-  end
-
-  # Wrapper around multiple ordered Nodes and GroupNodes
-  class GroupNode
+  # Wrapper around multiple ordered Tokens and Expression
+  class Expression
     def initialize *children, &block
       @children = children
     end
@@ -36,8 +21,8 @@ module Lextacular
     end
   end
 
-  # A GroupNode that can be splatted into other nodes
-  class TempGroupNode < GroupNode
+  # An Expression that can be splatted into other nodes
+  class TempExpression < Expression
     def to_a
       @children
     end

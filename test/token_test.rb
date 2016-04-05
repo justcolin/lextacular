@@ -6,36 +6,36 @@
 # (located in root directory of this project) for details.
 
 require './tet'
-require '../nodes'
+require '../Token'
 
 module Lextacular
-  group Node do
-    content    = 'here is some text'
-    empty_node = Node.new
-    node       = Node.new(content)
+  group Token do
+    content     = 'here is some text'
+    empty_token = Token.new
+    token       = Token.new(content)
 
     group '#to_s' do
       assert 'returns the content' do
-        node.to_s == content
+        token.to_s == content
       end
 
       assert 'returns an empty string if initialized with nothing' do
-        empty_node.to_s == ''
+        empty_token.to_s == ''
       end
     end
 
     group '#size' do
       assert 'returns the size of the content' do
-        node.size == content.size
+        token.size == content.size
       end
 
       assert 'returns 0 if initialized with nothing' do
-        empty_node.size.zero?
+        empty_token.size.zero?
       end
     end
 
     assert 'can not have its content splatted' do
-      [*node] == [node]
+      [*token] == [token]
     end
   end
 end

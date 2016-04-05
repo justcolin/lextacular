@@ -5,7 +5,19 @@
 # terms of the three-clause BSD license. See LICENSE.txt
 # (located in root directory of this project) for details.
 
-require './tet'
-require './token_test'
-require './expression_test'
+module Lextacular
+  # A leaf in the abstract syntax tree
+  class Token
+    def initialize content = '', &block
+      @content = content
+    end
 
+    def to_s
+      @content
+    end
+
+    def size
+      @content.size
+    end
+  end
+end
