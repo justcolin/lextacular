@@ -86,5 +86,26 @@ module Lextacular
                no_match:       'kitten time',
                later_match:    'it is puppy time',
                starting_index: 6,
-               return_class:   Expression
+               return_class:   Expression do
+
+    assert 'matches when there are nested ExpressionMatchers' do
+      word_matcher   = TokenMatcher.new(/\w+/, Token)
+      method_matcher = ExpressionMatcher.new(
+                         [TokenMatcher.new(/\./, Token), word_matcher],
+                         Expression
+                       )
+      nested_matcher = ExpressionMatcher.new(
+                         [word_matcher, method_matcher],
+                         Expression
+                       )
+
+      nested_matcher.match("foo.bar") == Expression.new(
+                                           Token.new('foo'),
+                                           Expression.new(
+                                             Token.new('.'),
+                                             Token.new('bar')
+                                           )
+                                         )
+    end
+  end
 end
