@@ -8,10 +8,12 @@
 module Lextacular
   # A leaf in the abstract syntax tree
   class Token
-    attr_reader :content
-
     def initialize content = '', &block
       @content = content
+    end
+
+    def to_s
+      @content
     end
 
     def size
@@ -19,7 +21,7 @@ module Lextacular
     end
 
     def == other
-      other.is_a?(self.class) && other.content == @content
+      other.is_a?(self.class) && other.to_s == @content
     end
   end
 end

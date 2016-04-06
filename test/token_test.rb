@@ -14,13 +14,13 @@ module Lextacular
     empty_token = Token.new
     token       = Token.new(content)
 
-    group '#content' do
+    group '#to_s' do
       assert 'returns the content' do
-        token.content == content
+        token.to_s == content
       end
 
       assert 'returns an empty string if initialized with nothing' do
-        empty_token.content == ''
+        empty_token.to_s == ''
       end
     end
 
