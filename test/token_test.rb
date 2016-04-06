@@ -5,8 +5,8 @@
 # terms of the three-clause BSD license. See LICENSE.txt
 # (located in root directory of this project) for details.
 
-require './tet'
-require '../Token'
+require_relative './tet'
+require_relative '../Token'
 
 module Lextacular
   group Token do
@@ -15,38 +15,39 @@ module Lextacular
     token       = Token.new(content)
 
     group '#to_s' do
-      assert 'returns the content' do
-        token.to_s == content
+      group 'returns the content' do
+        assert { token.to_s == content }
       end
 
-      assert 'returns an empty string if initialized with nothing' do
-        empty_token.to_s == ''
+      group 'returns an empty string if initialized with nothing' do
+        assert { empty_token.to_s == '' }
       end
     end
 
     group '#size' do
-      assert 'returns the size of the content' do
-        token.size == content.size
+      group 'returns the size of the content' do
+        assert { token.size == content.size }
       end
 
-      assert 'returns 0 if initialized with nothing' do
-        empty_token.size.zero?
+      group 'returns 0 if initialized with nothing' do
+        assert { empty_token.size.zero? }
       end
     end
 
     group '#==' do
-      assert 'returns true if self or a Token with the same content' do
-        token == token && token == Token.new(content)
+      group 'returns true if self or a Token with the same content' do
+        assert { token == token }
+        assert { token == Token.new(content) }
       end
 
-      assert 'returns false if given anything else' do
-        !(token == Token.new('something else')) &&
-        !(token == content)
+      group 'returns false if given anything else' do
+        deny { token == Token.new('something else') }
+        deny { token == content }
       end
     end
 
-    assert 'can not have its content splatted' do
-      [*token] == [token]
+    group 'can not have its content splatted' do
+      assert { [*token] == [token] }
     end
   end
 end

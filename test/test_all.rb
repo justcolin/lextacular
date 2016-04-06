@@ -5,7 +5,7 @@
 # terms of the three-clause BSD license. See LICENSE.txt
 # (located in root directory of this project) for details.
 
-require './tet'
-require './token_test'
-require './expression_test'
-require './matcher_test'
+require_relative './tet'
+require_relative './token_test'
+require_relative './expression_test'
+require_relative './matcher_test'

@@ -5,71 +5,101 @@
 # terms of the three-clause BSD license. See LICENSE.txt
 # (located in root directory of this project) for details.
 
-TET_DATA = Struct.new(:seperator, :group, :messages, :total, :failed)
-                 .new(' : ',      [],     [],        0,      0)
-
-at_exit do
-  puts "\n" unless TET_DATA.total.zero?
-
-  puts TET_DATA.messages
-               .unshift("#{TET_DATA.failed} out of #{TET_DATA.total} failed")
-               .join("\n\t")
-end
-
-def assert description
-  TET_DATA.total += 1
-  result     = begin
-                 yield
-               rescue StandardError => error
-                 description << " (error)" <<
-                                "\n\t\t" <<
-                                error.to_s <<
-                                "\n\t\t\t" <<
-                                error.backtrace.join("\n\t\t\t") <<
-                                "\n"
-                 false
-               end
-
-  if result
-    print '.'
-  else
-    TET_DATA.failed += 1
-    TET_DATA.messages
-            .push(
-              TET_DATA.group.join(TET_DATA.seperator) +
-              TET_DATA.seperator +
-              description
-            )
-
-    print 'F'
+def assert
+  begin
+    if yield
+      Tet.pass
+    else
+      Tet.fail
+    end
+  rescue StandardError => error
+    Tet.error(error)
   end
 
-  result
+  nil
 end
 
-def deny description
-  assert(description) { !yield }
+def deny
+  assert { !yield }
 end
 
-def err description, expect = StandardError
-  result = false
-
+def err expect = StandardError
   begin
     yield
-    description += " (expected error)"
+    Tet.no_error
   rescue StandardError => error
     if expect >= error.class
-      result = true
+      true
+    Tet.pass
     else
-      description += " (expected #{expect}, got #{error.class})"
+      Tet.wrong_error(expected: expect, got: error)
+      false
     end
   end
 
-  assert(description) { result }
+  nil
 end
 
 def group name
-  TET_DATA.group.push(name.to_s)
-  yield
-  TET_DATA.group.pop
+  Tet.in_group(name) { yield }
+
+  nil
+end
+
+module Tet
+  @current_group = []
+  @fail_messages = []
+  @total_asserts = 0
+
+  class << self
+    def in_group name
+      @current_group.push(name)
+      yield
+      @current_group.pop
+    end
+
+    def pass
+      print '.'
+
+      @total_asserts +=1
+    end
+
+    def fail message = '', letter = 'F'
+      print letter
+
+      @total_asserts +=1
+      @fail_messages << @current_group.join('  :  ') + message
+    end
+
+    def error error
+      fail format_error(error), '!'
+    end
+
+    def no_error
+      fail indent("EXPECTED ERROR", 1)
+    end
+
+    def wrong_error expected:, got:
+      fail indent("EXPECTED: #{expected}", 1) + format_error(got)
+    end
+
+    private
+
+    def format_error error
+      indent("ERROR: (#{error.class}) #{error.message}", 1) +
+      indent(error.backtrace.join("\n"), 2)
+    end
+
+    def indent string, amount = 0
+      string.split(/\n|\A/)
+            .inject('') do |memo, line|
+              memo + "\n" + ('    ' * amount) + line
+            end
+    end
+  end
+
+  at_exit do
+    puts "\n#{@fail_messages.size} out of #{@total_asserts} failed"+
+         indent(@fail_messages.join("\n\n"), 1)
+  end
 end

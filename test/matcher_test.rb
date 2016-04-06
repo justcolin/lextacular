@@ -5,11 +5,11 @@
 # terms of the three-clause BSD license. See LICENSE.txt
 # (located in root directory of this project) for details.
 
-require './tet'
-require './mocks'
-require '../token'
-require '../expression'
-require '../matchers'
+require_relative './tet'
+require_relative './mocks'
+require_relative '../token'
+require_relative '../expression'
+require_relative '../matchers'
 
 def matcher_like klass, pattern:, match_content:, matching:, return_class:,
                         no_match:, later_match:, starting_index:
@@ -18,41 +18,41 @@ def matcher_like klass, pattern:, match_content:, matching:, return_class:,
       matcher = klass.new(pattern, return_class)
 
       group 'given a string that starts with a match' do
-        assert 'returns instance of the class given at initialization' do
+        group 'returns instance of the class given at initialization' do
           given_mock = klass.new(pattern, MockMatcherReturn)
                             .match(matching)
 
           given_other = klass.new(pattern, return_class)
                              .match(matching)
 
-          given_mock.is_a?(MockMatcherReturn) &&
-          given_other.is_a?(return_class)
+          assert { given_mock.is_a?(MockMatcherReturn) }
+          assert { given_other.is_a?(return_class) }
         end
 
-        assert 'return has the proper content' do
+        group 'return has the proper content' do
           match = klass.new(pattern, return_class)
                        .match(matching)
 
-          match == return_class.new(*match_content)
+          assert { match == return_class.new(*match_content) }
         end
       end
 
-      assert 'given a string without a match, returns falsy' do
-        !matcher.match(no_match)
+      group 'given a string without a match, returns falsy' do
+        deny { matcher.match(no_match) }
       end
 
       group 'given a string with a match after the start' do
-        assert 'returns falsy when not given a starting index' do
-          !matcher.match(later_match)
+        group 'returns falsy when not given a starting index' do
+          deny { matcher.match(later_match) }
         end
 
-        assert 'returns falsy when given a wrong starting index' do
-          !matcher.match(later_match, starting_index - 1) &&
-          !matcher.match(later_match, starting_index + 1)
+        group 'returns falsy when given a wrong starting index' do
+          deny { matcher.match(later_match, starting_index - 1) }
+          deny { matcher.match(later_match, starting_index + 1) }
         end
 
-        assert 'returns match when given the starting index of the match' do
-          matcher.match(later_match, starting_index)
+        group 'returns match when given the starting index of the match' do
+          assert { matcher.match(later_match, starting_index) }
         end
       end
 
@@ -88,42 +88,43 @@ module Lextacular
                starting_index: 6,
                return_class:   Expression do
 
-    assert 'matches when there are nested ExpressionMatchers' do
-      word_matcher   = TokenMatcher.new(/\w+/, Token)
+    group 'matches when there are nested ExpressionMatchers' do
+      word_matcher = TokenMatcher.new(/\w+/, Token)
+
       method_matcher = ExpressionMatcher.new(
                          [TokenMatcher.new(/\./, Token), word_matcher],
                          Expression
                        )
+
       nested_matcher = ExpressionMatcher.new(
                          [word_matcher, method_matcher],
                          Expression
                        )
 
-      nested_matcher.match("foo.bar") == Expression.new(
-                                           Token.new('foo'),
-                                           Expression.new(
-                                             Token.new('.'),
-                                             Token.new('bar')
-                                           )
-                                         )
+      match = Expression.new(
+                Token.new('foo'),
+                Expression.new(Token.new('.'), Token.new('bar'))
+              )
+
+      assert { nested_matcher.match('foo.bar') == match }
     end
 
-    assert 'expands TempExpressions' do
-      word_matcher   = TokenMatcher.new(/\w+/, Token)
+    group 'expands TempExpressions' do
+      word_matcher = TokenMatcher.new(/\w+/, Token)
+
       method_matcher = ExpressionMatcher.new(
                          [TokenMatcher.new(/\./, Token), word_matcher],
                          TempExpression
                        )
+
       nested_matcher = ExpressionMatcher.new(
                          [word_matcher, method_matcher],
                          Expression
                        )
 
-      nested_matcher.match("foo.bar") == Expression.new(
-                                           Token.new('foo'),
-                                           Token.new('.'),
-                                           Token.new('bar')
-                                         )
+      match = Expression.new(Token.new('foo'), Token.new('.'), Token.new('bar'))
+
+      assert { nested_matcher.match('foo.bar') == match }
     end
   end
 end

@@ -5,9 +5,9 @@
 # terms of the three-clause BSD license. See LICENSE.txt
 # (located in root directory of this project) for details.
 
-require './tet'
-require '../token'
-require '../expression'
+require_relative './tet'
+require_relative '../token'
+require_relative '../expression'
 
 def expression_like klass
   group klass do
@@ -28,48 +28,48 @@ def expression_like klass
                         )
 
     group '#to_s' do
-      assert 'returns the joined content of all the children' do
-        expression.to_s == content_1 + content_2
+      group 'returns the joined content of all the children' do
+        assert { expression.to_s == content_1 + content_2 }
       end
 
-      assert 'works with nested groups' do
-        nested_expression.to_s == expression.to_s + content_3
+      group 'works with nested groups' do
+        assert { nested_expression.to_s == expression.to_s + content_3 }
       end
 
-      assert 'returns an empty string when initialized with nothing' do
-        empty_expression.to_s == ''
+      group 'returns an empty string when initialized with nothing' do
+        assert { empty_expression.to_s == '' }
       end
     end
 
     group '#size' do
-      assert 'returns the sum of the sizes of all the children' do
-        expression.size == content_1.size + content_2.size
+      group 'returns the sum of the sizes of all the children' do
+        assert { expression.size == content_1.size + content_2.size }
       end
 
-      assert 'works with nested groups' do
-        nested_expression.size == expression.size + content_3.size
+      group 'works with nested groups' do
+        assert { nested_expression.size == expression.size + content_3.size }
       end
 
-      assert 'returns 0 when initialized with nothing' do
-        empty_expression.size.zero?
+      group 'returns 0 when initialized with nothing' do
+        assert { empty_expression.size.zero? }
       end
     end
 
     group '#children' do
-      assert 'returns the children given when initialized' do
-        expression.children == expression_content
+      group 'returns the children given when initialized' do
+        assert { expression.children == expression_content }
       end
     end
 
     group '#==' do
-      assert 'returns true if self or a expression with the same content' do
-        expression == expression &&
-        expression == klass.new(*expression_content)
+      group 'returns true if self or a expression with the same content' do
+        assert { expression == expression }
+        assert { expression == klass.new(*expression_content) }
       end
 
-      assert 'returns false if given anything else' do
-        !(expression == klass.new('something else')) &&
-        !(expression == expression_content)
+      group 'returns false if given anything else' do
+        deny { expression == klass.new('something else') }
+        deny { expression == expression_content }
       end
     end
 
@@ -78,13 +78,13 @@ def expression_like klass
 end
 
 expression_like Lextacular::Expression do |expression, content|
-  assert 'can not have its content splatted' do
-    [*expression] == [expression]
+  group 'can not have its content splatted' do
+    assert { [*expression] == [expression] }
   end
 end
 
 expression_like Lextacular::TempExpression do |expression, content|
-  assert 'can have its content splatted' do
-    [*expression] == [*content]
+  group 'can have its content splatted' do
+    assert { [*expression] == [*content] }
   end
 end
