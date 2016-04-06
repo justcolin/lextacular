@@ -6,7 +6,7 @@
 # (located in root directory of this project) for details.
 
 require_relative './tet'
-require_relative '../Token'
+require_relative '../token'
 
 module Lextacular
   group Token do
