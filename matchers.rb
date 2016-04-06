@@ -45,3 +45,19 @@ module Lextacular
     end
   end
 end
+
+class EitherMatcher
+  def initialize *matchers
+    @matchers = matchers
+  end
+
+  def match string, start_index = 0
+    @matchers.each do |matcher|
+      match = matcher.match(string, start_index)
+
+      return match if match
+    end
+
+    nil
+  end
+end
