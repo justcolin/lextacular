@@ -8,6 +8,7 @@
 require './tet'
 require './mocks'
 require '../token'
+require '../expression'
 require '../matchers'
 
 def matcher_like klass, pattern:, match_content:, matching:, return_class:,
@@ -32,7 +33,7 @@ def matcher_like klass, pattern:, match_content:, matching:, return_class:,
           match = klass.new(pattern, return_class)
                        .match(matching)
 
-          match == return_class.new(match_content)
+          match == return_class.new(*match_content)
         end
       end
 
@@ -54,15 +55,36 @@ def matcher_like klass, pattern:, match_content:, matching:, return_class:,
           matcher.match(later_match, starting_index)
         end
       end
+
+      yield if block_given?
     end
   end
 end
 
-matcher_like Lextacular::TokenMatcher,
-             pattern:        /hello/,
-             matching:       'hello world',
-             match_content:  'hello',
-             no_match:       'goodbye for now',
-             later_match:    'I say hello',
-             starting_index: 6,
-             return_class:   Lextacular::Token
+module Lextacular
+  matcher_like TokenMatcher,
+               matching:       'hello world',
+               pattern:        /hello/,
+               match_content:  'hello',
+               no_match:       'goodbye for now',
+               later_match:    'I say hello',
+               starting_index: 6,
+               return_class:   Token
+
+  matcher_like ExpressionMatcher,
+               matching:       'puppy time is all the time',
+               pattern:        [
+                                 TokenMatcher.new(/puppy/, Token),
+                                 TokenMatcher.new(/ /, Token),
+                                 TokenMatcher.new(/time/, Token)
+                               ],
+               match_content:  [
+                                 Token.new('puppy'),
+                                 Token.new(' '),
+                                 Token.new('time')
+                               ],
+               no_match:       'kitten time',
+               later_match:    'it is puppy time',
+               starting_index: 6,
+               return_class:   Expression
+end

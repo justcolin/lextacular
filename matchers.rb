@@ -22,4 +22,26 @@ module Lextacular
       @klass.new(found.to_s) if found && found.begin(0) == start_index
     end
   end
+
+  class ExpressionMatcher
+    include MatcherInit
+
+    def match string, start_index = 0
+      matches = @pattern.inject([]) do |memo, part|
+                  if memo
+                    found = part.match(string, start_index)
+
+                    if found
+                      start_index += found.size
+                      memo << found
+                    end
+                  else
+                    break
+                  end
+                end
+
+
+      @klass.new(*matches) if matches
+    end
+  end
 end

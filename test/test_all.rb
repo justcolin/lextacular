@@ -8,4 +8,4 @@
 require './tet'
 require './token_test'
 require './expression_test'
-require './token_matcher_test'
+require './matcher_test'
