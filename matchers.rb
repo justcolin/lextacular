@@ -33,7 +33,7 @@ module Lextacular
 
                     if found
                       start_index += found.size
-                      memo << found
+                      memo + [*found]
                     end
                   else
                     break

@@ -107,5 +107,23 @@ module Lextacular
                                            )
                                          )
     end
+
+    assert 'expands TempExpressions' do
+      word_matcher   = TokenMatcher.new(/\w+/, Token)
+      method_matcher = ExpressionMatcher.new(
+                         [TokenMatcher.new(/\./, Token), word_matcher],
+                         TempExpression
+                       )
+      nested_matcher = ExpressionMatcher.new(
+                         [word_matcher, method_matcher],
+                         Expression
+                       )
+
+      nested_matcher.match("foo.bar") == Expression.new(
+                                           Token.new('foo'),
+                                           Token.new('.'),
+                                           Token.new('bar')
+                                         )
+    end
   end
 end
