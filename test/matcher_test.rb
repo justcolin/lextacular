@@ -38,6 +38,16 @@ module Lextacular
       assert { result_index  == given_index }
     end
 
+    group 'index argument defaults to 0' do
+      result_index    = nil
+      pattern_matcher = proc { |_, index| result_index = index }
+
+      build_matcher(MockResult, pattern_matcher)
+                   .call(given_string)
+
+      assert { result_index.zero? }
+    end
+
     group 'if the pattern matcher returns truthy' do
       group 'returns instance of the given class' do
         given_class = Class.new { def initialize *_; end }
