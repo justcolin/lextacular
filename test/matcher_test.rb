@@ -57,6 +57,18 @@ module Lextacular
                        .content == [proc_return]
         end
       end
+
+      group 'result of the pattern matcher is splatted into the result' do
+        number_1 = rand
+        number_2 = number_1 + rand
+        result   = [number_1, number_2]
+
+        assert do
+          build_matcher(MockResult, proc { result })
+                       .call
+                       .content == result
+        end
+      end
     end
 
     group 'if the pattern matcher returns falsy' do
