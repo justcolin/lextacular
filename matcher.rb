@@ -20,9 +20,9 @@ module Lextacular
     end
   end
 
-  def match_regexp pattern
+  def match_regexp regexp
     lambda do |string, index = 0|
-      found = pattern.match(string)
+      found = regexp.match(string)
 
       found.to_s if found && found.begin(0) == index
     end
