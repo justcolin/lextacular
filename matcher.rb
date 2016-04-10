@@ -27,4 +27,8 @@ module Lextacular
       found.to_s if found && found.begin(0) == index
     end
   end
+
+  def match_pattern *pattern
+    lambda { |_| }
+  end
 end

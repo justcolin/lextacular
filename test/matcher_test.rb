@@ -128,5 +128,16 @@ module Lextacular
         assert { matcher.call(later_match, match_index) == match }
       end
     end
+
+    group '.match_pattern' do
+      group 'returns falsy if any of the child matchers return falsy' do
+        yes = proc { true }
+        no  = proc { false }
+
+        deny { match_pattern(yes, no).call('') }
+        deny { match_pattern(no,  yes, yes).call('') }
+        deny { match_pattern(yes, no,  yes).call('') }
+      end
+    end
   end
 end
