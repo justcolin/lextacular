@@ -134,15 +134,21 @@ module Lextacular
         yes = proc { true }
         no  = proc { false }
 
+        deny { match_pattern(no).call('') }
         deny { match_pattern(yes, no).call('') }
         deny { match_pattern(no,  yes, yes).call('') }
         deny { match_pattern(yes, no,  yes).call('') }
+        deny { match_pattern(yes, no,  no).call('') }
       end
 
       group 'returns array of matches if all children return matches' do
         assert do
-          match_pattern(proc { 1 }, proc { 2 }, proc { 3 })
-                       .call('') == [1, 2, 3]
+          rand_1 = rand
+          rand_2 = rand
+          rand_3 = rand
+
+          match_pattern(proc { rand_1 }, proc { rand_2 }, proc { rand_3 })
+                       .call('') == [rand_1, rand_2, rand_3]
         end
       end
 
