@@ -54,7 +54,7 @@ module Lextacular
 
         assert do
           build_matcher(given_class, proc { true })
-                       .call.is_a? given_class
+                       .call('').is_a? given_class
         end
       end
 
@@ -63,7 +63,7 @@ module Lextacular
 
         assert do
           build_matcher(MockResult, proc { proc_return })
-                       .call
+                       .call('')
                        .content == [proc_return]
         end
       end
@@ -75,7 +75,7 @@ module Lextacular
 
         assert do
           build_matcher(MockResult, proc { result })
-                       .call
+                       .call('')
                        .content == result
         end
       end

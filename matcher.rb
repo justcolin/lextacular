@@ -9,7 +9,7 @@ module Lextacular
   module_function
 
   def build_matcher klass, pattern_matcher
-    proc do |string, index = 0|
+    lambda do |string, index = 0|
       found = pattern_matcher.call(string, index)
 
       if found
@@ -21,6 +21,6 @@ module Lextacular
   end
 
   def match_regexp pattern
-    proc { |string| pattern.match(string).to_s }
+    lambda { |string| pattern.match(string).to_s }
   end
 end
