@@ -40,8 +40,10 @@ module Lextacular
 
     group 'returns instance of the given class if the matcher returns truthy' do
       assert do
-        build_matcher(MockResult, proc { true })
-                     .call.is_a? MockResult
+        given_class = Class.new
+
+        build_matcher(given_class, proc { true })
+                     .call.is_a? given_class
       end
     end
 
