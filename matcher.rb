@@ -43,6 +43,10 @@ module Lextacular
   end
 
   def match_maybe *pattern
-    lambda { |_| [] }
+    sub_matcher = match_pattern *pattern
+
+    lambda do |_|
+      sub_matcher.call(nil) || []
+    end
   end
 end

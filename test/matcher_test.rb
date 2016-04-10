@@ -202,5 +202,16 @@ module Lextacular
         assert { match_maybe(yes, no,  no).call('')  == [] }
       end
     end
+
+    group 'returns array of matches if all children return matches' do
+      assert do
+        rand_1 = rand
+        rand_2 = rand
+        rand_3 = rand
+
+        match_maybe(proc { rand_1 }, proc { rand_2 }, proc { rand_3 })
+                   .call('') == [rand_1, rand_2, rand_3]
+      end
+    end
   end
 end
