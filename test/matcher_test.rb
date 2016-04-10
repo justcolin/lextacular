@@ -189,5 +189,18 @@ module Lextacular
         assert { result_index.zero? }
       end
     end
+
+    group '.match_maybe' do
+      group 'returns an empty array if any of the child patterns return falsy' do
+        yes = proc { true }
+        no  = proc { false }
+
+        assert { match_maybe(no).call('')            == [] }
+        assert { match_maybe(yes, no).call('')       == [] }
+        assert { match_maybe(no,  yes, yes).call('') == [] }
+        assert { match_maybe(yes, no,  yes).call('') == [] }
+        assert { match_maybe(yes, no,  no).call('')  == [] }
+      end
+    end
   end
 end

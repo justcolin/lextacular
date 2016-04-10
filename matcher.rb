@@ -41,4 +41,8 @@ module Lextacular
       end
     end
   end
+
+  def match_maybe *pattern
+    lambda { |_| [] }
+  end
 end
