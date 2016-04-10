@@ -38,7 +38,7 @@ module Lextacular
       assert { result_index  == given_index }
     end
 
-    group 'returns instance of the given class if the matcher returns truthy' do
+    group 'returns instance of the given class if the pattern matcher returns truthy' do
       assert do
         given_class = Class.new
 
@@ -47,7 +47,7 @@ module Lextacular
       end
     end
 
-    group 'returns instance of Mismatch if the matcher returns falsy' do
+    group 'returns instance of Mismatch if the pattern matcher returns falsy' do
       assert do
         build_matcher(MockResult, proc { nil })
                      .call.is_a? Mismatch
