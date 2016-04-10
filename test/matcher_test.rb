@@ -175,7 +175,12 @@ module Lextacular
       end
 
       group 'index defaults to 0' do
+        result_index = nil
+        index_proc   = proc { |_, index| result_index = index }
 
+        match_pattern(index_proc).call('')
+
+        assert { result_index.zero? }
       end
     end
   end

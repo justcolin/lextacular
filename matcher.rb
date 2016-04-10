@@ -29,7 +29,7 @@ module Lextacular
   end
 
   def match_pattern *pattern
-    lambda do |string, index = nil|
+    lambda do |string, index = 0|
       pattern.inject([]) do |memo, part|
         result = part.call(string, index)
 
