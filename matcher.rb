@@ -19,4 +19,8 @@ module Lextacular
       end
     end
   end
+
+  def match_regexp pattern
+    proc { |string| pattern.match(string).to_s }
+  end
 end

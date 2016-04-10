@@ -85,4 +85,12 @@ module Lextacular
       end
     end
   end
+
+  group '.match_regexp' do
+    group 'given a matching string, returns match content' do
+      matcher = match_regexp(/bubbles/)
+
+      assert { matcher.call('bubbles are fun') == 'bubbles' }
+    end
+  end
 end
