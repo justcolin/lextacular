@@ -29,9 +29,9 @@ module Lextacular
   end
 
   def match_pattern *pattern
-    lambda do |_|
+    lambda do |string, index = nil|
       pattern.inject([]) do |memo, part|
-        result = part.call
+        result = part.call(string, index)
 
         if result
           memo << result
