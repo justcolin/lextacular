@@ -8,4 +8,6 @@
 require 'tet'
 require_relative './token_test'
 require_relative './expression_test'
-require_relative './matcher_test'
+require_relative './build_matcher_test'
+require_relative './match_regexp_test'
+require_relative './match_pattern_like_test'
