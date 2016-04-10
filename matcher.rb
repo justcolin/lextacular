@@ -15,7 +15,7 @@ module Lextacular
       if found
         klass.new
       else
-        Mismatch.new
+        Mismatch.new(string, index)
       end
     end
   end

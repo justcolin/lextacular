@@ -19,10 +19,10 @@ end
 
 module Lextacular
   group '.build_matcher' do
-    group 'arguments from #call are passed into the given pattern matcher' do
-      given_index  = rand
-      given_string = (given_index + rand).to_s
+    given_index  = rand
+    given_string = (given_index + rand).to_s
 
+    group 'arguments from #call are passed into the given pattern matcher' do
       result_string = nil
       result_index  = nil
 
@@ -47,11 +47,16 @@ module Lextacular
       end
     end
 
+    mismatch_result = build_matcher(MockResult, proc { nil })
+                                   .call(given_string, given_index)
+
     group 'returns instance of Mismatch if the pattern matcher returns falsy' do
-      assert do
-        build_matcher(MockResult, proc { nil })
-                     .call.is_a? Mismatch
-      end
+      assert { mismatch_result.is_a? Mismatch }
+    end
+
+    group 'Mismatch is given the string and index' do
+      assert { mismatch_result.content == given_string }
+      assert { mismatch_result.index   == given_index  }
     end
   end
 end
