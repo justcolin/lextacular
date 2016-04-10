@@ -5,7 +5,12 @@
 # terms of the three-clause BSD license. See LICENSE.txt
 # (located in root directory of this project) for details.
 
-require 'tet'
-require_relative './token_test'
-require_relative './expression_test'
-require_relative './matcher_test'
+module Lextacular
+  module_function
+
+  def build_matcher pattern_matcher
+    proc do |string, index|
+      pattern_matcher.call(string, index)
+    end
+  end
+end
