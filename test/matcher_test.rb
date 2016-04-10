@@ -30,10 +30,17 @@ module Lextacular
                           result_index  = index
                         end
 
-      build_matcher(pattern_matcher).call(given_string, given_index)
+      build_matcher(MockResult, pattern_matcher)
+                   .call(given_string, given_index)
 
       assert { result_string == given_string }
       assert { result_index  == given_index }
+    end
+
+    group 'returns instance of the given class if the matcher returns truthy' do
+      assert do
+        build_matcher(MockResult, proc { true }).call.is_a? MockResult
+      end
     end
   end
 end

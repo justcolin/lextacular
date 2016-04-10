@@ -8,9 +8,11 @@
 module Lextacular
   module_function
 
-  def build_matcher pattern_matcher
+  def build_matcher klass, pattern_matcher
     proc do |string, index|
       pattern_matcher.call(string, index)
+
+      klass.new
     end
   end
 end
