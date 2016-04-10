@@ -21,7 +21,7 @@ module Lextacular
   end
 
   def match_regexp pattern
-    lambda do |string|
+    lambda do |string, index = 0|
       found = pattern.match(string)
 
       found.to_s if found && found.begin(0).zero?

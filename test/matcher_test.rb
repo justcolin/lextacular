@@ -112,9 +112,15 @@ module Lextacular
     group 'given a string that matches later' do
       matcher     = match_regexp(/bloop/)
       later_match = 'blip bloop'
+      match_index = 5
 
       group 'returns falsy if index is not given' do
         deny { matcher.call(later_match) }
+      end
+
+      group 'returns falsy if index is wrong' do
+        deny { matcher.call(later_match, match_index + 1) }
+        deny { matcher.call(later_match, match_index - 1) }
       end
     end
   end
