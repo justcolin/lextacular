@@ -24,7 +24,7 @@ module Lextacular
     lambda do |string|
       found = pattern.match(string)
 
-      found.to_s if found
+      found.to_s if found && found.begin(0).zero?
     end
   end
 end

@@ -108,5 +108,14 @@ module Lextacular
 
       deny { matcher.call('something else') }
     end
+
+    group 'given a string that matches later' do
+      matcher     = match_regexp(/bloop/)
+      later_match = 'blip bloop'
+
+      group 'returns falsy if index is not given' do
+        deny { matcher.call(later_match) }
+      end
+    end
   end
 end
