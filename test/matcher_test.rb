@@ -7,6 +7,7 @@
 
 require 'tet'
 require_relative '../matcher'
+require_relative '../mismatch'
 
 class MockResult
   attr_reader :content
@@ -39,7 +40,15 @@ module Lextacular
 
     group 'returns instance of the given class if the matcher returns truthy' do
       assert do
-        build_matcher(MockResult, proc { true }).call.is_a? MockResult
+        build_matcher(MockResult, proc { true })
+                     .call.is_a? MockResult
+      end
+    end
+
+    group 'returns instance of Mismatch if the matcher returns falsy' do
+      assert do
+        build_matcher(MockResult, proc { nil })
+                     .call.is_a? Mismatch
       end
     end
   end

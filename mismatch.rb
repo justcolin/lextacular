@@ -6,17 +6,5 @@
 # (located in root directory of this project) for details.
 
 module Lextacular
-  module_function
-
-  def build_matcher klass, pattern_matcher
-    proc do |string, index|
-      found = pattern_matcher.call(string, index)
-
-      if found
-        klass.new
-      else
-        Mismatch.new
-      end
-    end
-  end
+  Mismatch = Class.new
 end
