@@ -75,6 +75,8 @@ module Lextacular
   end
 
   group '.match_maybe' do
+    match_pattern_like { |*args| match_maybe(*args) }
+
     group 'returns an empty array if any of the child patterns return falsy' do
       yes = proc { true }
       no  = proc { false }
@@ -84,17 +86,6 @@ module Lextacular
       assert { match_maybe(no,  yes, yes).call('') == [] }
       assert { match_maybe(yes, no,  yes).call('') == [] }
       assert { match_maybe(yes, no,  no).call('')  == [] }
-    end
-  end
-
-  group 'returns array of matches if all children return matches' do
-    assert do
-      rand_1 = rand
-      rand_2 = rand
-      rand_3 = rand
-
-      match_maybe(proc { rand_1 }, proc { rand_2 }, proc { rand_3 })
-                 .call('') == [rand_1, rand_2, rand_3]
     end
   end
 end
