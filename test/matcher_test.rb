@@ -138,6 +138,13 @@ module Lextacular
         deny { match_pattern(no,  yes, yes).call('') }
         deny { match_pattern(yes, no,  yes).call('') }
       end
+
+      group 'returns array of matches if all children return matches' do
+        assert do
+          match_pattern(proc { 1 }, proc { 2 }, proc { 3 })
+                       .call('') == [1, 2, 3]
+        end
+      end
     end
   end
 end
