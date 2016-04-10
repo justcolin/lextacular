@@ -6,5 +6,5 @@
 # (located in root directory of this project) for details.
 
 module Lextacular
-  Mismatch = Class.new
+  Mismatch = Struct.new(:content, :index)
 end
