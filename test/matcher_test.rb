@@ -102,5 +102,11 @@ module Lextacular
 
       assert { matcher.call('bubbles are fun') == 'bubbles' }
     end
+
+    group 'given a non-matching string, returns falsy' do
+      matcher = match_regexp(/never found/)
+
+      deny { matcher.call('something else') }
+    end
   end
 end

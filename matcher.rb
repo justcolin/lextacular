@@ -21,6 +21,10 @@ module Lextacular
   end
 
   def match_regexp pattern
-    lambda { |string| pattern.match(string).to_s }
+    lambda do |string|
+      found = pattern.match(string)
+
+      found.to_s if found
+    end
   end
 end
