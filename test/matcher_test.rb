@@ -38,25 +38,39 @@ module Lextacular
       assert { result_index  == given_index }
     end
 
-    group 'returns instance of the given class if the pattern matcher returns truthy' do
-      assert do
-        given_class = Class.new
+    group 'if the pattern matcher returns truthy' do
+      group 'returns instance of the given class' do
+        given_class = Class.new { def initialize *_; end }
 
-        build_matcher(given_class, proc { true })
-                     .call.is_a? given_class
+        assert do
+          build_matcher(given_class, proc { true })
+                       .call.is_a? given_class
+        end
+      end
+
+      group 'returned object is initialized with the result of the pattern matcher' do
+        proc_return = rand
+
+        assert do
+          build_matcher(MockResult, proc { proc_return })
+                       .call
+                       .content == [proc_return]
+        end
       end
     end
 
-    mismatch_result = build_matcher(MockResult, proc { nil })
-                                   .call(given_string, given_index)
+    group 'if the pattern matcher returns falsy' do
+      mismatch_result = build_matcher(MockResult, proc { nil })
+                                     .call(given_string, given_index)
 
-    group 'returns instance of Mismatch if the pattern matcher returns falsy' do
-      assert { mismatch_result.is_a? Mismatch }
-    end
+      group 'returns instance of Mismatch' do
+        assert { mismatch_result.is_a? Mismatch }
+      end
 
-    group 'Mismatch is given the string and index' do
-      assert { mismatch_result.content == given_string }
-      assert { mismatch_result.index   == given_index  }
+      group 'Mismatch is given the string and index' do
+        assert { mismatch_result.content == given_string }
+        assert { mismatch_result.index   == given_index  }
+      end
     end
   end
 end

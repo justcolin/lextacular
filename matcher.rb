@@ -13,7 +13,7 @@ module Lextacular
       found = pattern_matcher.call(string, index)
 
       if found
-        klass.new
+        klass.new(found)
       else
         Mismatch.new(string, index)
       end
