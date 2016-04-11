@@ -13,8 +13,8 @@ def match_pattern_like make_matcher
   group 'return array of matches if all children return matches' do
     assert do
       rand_1 = rand.to_s
-      rand_2 = rand.to_s
-      rand_3 = rand.to_s
+      rand_2 = rand_1 + rand.to_s
+      rand_3 = rand_2 + rand.to_s
 
       make_matcher.call(
                     proc { rand_1 },
@@ -27,7 +27,7 @@ def match_pattern_like make_matcher
 
   group 'pass string and index into children, incrementing index as it goes' do
     given_index  = 10
-    given_string = (rand).to_s
+    given_string = rand.to_s
 
     result_index_1  = nil
     result_index_2  = nil
