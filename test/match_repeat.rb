@@ -31,5 +31,28 @@ module Lextacular
         deny { match_repeat(yes, no, yes).call('') }
       end
     end
+
+    group 'returns array of matches until a pattern returns...' do
+      with_falsy_and_mismatch do |option|
+        total_cycles = 3
+        cycle_count  = 0
+        match        = 'truthy'
+
+        always_true      = proc { match }
+        eventually_falsy = lambda do |_, _ = 0|
+                             if cycle_count == total_cycles
+                               return option
+                             else
+                               cycle_count += 1
+                               match
+                             end
+                           end
+
+        assert do
+          match_repeat(always_true, eventually_falsy, always_true)
+                      .call('') == ([match] * total_cycles * 3)
+        end
+      end
+    end
   end
 end

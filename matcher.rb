@@ -72,7 +72,17 @@ module Lextacular
   end
 
   def match_repeat *pattern
-    lambda { |string| }
+    sub_matcher = match_pattern *pattern
+
+    lambda do |string|
+      result = []
+
+      while valid_match? match = sub_matcher.call('')
+        result += match
+      end
+
+      result unless result.empty?
+    end
   end
 
   def valid_match? match
