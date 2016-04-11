@@ -60,9 +60,10 @@ module Lextacular
   end
 
   def match_either *pattern
-    lambda do |string|
+    lambda do |string, index = nil|
       pattern.each do |matcher|
-        match = matcher.call
+        match = matcher.call(string, index)
+
         return match if valid_match? match
       end
 
