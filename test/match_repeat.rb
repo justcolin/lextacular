@@ -9,30 +9,22 @@ require 'tet'
 require_relative '../matcher'
 require_relative '../mismatch'
 
-def returns_falsy_if_any_are falsy
-  yes = proc { 'truthy' }
-  no  = proc { falsy }
+def with_falsy_and_mismatch
+  group 'falsy' do
+    yield nil
+  end
 
-  deny { match_repeat(no          ).call('') }
-  deny { match_repeat(yes, no     ).call('') }
-  deny { match_repeat(yes, no, yes).call('') }
+  group 'a Mismatch' do
+    yield Lextacular::Mismatch.new
+  end
 end
 
 module Lextacular
   group '.match_repeat' do
-    group 'returns falsy' do
-      group 'if any children return falsy' do
+    group 'returns falsy if any children return' do
+      with_falsy_and_mismatch do |option|
         yes = proc { 'truthy' }
-        no  = proc { nil }
-
-        deny { match_repeat(no          ).call('') }
-        deny { match_repeat(yes, no     ).call('') }
-        deny { match_repeat(yes, no, yes).call('') }
-      end
-
-      group 'if any children return a Mismatch' do
-        yes = proc { 'truthy' }
-        no  = proc { Mismatch.new }
+        no  = proc { option }
 
         deny { match_repeat(no          ).call('') }
         deny { match_repeat(yes, no     ).call('') }
