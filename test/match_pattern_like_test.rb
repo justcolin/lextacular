@@ -112,7 +112,6 @@ module Lextacular
       assert { match_maybe(no          ).call('') == [] }
       assert { match_maybe(yes, no     ).call('') == [] }
       assert { match_maybe(yes, no, yes).call('') == [] }
-
     end
 
     group 'return an empty array if any child returns a Mismatch' do

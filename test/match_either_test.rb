@@ -40,8 +40,8 @@ module Lextacular
 
       result_index_1  = nil
       result_index_2  = nil
-      result_string_2 = nil
       result_string_1 = nil
+      result_string_2 = nil
 
       pattern = [
                   proc do |string, index|
