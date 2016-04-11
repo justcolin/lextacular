@@ -20,5 +20,18 @@ module Lextacular
         ).call('')
       end
     end
+
+    group 'returns the first match if any child matches' do
+      first_match  = rand.to_s
+      second_match = first_match + rand.to_s
+
+      no    = proc { nil }
+      yes_1 = proc { first_match }
+      yes_2 = proc { second_match }
+
+      assert { match_either(yes_1           ).call('') == first_match }
+      assert { match_either(yes_1, yes_2    ).call('') == first_match }
+      assert { match_either(no, yes_1, yes_2).call('') == first_match }
+    end
   end
 end

@@ -60,7 +60,14 @@ module Lextacular
   end
 
   def match_either *pattern
-    lambda { |_| nil }
+    lambda do |string|
+      pattern.each do |matcher|
+        match = matcher.call
+        return match if valid_match? match
+      end
+
+      nil
+    end
   end
 
   def valid_match? match
