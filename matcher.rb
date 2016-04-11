@@ -34,6 +34,7 @@ module Lextacular
         result = part.call(string, index)
 
         if valid_match? result
+          index += result.size
           memo << result
         else
           return

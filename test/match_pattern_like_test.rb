@@ -7,36 +7,49 @@
 
 require 'tet'
 require_relative '../matcher'
+require_relative '../mismatch'
 
 def match_pattern_like make_matcher:, falsy_check:
   group 'returns array of matches if all children return matches' do
     assert do
-      rand_1 = rand
-      rand_2 = rand
-      rand_3 = rand
+      rand_1 = rand.to_s
+      rand_2 = rand.to_s
+      rand_3 = rand.to_s
 
       make_matcher.call(proc { rand_1 }, proc { rand_2 }, proc { rand_3 })
                   .call('') == [rand_1, rand_2, rand_3]
     end
   end
 
-  group 'passes string and index into children' do
-    given_index  = rand
-    given_string = (given_index + rand).to_s
+  group 'passes string and index into children, incrementing index as it goes' do
+    given_index  = 10
+    given_string = (rand).to_s
 
     result_index_1  = nil
     result_index_2  = nil
-    result_string_1 = nil
+    result_index_3  = nil
     result_string_2 = nil
+    result_string_1 = nil
+    result_string_3 = nil
 
     pattern = [
                 proc do |string, index|
                   result_string_1 = string
                   result_index_1  = index
+
+                  "12345678"
                 end,
                 proc do |string, index|
                   result_string_2 = string
                   result_index_2  = index
+
+                  "123"
+                end,
+                proc do |string, index|
+                  result_string_3 = string
+                  result_index_3  = index
+
+                  "something else"
                 end
               ]
 
@@ -44,8 +57,11 @@ def match_pattern_like make_matcher:, falsy_check:
 
     assert { result_string_1 == given_string }
     assert { result_string_2 == given_string }
-    assert { result_index_1  == given_index  }
-    assert { result_index_2  == given_index  }
+    assert { result_string_3 == given_string }
+
+    assert { result_index_1 == given_index }
+    assert { result_index_2 == given_index + 8 }
+    assert { result_index_3 == given_index + 11 }
   end
 
   group 'index defaults to 0' do
@@ -58,7 +74,7 @@ def match_pattern_like make_matcher:, falsy_check:
   end
 
   falsy_tests = proc do |falsy|
-                  yes = proc { true }
+                  yes = proc { 'truthy' }
                   no  = proc { falsy }
 
                   falsy_check.call(make_matcher.call(no).call(''))
