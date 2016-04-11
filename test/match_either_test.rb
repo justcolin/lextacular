@@ -16,7 +16,7 @@ module Lextacular
         match_either(
           proc { nil },
           proc { false },
-          proc { Mismatch }
+          proc { Mismatch.new }
         ).call('')
       end
     end
