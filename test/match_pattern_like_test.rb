@@ -69,6 +69,10 @@ def match_pattern_like make_matcher:, falsy_check:
   group 'returns proper value if any of the child patterns return falsy' do
     falsy_tests.call(false)
   end
+
+  group 'returns proper value if any of the child patterns return a Mismatch' do
+    falsy_tests.call(Lextacular::Mismatch.new('example', 0))
+  end
 end
 
 module Lextacular

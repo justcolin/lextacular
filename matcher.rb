@@ -33,7 +33,7 @@ module Lextacular
       pattern.inject([]) do |memo, part|
         result = part.call(string, index)
 
-        if result
+        if valid_match? result
           memo << result
         else
           return
@@ -46,7 +46,17 @@ module Lextacular
     sub_matcher = match_pattern *pattern
 
     lambda do |string, index = 0|
-      sub_matcher.call(string, index) || []
+      match = sub_matcher.call(string, index)
+
+      if valid_match? match
+        match
+      else
+        []
+      end
     end
+  end
+
+  def valid_match? match
+    match && !match.is_a?(Mismatch)
   end
 end
