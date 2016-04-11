@@ -57,6 +57,10 @@ module Lextacular
     end
   end
 
+  def match_either *pattern
+    lambda { |_| nil }
+  end
+
   def valid_match? match
     match && !match.is_a?(Mismatch)
   end
