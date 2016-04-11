@@ -64,5 +64,14 @@ module Lextacular
       assert { result_index_1 == given_index }
       assert { result_index_2 == given_index }
     end
+
+    group 'index defaults to 0' do
+      result_index = nil
+      index_proc   = proc { |_, index| result_index = index }
+
+      match_either(index_proc).call('')
+
+      assert { result_index.zero? }
+    end
   end
 end
