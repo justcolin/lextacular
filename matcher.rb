@@ -33,7 +33,9 @@ module Lextacular
       pattern.inject([]) do |memo, part|
         result = part.call(string, index)
 
-        if valid_match? result
+        if result.is_a?(Mismatch)
+          return result
+        elsif result
           index += result.size
           memo << result
         else
