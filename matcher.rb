@@ -71,6 +71,10 @@ module Lextacular
     end
   end
 
+  def match_repeat *pattern
+    lambda { |string| }
+  end
+
   def valid_match? match
     match && !match.is_a?(Mismatch)
   end
