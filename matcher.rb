@@ -12,7 +12,7 @@ module Lextacular
     lambda do |string, index = 0|
       found = pattern_matcher.call(string, index)
 
-      if found
+      if valid_match? found
         klass.new(*found)
       else
         Mismatch.new(string, index)

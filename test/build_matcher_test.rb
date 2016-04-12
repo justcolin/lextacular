@@ -102,10 +102,8 @@ module Lextacular
       returns_mismatch_given nil
     end
 
-      group 'Mismatch is given the string and index' do
-        assert { mismatch_result.content == given_string }
-        assert { mismatch_result.index   == given_index  }
-      end
+    group 'if the pattern matcher returns a Mismatch' do
+      returns_mismatch_given Mismatch.new
     end
   end
 end
