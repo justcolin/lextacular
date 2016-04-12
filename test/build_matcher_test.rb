@@ -17,6 +17,23 @@ class MockResult
   end
 end
 
+def returns_mismatch_given option
+  given_index  = rand
+  given_string = (given_index + rand).to_s
+
+  mismatch_result = build_matcher(MockResult, proc { option })
+                                 .call(given_string, given_index)
+
+  group 'returns instance of Mismatch' do
+    assert { mismatch_result.is_a? Lextacular::Mismatch }
+  end
+
+  group 'Mismatch is given the string and index' do
+    assert { mismatch_result.content == given_string }
+    assert { mismatch_result.index   == given_index  }
+  end
+end
+
 module Lextacular
   group '.build_matcher' do
     given_index  = rand
@@ -82,12 +99,8 @@ module Lextacular
     end
 
     group 'if the pattern matcher returns falsy' do
-      mismatch_result = build_matcher(MockResult, proc { nil })
-                                     .call(given_string, given_index)
-
-      group 'returns instance of Mismatch' do
-        assert { mismatch_result.is_a? Mismatch }
-      end
+      returns_mismatch_given nil
+    end
 
       group 'Mismatch is given the string and index' do
         assert { mismatch_result.content == given_string }
