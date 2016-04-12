@@ -34,6 +34,16 @@ module Lextacular
       end
     end
 
+    group '#empty?' do
+      group 'returns truthy when size == 0' do
+        assert { empty_token.empty? }
+      end
+
+      group 'returns falsy when size > 0' do
+        deny { token.empty? }
+      end
+    end
+
     group '#==' do
       group 'returns true if self or a Token with the same content' do
         assert { token == token }

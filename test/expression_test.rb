@@ -55,6 +55,16 @@ def expression_like klass
       end
     end
 
+    group '#empty?' do
+      group 'returns truthy when size == 0' do
+        assert { empty_expression.empty? }
+      end
+
+      group 'returns falsy when size > 0' do
+        deny { expression.empty? }
+      end
+    end
+
     group '#children' do
       group 'returns the children given when initialized' do
         assert { expression.children == expression_content }

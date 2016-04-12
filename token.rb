@@ -20,6 +20,10 @@ module Lextacular
       @content.size
     end
 
+    def empty?
+      size.zero?
+    end
+
     def == other
       other.is_a?(self.class) && other.to_s == @content
     end

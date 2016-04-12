@@ -22,6 +22,10 @@ module Lextacular
       @children.map(&:size).inject(&:+) || 0
     end
 
+    def empty?
+      size.zero?
+    end
+
     def == other
       other.is_a?(self.class) && other.children == @children
     end
