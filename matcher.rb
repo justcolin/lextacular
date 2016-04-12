@@ -74,13 +74,14 @@ module Lextacular
   end
 
   def match_repeat *pattern
-    sub_matcher = match_pattern *pattern
+    sub_matcher = build_matcher(TempExpression, match_pattern(*pattern))
 
-    lambda do |string|
+    lambda do |string, index = 0|
       result = []
 
-      while valid_match? match = sub_matcher.call('')
-        result += match
+      while valid_nonempty_match? match = sub_matcher.call(string, index)
+        index  += match.size
+        result += match.to_a
       end
 
       result unless result.empty?
@@ -89,5 +90,9 @@ module Lextacular
 
   def valid_match? match
     match && !match.is_a?(Mismatch)
+  end
+
+  def valid_nonempty_match? match
+    valid_match?(match) && !match.empty?
   end
 end
