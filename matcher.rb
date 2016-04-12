@@ -33,17 +33,20 @@ module Lextacular
   def match_pattern *pattern
     lambda do |string, index = 0|
       pattern.inject([]) do |memo, part|
-        result = part.call(string, index)
+                result = part.call(string, index)
 
-        if result.is_a?(Mismatch)
-          return result
-        elsif result
-          index += result.size
-          memo << result
-        else
-          return
-        end
-      end
+                if result.is_a?(Mismatch)
+                  return result
+                elsif result
+                  index += result.size
+                  memo  << result
+                else
+                  return
+                end
+              end
+              .tap do |result|
+                return if result.empty? || result.all?(&:empty?)
+              end
     end
   end
 

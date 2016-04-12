@@ -70,7 +70,10 @@ def match_pattern_like make_matcher
 
   group 'index defaults to 0' do
     result_index = nil
-    index_proc   = proc { |_, index| result_index = index }
+    index_proc   = proc do |_, index|
+                     result_index = index
+                     'stringy stringle string'
+                   end
 
     make_matcher.call(index_proc).call('')
 
@@ -89,6 +92,12 @@ module Lextacular
       deny { match_pattern(no          ).call('') }
       deny { match_pattern(yes, no     ).call('') }
       deny { match_pattern(yes, no, yes).call('') }
+    end
+
+    group 'return falsy if the final result is empty' do
+      deny { match_pattern().call('') }
+      deny { match_pattern(proc { '' }).call('') }
+      deny { match_pattern(proc { [] }).call('') }
     end
 
     group 'if any child returns a Mismatch, return that same Mismatch' do
