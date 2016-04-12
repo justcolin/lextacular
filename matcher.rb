@@ -25,8 +25,9 @@ module Lextacular
   def match_regexp regexp
     lambda do |string, index = 0|
       found = regexp.match(string)
+      string = found.to_s
 
-      found.to_s if found && found.begin(0) == index
+      string if found && found.begin(0) == index && !string.empty?
     end
   end
 

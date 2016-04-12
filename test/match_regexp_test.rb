@@ -41,5 +41,9 @@ module Lextacular
         assert { matcher.call(later_match, match_index) == match }
       end
     end
+
+    group 'returns falsy if the match is empty' do
+      deny { match_regexp(//).call('content') }
+    end
   end
 end
