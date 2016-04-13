@@ -22,8 +22,8 @@ module Lextacular
     end
 
     group 'returns the first match if any child matches' do
-      first_match  = rand.to_s
-      second_match = first_match + rand.to_s
+      first_match  = 'Oooooo, Ford Focus'
+      second_match = 'The example above is an obscure song reference'
 
       no    = proc { nil }
       yes_1 = proc { first_match }
@@ -35,43 +35,38 @@ module Lextacular
     end
 
     group 'passes string and index into children' do
-      given_index  = rand
-      given_string = rand.to_s
+      given_index  = 999
+      given_string = 'Forsooth!'
 
-      result_index_1  = nil
-      result_index_2  = nil
-      result_string_1 = nil
-      result_string_2 = nil
+      result_indices = []
+      result_strings = []
 
       pattern = [
                   proc do |string, index|
-                    result_string_1 = string
-                    result_index_1  = index
+                    result_strings << string
+                    result_indices << index
 
                     false
                   end,
                   proc do |string, index|
-                    result_string_2 = string
-                    result_index_2  = index
+                    result_strings << string
+                    result_indices << index
                   end
                 ]
 
       match_either(*pattern).call(given_string, given_index)
 
-      assert { result_string_1 == given_string }
-      assert { result_string_2 == given_string }
-
-      assert { result_index_1 == given_index }
-      assert { result_index_2 == given_index }
+      assert { result_strings == [given_string, given_string] }
+      assert { result_indices == [given_index,  given_index ] }
     end
 
     group 'index defaults to 0' do
-      result_index = nil
-      index_proc   = proc { |_, index| result_index = index }
+      result     = nil
+      index_proc = proc { |_, index| result = index }
 
       match_either(index_proc).call('')
 
-      assert { result_index.zero? }
+      assert { result.zero? }
     end
   end
 end
