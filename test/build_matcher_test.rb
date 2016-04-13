@@ -19,10 +19,10 @@ end
 
 module Lextacular
   group '.build_matcher' do
-    given_index  = rand
-    given_string = (given_index + rand).to_s
-
     group 'arguments from #call are passed into the given pattern matcher' do
+      given_index  = 32
+      given_string = 'Sugar Plum Fairy'
+
       result_string = nil
       result_index  = nil
 
@@ -43,7 +43,7 @@ module Lextacular
       pattern_matcher = proc { |_, index| result_index = index }
 
       build_matcher(MockResult, pattern_matcher)
-                   .call(given_string)
+                   .call('here is a string to match')
 
       assert { result_index.zero? }
     end
@@ -59,19 +59,17 @@ module Lextacular
       end
 
       group 'returned object is initialized with the result of the pattern matcher' do
-        proc_return = rand
+        result = 'Hey there little mouse'
 
         assert do
-          build_matcher(MockResult, proc { proc_return })
+          build_matcher(MockResult, proc { result })
                        .call('')
-                       .content == [proc_return]
+                       .content == [result]
         end
       end
 
       group 'result of the pattern matcher is splatted into the result' do
-        number_1 = rand
-        number_2 = number_1 + rand
-        result   = [number_1, number_2]
+        result = ['This result', 'is an array', 'so it can be splatted']
 
         assert do
           build_matcher(MockResult, proc { result })
@@ -82,8 +80,8 @@ module Lextacular
     end
 
     group 'if the pattern matcher returns falsy' do
-      given_index  = rand
-      given_string = (given_index + rand).to_s
+      given_index  = 'Snorlax'
+      given_string = 222
 
       mismatch_result = build_matcher(MockResult, proc { nil })
                                      .call(given_string, given_index)
@@ -98,7 +96,7 @@ module Lextacular
       end
     end
 
-    group 'if the pattern matcher returns a Mismatch returns the same Mismatch' do
+    group 'if the pattern matcher returns a Mismatch, returns the same Mismatch' do
       mismatch = Mismatch.new
 
       assert do
