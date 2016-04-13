@@ -11,9 +11,11 @@ require_relative '../mismatch'
 
 module Lextacular
   group '.match_either' do
-    group 'returns falsy if all children return falsy or Mismatches' do
+    group 'returns falsy if all children return falsy, #empty? matches or Mismatches' do
       deny do
         match_either(
+          proc { '' },
+          proc { [] },
           proc { nil },
           proc { false },
           proc { Mismatch.new }
@@ -62,7 +64,7 @@ module Lextacular
 
     group 'index defaults to 0' do
       result     = nil
-      index_proc = proc { |_, index| result = index }
+      index_proc = proc { |_, index| result = index; '' }
 
       match_either(index_proc).call('')
 

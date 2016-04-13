@@ -70,7 +70,7 @@ module Lextacular
       pattern.each do |matcher|
         match = matcher.call(string, index)
 
-        return match if valid_match? match
+        return match if valid_nonempty_match? match
       end
 
       nil
