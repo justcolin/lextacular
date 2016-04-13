@@ -22,10 +22,10 @@ end
 
 module Lextacular
   group '.match_repeat' do
-    group 'returns falsy if any children on the first pass return...' do
-      with_falsy_and_mismatch do |option|
+    group 'returns falsy if children immediately return...' do
+      with_falsy_and_mismatch do |stop|
         yes = proc { 'truthy' }
-        no  = proc { option }
+        no  = proc { stop }
 
         deny { match_repeat(no          ).call('') }
         deny { match_repeat(yes, no     ).call('') }
@@ -33,8 +33,27 @@ module Lextacular
       end
     end
 
-    group 'keeps matching until one round returns...' do
-      with_falsy_and_mismatch do |option|
+    group 'keeps matching until an item returns...' do
+      group 'a completely #empty? match' do
+        total_cycles = 3
+        cycle_count  = 0
+
+        empty            = proc { '' }
+        eventually_empty = proc do
+                             if cycle_count == total_cycles
+                               ''
+                             else
+                               cycle_count += 1
+                               'a string'
+                             end
+                           end
+
+        match_repeat(empty, eventually_empty, empty).call('')
+
+        assert { cycle_count == total_cycles }
+      end
+
+      with_falsy_and_mismatch do |stop|
         total_cycles = 3
         cycle_count  = 0
         match        = 'truthy'
@@ -42,7 +61,7 @@ module Lextacular
         always_true      = proc { match }
         eventually_falsy = proc do
                              if cycle_count == total_cycles
-                               option
+                               stop
                              else
                                cycle_count += 1
                                match
@@ -54,55 +73,31 @@ module Lextacular
                       .call('') == ([match] * total_cycles * 3)
         end
       end
-
-
-      group 'a completely #empty? match' do
-        total_cycles = 3
-        cycle_count  = 0
-
-        eventually_empty         = proc { '' }
-        eventually_empty_counter = proc do
-                                     if cycle_count == total_cycles
-                                       ''
-                                     else
-                                       cycle_count += 1
-                                       'a string'
-                                     end
-                                   end
-
-        match_repeat(eventually_empty, eventually_empty_counter).call('')
-
-        assert do
-          cycle_count == total_cycles
-        end
-      end
     end
 
     group 'passes string and index into children, incrementing the index along the way' do
       total_cycles = 4
       cycle_count  = 0
 
-      given_index  = rand
-      given_string = rand.to_s
+      given_index  = 7727
+      given_string = 'the prerogative to have a little fun'
 
       result_indices = []
       result_strings = []
 
-      pattern = [
-                  proc do |string, index|
-                    if cycle_count == total_cycles
-                      nil
-                    else
-                      result_strings << string
-                      result_indices << index
+      pattern = proc do |string, index|
+                  if cycle_count == total_cycles
+                    nil
+                  else
+                    result_strings << string
+                    result_indices << index
 
-                      cycle_count += 1
-                      "12"
-                    end
+                    cycle_count += 1
+                    "12"
                   end
-                ]
+                end
 
-      match_repeat(*pattern).call(given_string, given_index)
+      match_repeat(pattern).call(given_string, given_index)
 
       assert { result_strings == ([given_string] * total_cycles) }
       assert do
