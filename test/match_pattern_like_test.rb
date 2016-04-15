@@ -6,7 +6,7 @@
 # (located in root directory of this project) for details.
 
 require 'tet'
-require_relative '../matcher'
+require_relative '../matcher_building'
 require_relative '../mismatch'
 
 def match_pattern_like make_matcher
@@ -73,55 +73,57 @@ def match_pattern_like make_matcher
 end
 
 module Lextacular
-  group '.match_pattern' do
-    match_pattern_like method(:match_pattern)
+  module MatcherBuilding
+    group '.match_pattern' do
+      match_pattern_like method(:match_pattern)
 
-    group 'return falsy if any of the child patterns return falsy' do
-      yes = proc { 'truthy' }
-      no  = proc { false }
+      group 'return falsy if any of the child patterns return falsy' do
+        yes = proc { 'truthy' }
+        no  = proc { false }
 
-      deny { match_pattern(no          ).call('') }
-      deny { match_pattern(yes, no     ).call('') }
-      deny { match_pattern(yes, no, yes).call('') }
+        deny { match_pattern(no          ).call('') }
+        deny { match_pattern(yes, no     ).call('') }
+        deny { match_pattern(yes, no, yes).call('') }
+      end
+
+      group 'return falsy if the final result is empty' do
+        deny { match_pattern().call('') }
+        deny { match_pattern(proc { '' }).call('') }
+        deny { match_pattern(proc { [] }).call('') }
+      end
+
+      group 'if any child returns a Mismatch, return that same Mismatch' do
+        mismatch = Mismatch.new
+        yes      = proc { 'truthy' }
+        no       = proc { mismatch }
+
+        assert { match_pattern(no          ).call('').equal?(mismatch) }
+        assert { match_pattern(yes, no     ).call('').equal?(mismatch) }
+        assert { match_pattern(yes, no, yes).call('').equal?(mismatch) }
+      end
     end
 
-    group 'return falsy if the final result is empty' do
-      deny { match_pattern().call('') }
-      deny { match_pattern(proc { '' }).call('') }
-      deny { match_pattern(proc { [] }).call('') }
-    end
+    group '.match_maybe' do
+      match_pattern_like method(:match_maybe)
 
-    group 'if any child returns a Mismatch, return that same Mismatch' do
-      mismatch = Mismatch.new
-      yes      = proc { 'truthy' }
-      no       = proc { mismatch }
+      group 'return empty array if any of the child patterns return falsy' do
+        yes = proc { 'truthy' }
+        no  = proc { false }
 
-      assert { match_pattern(no          ).call('').equal?(mismatch) }
-      assert { match_pattern(yes, no     ).call('').equal?(mismatch) }
-      assert { match_pattern(yes, no, yes).call('').equal?(mismatch) }
-    end
-  end
+        assert { match_maybe(no          ).call('') == [] }
+        assert { match_maybe(yes, no     ).call('') == [] }
+        assert { match_maybe(yes, no, yes).call('') == [] }
+      end
 
-  group '.match_maybe' do
-    match_pattern_like method(:match_maybe)
+      group 'return an empty array if any child returns a Mismatch' do
+        mismatch = Mismatch.new
+        yes      = proc { 'truthy' }
+        no       = proc { mismatch }
 
-    group 'return empty array if any of the child patterns return falsy' do
-      yes = proc { 'truthy' }
-      no  = proc { false }
-
-      assert { match_maybe(no          ).call('') == [] }
-      assert { match_maybe(yes, no     ).call('') == [] }
-      assert { match_maybe(yes, no, yes).call('') == [] }
-    end
-
-    group 'return an empty array if any child returns a Mismatch' do
-      mismatch = Mismatch.new
-      yes      = proc { 'truthy' }
-      no       = proc { mismatch }
-
-      assert { match_maybe(no          ).call('') == [] }
-      assert { match_maybe(yes, no     ).call('') == [] }
-      assert { match_maybe(yes, no, yes).call('') == [] }
+        assert { match_maybe(no          ).call('') == [] }
+        assert { match_maybe(yes, no     ).call('') == [] }
+        assert { match_maybe(yes, no, yes).call('') == [] }
+      end
     end
   end
 end

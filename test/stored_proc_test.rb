@@ -6,44 +6,46 @@
 # (located in root directory of this project) for details.
 
 require 'tet'
-require '../stored_proc'
+require '../matcher_building'
 
 module Lextacular
-  group '.stored_proc' do
-    group 'returns a function which...' do
-      group 'calls the function stored in the hash' do
-        called = false
-        hash   = { example: proc { called = true } }
+  module MatcherBuilding
+    group '.stored_proc' do
+      group 'returns a function which...' do
+        group 'calls the function stored in the hash' do
+          called = false
+          hash   = { example: proc { called = true } }
 
-        stored_proc(hash, :example).call
+          stored_proc(hash, :example).call
 
-        assert { called }
-      end
+          assert { called }
+        end
 
-      group 'returns whatever the stored function returns' do
-        result = 'fluffle bumble'
-        hash   = { the_name: proc { result } }
+        group 'returns whatever the stored function returns' do
+          result = 'fluffle bumble'
+          hash   = { the_name: proc { result } }
 
-        assert { stored_proc(hash, :the_name).call == result }
-      end
+          assert { stored_proc(hash, :the_name).call == result }
+        end
 
-      group 'stored function can be added after creating the stored_proc' do
-        hash   = {}
-        stored = stored_proc(hash, :sally)
+        group 'stored function can be added after creating the stored_proc' do
+          hash   = {}
+          stored = stored_proc(hash, :sally)
 
-        called       = false
-        hash[:sally] = proc { called = true }
+          called       = false
+          hash[:sally] = proc { called = true }
 
-        stored.call
+          stored.call
 
-        assert { called }
-      end
+          assert { called }
+        end
 
-      group 'passes arguments to the stored function' do
-        args = [1, 'two', :iii]
-        hash = { funky_func: proc { |*args| args } }
+        group 'passes arguments to the stored function' do
+          args = [1, 'two', :iii]
+          hash = { funky_func: proc { |*args| args } }
 
-        assert { stored_proc(hash, :funky_func).call(*args) == args }
+          assert { stored_proc(hash, :funky_func).call(*args) == args }
+        end
       end
     end
   end
