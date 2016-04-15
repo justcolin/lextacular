@@ -12,46 +12,42 @@ require_relative '../mismatch'
 def match_pattern_like make_matcher
   group 'return array of matches if all children return matches' do
     assert do
-      rand_1 = rand.to_s
-      rand_2 = rand_1 + rand.to_s
-      rand_3 = rand_2 + rand.to_s
+      match_1 = "this"
+      match_2 = "is a"
+      match_3 = "match"
 
       make_matcher.call(
-                    proc { rand_1 },
-                    proc { rand_2 },
-                    proc { rand_3 }
+                    proc { match_1 },
+                    proc { match_2 },
+                    proc { match_3 }
                   )
-                  .call('') == [rand_1, rand_2, rand_3]
+                  .call('') == [match_1, match_2, match_3]
     end
   end
 
   group 'pass string and index into children, incrementing index as it goes' do
     given_index  = 10
-    given_string = rand.to_s
+    given_string = "this is not a pipe"
 
-    result_index_1  = nil
-    result_index_2  = nil
-    result_index_3  = nil
-    result_string_2 = nil
-    result_string_1 = nil
-    result_string_3 = nil
+    result_indices = []
+    result_strings = []
 
     pattern = [
                 proc do |string, index|
-                  result_string_1 = string
-                  result_index_1  = index
+                  result_strings << string
+                  result_indices << index
 
                   "12345678"
                 end,
                 proc do |string, index|
-                  result_string_2 = string
-                  result_index_2  = index
+                  result_strings << string
+                  result_indices << index
 
                   "123"
                 end,
                 proc do |string, index|
-                  result_string_3 = string
-                  result_index_3  = index
+                  result_strings << string
+                  result_indices << index
 
                   "something else"
                 end
@@ -59,13 +55,8 @@ def match_pattern_like make_matcher
 
     make_matcher.call(*pattern).call(given_string, given_index)
 
-    assert { result_string_1 == given_string }
-    assert { result_string_2 == given_string }
-    assert { result_string_3 == given_string }
-
-    assert { result_index_1 == given_index }
-    assert { result_index_2 == given_index + 8 }
-    assert { result_index_3 == given_index + 11 }
+    assert { result_strings == [given_string] * 3 }
+    assert { result_indices == [given_index, given_index + 8, given_index + 11] }
   end
 
   group 'index defaults to 0' do
