@@ -10,21 +10,21 @@ require_relative '../matcher_building'
 
 module Lextacular
   module MatcherBuilding
-    group '.match_regexp' do
+    group '.regexp_matcher' do
       group 'given a matching string, returns match content' do
-        matcher = match_regexp(/bubbles/)
+        matcher = regexp_matcher(/bubbles/)
 
         assert { matcher.call('bubbles are fun') == 'bubbles' }
       end
 
       group 'given a non-matching string, returns falsy' do
-        matcher = match_regexp(/never found/)
+        matcher = regexp_matcher(/never found/)
 
         deny { matcher.call('something else') }
       end
 
       group 'given a string that matches later' do
-        matcher     = match_regexp(/bloop/)
+        matcher     = regexp_matcher(/bloop/)
         later_match = 'blip bloop'
         match       = 'bloop'
         match_index = 5
@@ -44,7 +44,7 @@ module Lextacular
       end
 
       group 'returns falsy if the match is empty' do
-        deny { match_regexp(//).call('content') }
+        deny { regexp_matcher(//).call('content') }
       end
     end
   end

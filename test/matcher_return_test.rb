@@ -19,7 +19,7 @@ end
 
 module Lextacular
   module MatcherBuilding
-    group '.build_matcher' do
+    group '.matcher_return' do
       group 'arguments from #call are passed into the given pattern matcher' do
         given_index  = 32
         given_string = 'Sugar Plum Fairy'
@@ -32,7 +32,7 @@ module Lextacular
                             result_index  = index
                           end
 
-        build_matcher(MockResult, pattern_matcher)
+        matcher_return(MockResult, pattern_matcher)
                      .call(given_string, given_index)
 
         assert { result_string == given_string }
@@ -43,7 +43,7 @@ module Lextacular
         result_index    = nil
         pattern_matcher = proc { |_, index| result_index = index }
 
-        build_matcher(MockResult, pattern_matcher)
+        matcher_return(MockResult, pattern_matcher)
                      .call('here is a string to match')
 
         assert { result_index.zero? }
@@ -54,7 +54,7 @@ module Lextacular
           given_class = Class.new { def initialize *_; end }
 
           assert do
-            build_matcher(given_class, proc { true })
+            matcher_return(given_class, proc { true })
                          .call('').is_a? given_class
           end
         end
@@ -63,7 +63,7 @@ module Lextacular
           result = 'Hey there little mouse'
 
           assert do
-            build_matcher(MockResult, proc { result })
+            matcher_return(MockResult, proc { result })
                          .call('')
                          .content == [result]
           end
@@ -73,7 +73,7 @@ module Lextacular
           result = ['This result', 'is an array', 'so it can be splatted']
 
           assert do
-            build_matcher(MockResult, proc { result })
+            matcher_return(MockResult, proc { result })
                          .call('')
                          .content == result
           end
@@ -84,7 +84,7 @@ module Lextacular
         given_index  = 'Snorlax'
         given_string = 222
 
-        mismatch_result = build_matcher(MockResult, proc { nil })
+        mismatch_result = matcher_return(MockResult, proc { nil })
                                        .call(given_string, given_index)
 
         group 'returns instance of Mismatch' do
@@ -101,7 +101,7 @@ module Lextacular
         mismatch = Mismatch.new
 
         assert do
-          build_matcher(MockResult, proc { mismatch })
+          matcher_return(MockResult, proc { mismatch })
                        .call('')
                        .equal?(mismatch)
         end

@@ -5,7 +5,7 @@
 # terms of the three-clause BSD license. See LICENSE.txt
 # (located in root directory of this project) for details.
 
-def match_pattern_like make_matcher
+def pattern_matcher_like make_matcher
   group 'return array of matches if all children return matches' do
     assert do
       match_1 = "this"

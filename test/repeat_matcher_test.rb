@@ -22,15 +22,15 @@ end
 
 module Lextacular
   module MatcherBuilding
-    group '.match_repeat' do
+    group '.repeat_matcher' do
       group 'returns falsy if children immediately return...' do
         with_falsy_and_mismatch do |stop|
           yes = proc { 'truthy' }
           no  = proc { stop }
 
-          deny { match_repeat(no          ).call('') }
-          deny { match_repeat(yes, no     ).call('') }
-          deny { match_repeat(yes, no, yes).call('') }
+          deny { repeat_matcher(no          ).call('') }
+          deny { repeat_matcher(yes, no     ).call('') }
+          deny { repeat_matcher(yes, no, yes).call('') }
         end
       end
 
@@ -49,7 +49,7 @@ module Lextacular
                                end
                              end
 
-          match_repeat(empty, eventually_empty, empty).call('')
+          repeat_matcher(empty, eventually_empty, empty).call('')
 
           assert { cycle_count == total_cycles }
         end
@@ -70,7 +70,7 @@ module Lextacular
                              end
 
           assert do
-            match_repeat(always_true, eventually_falsy, always_true)
+            repeat_matcher(always_true, eventually_falsy, always_true)
                         .call('') == ([match] * total_cycles * 3)
           end
         end
@@ -98,7 +98,7 @@ module Lextacular
                     end
                   end
 
-        match_repeat(pattern).call(given_string, given_index)
+        repeat_matcher(pattern).call(given_string, given_index)
 
         assert { result_strings == ([given_string] * total_cycles) }
         assert do
@@ -111,7 +111,7 @@ module Lextacular
 
       group 'index defaults to 0' do
         result_index = nil
-        match_repeat(proc { |_, index| result_index = index; nil })
+        repeat_matcher(proc { |_, index| result_index = index; nil })
                     .call('')
 
 

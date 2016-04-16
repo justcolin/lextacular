@@ -9,21 +9,21 @@ module Lextacular
   module MatcherBuilding
     module_function
 
-    def build_matcher klass, pattern_matcher
+    def matcher_return return_class, pattern_matcher
       lambda do |string, index = 0|
         found = pattern_matcher.call(string, index)
 
         if found.is_a?(Mismatch)
           found
         elsif found
-          klass.new(*found)
+          return_class.new(*found)
         else
           Mismatch.new(string, index)
         end
       end
     end
 
-    def match_regexp regexp
+    def regexp_matcher regexp
       lambda do |string, index = 0|
         found = regexp.match(string)
         string = found.to_s
@@ -32,7 +32,7 @@ module Lextacular
       end
     end
 
-    def match_pattern *pattern
+    def pattern_matcher *pattern
       lambda do |string, index = 0|
         pattern.inject([]) do |memo, part|
                   result = part.call(string, index)
@@ -52,8 +52,8 @@ module Lextacular
       end
     end
 
-    def match_maybe *pattern
-      sub_matcher = match_pattern *pattern
+    def maybe_matcher *pattern
+      sub_matcher = pattern_matcher *pattern
 
       lambda do |string, index = 0|
         match = sub_matcher.call(string, index)
@@ -66,7 +66,7 @@ module Lextacular
       end
     end
 
-    def match_either *pattern
+    def either_matcher *pattern
       lambda do |string, index = 0|
         pattern.each do |matcher|
           match = matcher.call(string, index)
@@ -78,8 +78,8 @@ module Lextacular
       end
     end
 
-    def match_repeat *pattern
-      sub_matcher = build_matcher(TempExpression, match_pattern(*pattern))
+    def repeat_matcher *pattern
+      sub_matcher = matcher_return(TempExpression, pattern_matcher(*pattern))
 
       lambda do |string, index = 0|
         result = []

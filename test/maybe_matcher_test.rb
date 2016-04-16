@@ -6,22 +6,22 @@
 # (located in root directory of this project) for details.
 
 require 'tet'
-require_relative './match_pattern_like'
+require_relative './pattern_matcher_like'
 require_relative '../matcher_building'
 require_relative '../mismatch'
 
 module Lextacular
   module MatcherBuilding
-    group '.match_maybe' do
-      match_pattern_like method(:match_maybe)
+    group '.maybe_matcher' do
+      pattern_matcher_like method(:maybe_matcher)
 
       group 'return empty array if any of the child patterns return falsy' do
         yes = proc { 'truthy' }
         no  = proc { false }
 
-        assert { match_maybe(no          ).call('') == [] }
-        assert { match_maybe(yes, no     ).call('') == [] }
-        assert { match_maybe(yes, no, yes).call('') == [] }
+        assert { maybe_matcher(no          ).call('') == [] }
+        assert { maybe_matcher(yes, no     ).call('') == [] }
+        assert { maybe_matcher(yes, no, yes).call('') == [] }
       end
 
       group 'return an empty array if any child returns a Mismatch' do
@@ -29,9 +29,9 @@ module Lextacular
         yes      = proc { 'truthy' }
         no       = proc { mismatch }
 
-        assert { match_maybe(no          ).call('') == [] }
-        assert { match_maybe(yes, no     ).call('') == [] }
-        assert { match_maybe(yes, no, yes).call('') == [] }
+        assert { maybe_matcher(no          ).call('') == [] }
+        assert { maybe_matcher(yes, no     ).call('') == [] }
+        assert { maybe_matcher(yes, no, yes).call('') == [] }
       end
     end
   end

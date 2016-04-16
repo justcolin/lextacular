@@ -11,10 +11,10 @@ require_relative '../mismatch'
 
 module Lextacular
   module MatcherBuilding
-    group '.match_either' do
+    group '.either_matcher' do
       group 'returns falsy if all children return falsy, #empty? matches or Mismatches' do
         deny do
-          match_either(
+          either_matcher(
             proc { '' },
             proc { [] },
             proc { nil },
@@ -32,9 +32,9 @@ module Lextacular
         yes_1 = proc { first_match }
         yes_2 = proc { second_match }
 
-        assert { match_either(yes_1           ).call('') == first_match }
-        assert { match_either(yes_1, yes_2    ).call('') == first_match }
-        assert { match_either(no, yes_1, yes_2).call('') == first_match }
+        assert { either_matcher(yes_1           ).call('') == first_match }
+        assert { either_matcher(yes_1, yes_2    ).call('') == first_match }
+        assert { either_matcher(no, yes_1, yes_2).call('') == first_match }
       end
 
       group 'passes string and index into children' do
@@ -57,7 +57,7 @@ module Lextacular
                     end
                   ]
 
-        match_either(*pattern).call(given_string, given_index)
+        either_matcher(*pattern).call(given_string, given_index)
 
         assert { result_strings == [given_string, given_string] }
         assert { result_indices == [given_index,  given_index ] }
@@ -67,7 +67,7 @@ module Lextacular
         result     = nil
         index_proc = proc { |_, index| result = index; '' }
 
-        match_either(index_proc).call('')
+        either_matcher(index_proc).call('')
 
         assert { result.zero? }
       end

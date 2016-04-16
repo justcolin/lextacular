@@ -6,28 +6,28 @@
 # (located in root directory of this project) for details.
 
 require 'tet'
-require_relative './match_pattern_like'
+require_relative './pattern_matcher_like'
 require_relative '../matcher_building'
 require_relative '../mismatch'
 
 module Lextacular
   module MatcherBuilding
-    group '.match_pattern' do
-      match_pattern_like method(:match_pattern)
+    group '.pattern_matcher' do
+      pattern_matcher_like method(:pattern_matcher)
 
       group 'return falsy if any of the child patterns return falsy' do
         yes = proc { 'truthy' }
         no  = proc { false }
 
-        deny { match_pattern(no          ).call('') }
-        deny { match_pattern(yes, no     ).call('') }
-        deny { match_pattern(yes, no, yes).call('') }
+        deny { pattern_matcher(no          ).call('') }
+        deny { pattern_matcher(yes, no     ).call('') }
+        deny { pattern_matcher(yes, no, yes).call('') }
       end
 
       group 'return falsy if the final result is empty' do
-        deny { match_pattern().call('') }
-        deny { match_pattern(proc { '' }).call('') }
-        deny { match_pattern(proc { [] }).call('') }
+        deny { pattern_matcher().call('') }
+        deny { pattern_matcher(proc { '' }).call('') }
+        deny { pattern_matcher(proc { [] }).call('') }
       end
 
       group 'if any child returns a Mismatch, return that same Mismatch' do
@@ -35,9 +35,9 @@ module Lextacular
         yes      = proc { 'truthy' }
         no       = proc { mismatch }
 
-        assert { match_pattern(no          ).call('').equal?(mismatch) }
-        assert { match_pattern(yes, no     ).call('').equal?(mismatch) }
-        assert { match_pattern(yes, no, yes).call('').equal?(mismatch) }
+        assert { pattern_matcher(no          ).call('').equal?(mismatch) }
+        assert { pattern_matcher(yes, no     ).call('').equal?(mismatch) }
+        assert { pattern_matcher(yes, no, yes).call('').equal?(mismatch) }
       end
     end
   end
