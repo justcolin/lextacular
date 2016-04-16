@@ -25,7 +25,7 @@ module Lextacular
 
     def regexp_matcher regexp
       lambda do |string, index = 0|
-        found = regexp.match(string)
+        found  = regexp.match(string)
         string = found.to_s
 
         string if found && found.begin(0) == index && !string.empty?
@@ -34,21 +34,18 @@ module Lextacular
 
     def pattern_matcher *pattern
       lambda do |string, index = 0|
-        pattern.inject([]) do |memo, part|
-                  result = part.call(string, index)
+        result = pattern.inject([]) do |memo, part|
+                   match = part.call(string, index)
 
-                  if result.is_a?(Mismatch)
-                    return result
-                  elsif result
-                    index += result.size
-                    memo  << result
-                  else
-                    return
-                  end
-                end
-                .tap do |result|
-                  return if result.empty? || result.all?(&:empty?)
-                end
+                   if valid_match? match
+                     index += match.size
+                     memo  << match
+                   else
+                     return match
+                   end
+                 end
+
+        result unless result.empty? || result.all?(&:empty?)
       end
     end
 
@@ -84,7 +81,7 @@ module Lextacular
       lambda do |string, index = 0|
         result = []
 
-        while valid_nonempty_match? match = sub_matcher.call(string, index)
+        while valid_nonempty_match?(match = sub_matcher.call(string, index))
           index  += match.size
           result += match.to_a
         end
