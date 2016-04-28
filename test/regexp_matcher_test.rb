@@ -41,6 +41,15 @@ module Lextacular
         group 'returns match if index is correct' do
           assert { matcher.call(later_match, match_index) == match }
         end
+
+        group 'does return earlier matches' do
+          matcher     = regexp_matcher(/\d/)
+          later_match = '42'
+          match       = '2'
+          match_index = 1
+
+          assert { matcher.call(later_match, match_index) == match }
+        end
       end
 
       group 'returns falsy if the match is empty' do
