@@ -42,7 +42,7 @@ module Lextacular
           assert { matcher.call(later_match, match_index) == match }
         end
 
-        group 'does return earlier matches' do
+        group 'does not return matches from before the given index' do
           matcher     = regexp_matcher(/\d/)
           later_match = '42'
           match       = '2'

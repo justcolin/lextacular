@@ -93,7 +93,7 @@ expression_like Lextacular::Expression do |expression, content|
   end
 end
 
-expression_like Lextacular::TempExpression do |expression, content|
+expression_like Lextacular::SplatExpression do |expression, content|
   group 'can have its content splatted' do
     assert { [*expression] == [*content] }
   end

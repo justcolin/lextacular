@@ -32,7 +32,7 @@ module Lextacular
   end
 
   # An Expression that can be splatted into other nodes
-  class TempExpression < Expression
+  class SplatExpression < Expression
     def to_a
       @children
     end

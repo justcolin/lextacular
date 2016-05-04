@@ -76,7 +76,7 @@ module Lextacular
     end
 
     def repeat_matcher *pattern
-      sub_matcher = matcher_return(TempExpression, pattern_matcher(*pattern))
+      sub_matcher = matcher_return(SplatExpression, pattern_matcher(*pattern))
 
       lambda do |string, index = 0|
         result = []
