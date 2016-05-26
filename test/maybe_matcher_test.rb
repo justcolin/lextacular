@@ -7,11 +7,11 @@
 
 require 'tet'
 require_relative './pattern_matcher_like'
-require_relative '../matcher_building'
+require_relative '../build'
 require_relative '../mismatch'
 
 module Lextacular
-  module MatcherBuilding
+  module Build
     group '.maybe_matcher' do
       pattern_matcher_like method(:maybe_matcher)
 

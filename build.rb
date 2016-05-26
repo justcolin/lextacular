@@ -6,7 +6,7 @@
 # (located in root directory of this project) for details.
 
 module Lextacular
-  module MatcherBuilding
+  module Build
     module_function
 
     def matcher_return return_class, pattern_matcher

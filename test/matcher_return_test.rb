@@ -6,7 +6,7 @@
 # (located in root directory of this project) for details.
 
 require 'tet'
-require_relative '../matcher_building'
+require_relative '../build'
 require_relative '../mismatch'
 
 class MockResult
@@ -18,7 +18,7 @@ class MockResult
 end
 
 module Lextacular
-  module MatcherBuilding
+  module Build
     group '.matcher_return' do
       group 'arguments from #call are passed into the given pattern matcher' do
         given_index  = 32

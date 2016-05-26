@@ -6,10 +6,10 @@
 # (located in root directory of this project) for details.
 
 require 'tet'
-require '../matcher_building'
+require '../build'
 
 module Lextacular
-  module MatcherBuilding
+  module Build
     group '.stored_proc' do
       group 'returns a function which...' do
         group 'calls the function stored in the hash' do

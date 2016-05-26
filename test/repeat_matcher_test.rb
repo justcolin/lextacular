@@ -6,7 +6,7 @@
 # (located in root directory of this project) for details.
 
 require 'tet'
-require_relative '../matcher_building'
+require_relative '../build'
 require_relative '../expression'
 require_relative '../mismatch'
 
@@ -21,7 +21,7 @@ def with_falsy_and_mismatch
 end
 
 module Lextacular
-  module MatcherBuilding
+  module Build
     group '.repeat_matcher' do
       group 'returns falsy if children immediately return...' do
         with_falsy_and_mismatch do |stop|
