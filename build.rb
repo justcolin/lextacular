@@ -5,6 +5,8 @@
 # terms of the three-clause BSD license. See LICENSE.txt
 # (located in root directory of this project) for details.
 
+require_relative './mismatch'
+
 module Lextacular
   module Build
     module_function

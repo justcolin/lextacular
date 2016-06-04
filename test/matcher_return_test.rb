@@ -7,7 +7,6 @@
 
 require 'tet'
 require_relative '../build'
-require_relative '../mismatch'
 
 class MockResult
   attr_reader :content
