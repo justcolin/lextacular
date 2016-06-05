@@ -61,7 +61,7 @@ def expression_like klass
       end
 
       group 'returns falsy when size > 0' do
-        deny { expression.empty? }
+        assert { !expression.empty? }
       end
     end
 
@@ -78,8 +78,8 @@ def expression_like klass
       end
 
       group 'returns false if given anything else' do
-        deny { expression == klass.new('something else') }
-        deny { expression == expression_content }
+        assert { expression != klass.new('something else') }
+        assert { expression != expression_content }
       end
     end
 

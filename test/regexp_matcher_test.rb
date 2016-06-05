@@ -20,7 +20,7 @@ module Lextacular
       group 'given a non-matching string, returns falsy' do
         matcher = regexp_matcher(/never found/)
 
-        deny { matcher.call('something else') }
+        assert { !matcher.call('something else') }
       end
 
       group 'given a string that matches later' do
@@ -30,12 +30,12 @@ module Lextacular
         match_index = 5
 
         group 'returns falsy if index is not given' do
-          deny { matcher.call(later_match) }
+          assert { !matcher.call(later_match) }
         end
 
         group 'returns falsy if index is wrong' do
-          deny { matcher.call(later_match, match_index + 1) }
-          deny { matcher.call(later_match, match_index - 1) }
+          assert { !matcher.call(later_match, match_index + 1) }
+          assert { !matcher.call(later_match, match_index - 1) }
         end
 
         group 'returns match if index is correct' do
@@ -53,7 +53,7 @@ module Lextacular
       end
 
       group 'returns falsy if the match is empty' do
-        deny { regexp_matcher(//).call('content') }
+        assert { !regexp_matcher(//).call('content') }
       end
     end
   end

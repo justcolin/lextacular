@@ -28,9 +28,9 @@ module Lextacular
           yes = proc { 'truthy' }
           no  = proc { stop }
 
-          deny { repeat_matcher(no          ).call('') }
-          deny { repeat_matcher(yes, no     ).call('') }
-          deny { repeat_matcher(yes, no, yes).call('') }
+          assert { !repeat_matcher(no          ).call('') }
+          assert { !repeat_matcher(yes, no     ).call('') }
+          assert { !repeat_matcher(yes, no, yes).call('') }
         end
       end
 

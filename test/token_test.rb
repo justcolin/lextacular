@@ -40,7 +40,7 @@ module Lextacular
       end
 
       group 'returns falsy when size > 0' do
-        deny { token.empty? }
+        assert { !token.empty? }
       end
     end
 
@@ -51,8 +51,8 @@ module Lextacular
       end
 
       group 'returns false if given anything else' do
-        deny { token == Token.new('something else') }
-        deny { token == content }
+        assert { token != Token.new('something else') }
+        assert { token != content }
       end
     end
 

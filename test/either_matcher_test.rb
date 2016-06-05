@@ -13,8 +13,8 @@ module Lextacular
   module Build
     group '.either_matcher' do
       group 'returns falsy if all children return falsy, #empty? matches or Mismatches' do
-        deny do
-          either_matcher(
+        assert do
+          !either_matcher(
             proc { '' },
             proc { [] },
             proc { nil },
