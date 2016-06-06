@@ -15,32 +15,32 @@ module Lextacular
     token       = Token.new(content)
 
     group '#to_s' do
-      group 'returns the content' do
-        assert { token.to_s == content }
+      assert 'returns the content' do
+        token.to_s == content
       end
 
-      group 'returns an empty string if initialized with nothing' do
-        assert { empty_token.to_s == '' }
+      assert 'returns an empty string if initialized with nothing' do
+        empty_token.to_s == ''
       end
     end
 
     group '#size' do
-      group 'returns the size of the content' do
-        assert { token.size == content.size }
+      assert 'returns the size of the content' do
+        token.size == content.size
       end
 
-      group 'returns 0 if initialized with nothing' do
-        assert { empty_token.size.zero? }
+      assert 'returns 0 if initialized with nothing' do
+         empty_token.size.zero?
       end
     end
 
     group '#empty?' do
-      group 'returns truthy when size == 0' do
-        assert { empty_token.empty? }
+      assert 'returns truthy when size == 0' do
+        empty_token.empty?
       end
 
-      group 'returns falsy when size > 0' do
-        assert { !token.empty? }
+      assert 'returns falsy when size > 0' do
+        !token.empty?
       end
     end
 
@@ -56,8 +56,8 @@ module Lextacular
       end
     end
 
-    group 'can not have its content splatted' do
-      assert { [*token] == [token] }
+    assert 'can not have its content splatted' do
+      [*token] == [token]
     end
   end
 end

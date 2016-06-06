@@ -28,46 +28,46 @@ def expression_like klass
                         )
 
     group '#to_s' do
-      group 'returns the joined content of all the children' do
-        assert { expression.to_s == content_1 + content_2 }
+      assert 'returns the joined content of all the children' do
+        expression.to_s == content_1 + content_2
       end
 
-      group 'works with nested groups' do
-        assert { nested_expression.to_s == expression.to_s + content_3 }
+      assert 'works with nested groups' do
+        nested_expression.to_s == expression.to_s + content_3
       end
 
-      group 'returns an empty string when initialized with nothing' do
-        assert { empty_expression.to_s == '' }
+      assert 'returns an empty string when initialized with nothing' do
+        empty_expression.to_s == ''
       end
     end
 
     group '#size' do
-      group 'returns the sum of the sizes of all the children' do
-        assert { expression.size == content_1.size + content_2.size }
+      assert 'returns the sum of the sizes of all the children' do
+        expression.size == content_1.size + content_2.size
       end
 
-      group 'works with nested groups' do
-        assert { nested_expression.size == expression.size + content_3.size }
+      assert 'works with nested groups' do
+        nested_expression.size == expression.size + content_3.size
       end
 
-      group 'returns 0 when initialized with nothing' do
-        assert { empty_expression.size.zero? }
+      assert 'returns 0 when initialized with nothing' do
+        empty_expression.size.zero?
       end
     end
 
     group '#empty?' do
-      group 'returns truthy when size == 0' do
-        assert { empty_expression.empty? }
+      assert 'returns truthy when size == 0' do
+        empty_expression.empty?
       end
 
-      group 'returns falsy when size > 0' do
-        assert { !expression.empty? }
+      assert 'returns falsy when size > 0' do
+        !expression.empty?
       end
     end
 
     group '#children' do
-      group 'returns the children given when initialized' do
-        assert { expression.children == expression_content }
+      assert 'returns the children given when initialized' do
+        expression.children == expression_content
       end
     end
 
@@ -88,13 +88,13 @@ def expression_like klass
 end
 
 expression_like Lextacular::Expression do |expression, content|
-  group 'can not have its content splatted' do
-    assert { [*expression] == [expression] }
+  assert 'can not have its content splatted' do
+    [*expression] == [expression]
   end
 end
 
 expression_like Lextacular::SplatExpression do |expression, content|
-  group 'can have its content splatted' do
-    assert { [*expression] == [*content] }
+  assert 'can have its content splatted' do
+    [*expression] == [*content]
   end
 end

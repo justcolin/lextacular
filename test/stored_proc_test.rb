@@ -12,39 +12,39 @@ module Lextacular
   module Build
     group '.stored_proc' do
       group 'returns a function which...' do
-        group 'calls the function stored in the hash' do
-          called = false
-          hash   = { example: proc { called = true } }
+        assert 'calls the function stored in the hash' do
+          was_called = false
+          hash       = { example: proc { was_called = true } }
 
-          stored_proc(hash, :example).call
+          stored_proc(:example, hash).call
 
-          assert { called }
+          was_called
         end
 
-        group 'returns whatever the stored function returns' do
+        assert 'returns whatever the stored function returns' do
           result = 'fluffle bumble'
           hash   = { the_name: proc { result } }
 
-          assert { stored_proc(hash, :the_name).call == result }
+          stored_proc(:the_name, hash).call == result
         end
 
-        group 'stored function can be added after creating the stored_proc' do
+        assert 'stored function can be added after creating the stored_proc' do
           hash   = {}
-          stored = stored_proc(hash, :sally)
+          stored = stored_proc(:sally, hash)
 
-          called       = false
-          hash[:sally] = proc { called = true }
+          was_called   = false
+          hash[:sally] = proc { was_called = true }
 
           stored.call
 
-          assert { called }
+          was_called
         end
 
-        group 'passes arguments to the stored function' do
+        assert 'passes arguments to the stored function' do
           args = [1, 'two', :iii]
           hash = { funky_func: proc { |*args| args } }
 
-          assert { stored_proc(hash, :funky_func).call(*args) == args }
+          stored_proc(:funky_func, hash).call(*args) == args
         end
       end
     end

@@ -12,16 +12,14 @@ require_relative '../mismatch'
 module Lextacular
   module Build
     group '.either_matcher' do
-      group 'returns falsy if all children return falsy, #empty? matches or Mismatches' do
-        assert do
-          !either_matcher(
-            proc { '' },
-            proc { [] },
-            proc { nil },
-            proc { false },
-            proc { Mismatch.new }
-          ).call('')
-        end
+      assert 'returns falsy if all children return falsy, #empty? matches or Mismatches' do
+        !either_matcher(
+          proc { '' },
+          proc { [] },
+          proc { nil },
+          proc { false },
+          proc { Mismatch.new }
+        ).call('')
       end
 
       group 'returns the first match if any child matches' do
@@ -63,13 +61,13 @@ module Lextacular
         assert { result_indices == [given_index,  given_index ] }
       end
 
-      group 'index defaults to 0' do
+      assert 'index defaults to 0' do
         result     = nil
         index_proc = proc { |_, index| result = index; '' }
 
         either_matcher(index_proc).call('')
 
-        assert { result.zero? }
+        result.zero?
       end
     end
   end

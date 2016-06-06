@@ -22,12 +22,12 @@ module Lextacular
     given_string = (given_index + rand).to_s
     example      = Mismatch.new(given_string, given_index)
 
-    group '#content returns the string given at initialization' do
-      assert { example.content == given_string }
+    assert '#content returns the string given at initialization' do
+      example.content == given_string
     end
 
-    group '#index returns the index given at initialization' do
-      assert { example.index == given_index }
+    assert '#index returns the index given at initialization' do
+      example.index == given_index
     end
   end
 end

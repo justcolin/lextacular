@@ -55,7 +55,7 @@ def pattern_matcher_like make_matcher
     assert { result_indices == [given_index, given_index + 8, given_index + 11] }
   end
 
-  group 'index defaults to 0' do
+  assert 'index defaults to 0' do
     result_index = nil
     index_proc   = proc do |_, index|
                      result_index = index
@@ -64,6 +64,6 @@ def pattern_matcher_like make_matcher
 
     make_matcher.call(index_proc).call('')
 
-    assert { result_index.zero? }
+    result_index.zero?
   end
 end

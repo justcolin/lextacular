@@ -24,18 +24,18 @@ module Lextacular
   module Build
     group '.repeat_matcher' do
       group 'returns falsy if children immediately return...' do
-        with_falsy_and_mismatch do |stop|
-          yes = proc { 'truthy' }
-          no  = proc { stop }
+        with_falsy_and_mismatch do |value|
+          match = proc { 'truthy' }
+          none  = proc { value }
 
-          assert { !repeat_matcher(no          ).call('') }
-          assert { !repeat_matcher(yes, no     ).call('') }
-          assert { !repeat_matcher(yes, no, yes).call('') }
+          assert { !repeat_matcher(none              ).call('') }
+          assert { !repeat_matcher(match, none       ).call('') }
+          assert { !repeat_matcher(match, none, match).call('') }
         end
       end
 
       group 'keeps matching until an item returns...' do
-        group 'a completely #empty? match' do
+        assert 'a completely #empty? match' do
           total_cycles = 3
           cycle_count  = 0
 
@@ -51,10 +51,10 @@ module Lextacular
 
           repeat_matcher(empty, eventually_empty, empty).call('')
 
-          assert { cycle_count == total_cycles }
+          cycle_count == total_cycles
         end
 
-        with_falsy_and_mismatch do |stop|
+        with_falsy_and_mismatch do |value|
           total_cycles = 3
           cycle_count  = 0
           match        = 'truthy'
@@ -62,7 +62,7 @@ module Lextacular
           always_true      = proc { match }
           eventually_falsy = proc do
                                if cycle_count == total_cycles
-                                 stop
+                                 value
                                else
                                  cycle_count += 1
                                  match
@@ -71,7 +71,7 @@ module Lextacular
 
           assert do
             repeat_matcher(always_true, eventually_falsy, always_true)
-                        .call('') == ([match] * total_cycles * 3)
+                          .call('') == ([match] * total_cycles * 3)
           end
         end
       end
@@ -109,13 +109,13 @@ module Lextacular
         end
       end
 
-      group 'index defaults to 0' do
+      assert 'index defaults to 0' do
         result_index = nil
         repeat_matcher(proc { |_, index| result_index = index; nil })
                     .call('')
 
 
-        assert { result_index == 0 }
+        result_index == 0
       end
     end
   end

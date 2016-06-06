@@ -92,7 +92,7 @@ module Lextacular
       end
     end
 
-    def stored_proc hash, name
+    def stored_proc name, hash
       proc { |*args| hash[name].call(*args) }
     end
 

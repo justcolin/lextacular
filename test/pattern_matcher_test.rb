@@ -16,12 +16,12 @@ module Lextacular
       pattern_matcher_like method(:pattern_matcher)
 
       group 'return falsy if any of the child patterns return falsy' do
-        yes = proc { 'truthy' }
-        no  = proc { false }
+        match = proc { 'truthy' }
+        none  = proc { false }
 
-        assert { !pattern_matcher(no          ).call('') }
-        assert { !pattern_matcher(yes, no     ).call('') }
-        assert { !pattern_matcher(yes, no, yes).call('') }
+        assert { !pattern_matcher(none              ).call('') }
+        assert { !pattern_matcher(match, none       ).call('') }
+        assert { !pattern_matcher(match, none, match).call('') }
       end
 
       group 'return falsy if the final result is empty' do
@@ -32,12 +32,12 @@ module Lextacular
 
       group 'if any child returns a Mismatch, return that same Mismatch' do
         mismatch = Mismatch.new
-        yes      = proc { 'truthy' }
-        no       = proc { mismatch }
+        match      = proc { 'truthy' }
+        none       = proc { mismatch }
 
-        assert { pattern_matcher(no          ).call('').equal?(mismatch) }
-        assert { pattern_matcher(yes, no     ).call('').equal?(mismatch) }
-        assert { pattern_matcher(yes, no, yes).call('').equal?(mismatch) }
+        assert { pattern_matcher(none              ).call('').equal?(mismatch) }
+        assert { pattern_matcher(match, none       ).call('').equal?(mismatch) }
+        assert { pattern_matcher(match, none, match).call('').equal?(mismatch) }
       end
     end
   end

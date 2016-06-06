@@ -38,44 +38,38 @@ module Lextacular
         assert { result_index  == given_index }
       end
 
-      group 'index argument defaults to 0' do
+      assert 'index argument defaults to 0' do
         result_index    = nil
         pattern_matcher = proc { |_, index| result_index = index }
 
         matcher_return(MockResult, pattern_matcher)
                      .call('here is a string to match')
 
-        assert { result_index.zero? }
+        result_index.zero?
       end
 
       group 'if the pattern matcher returns truthy' do
-        group 'returns instance of the given class' do
+        assert 'returns instance of the given class' do
           given_class = Class.new { def initialize *_; end }
 
-          assert do
-            matcher_return(given_class, proc { true })
-                         .call('').is_a? given_class
-          end
+          matcher_return(given_class, proc { true })
+                       .call('').is_a? given_class
         end
 
-        group 'returned object is initialized with the result of the pattern matcher' do
+        assert 'returned object is initialized with the result of the pattern matcher' do
           result = 'Hey there little mouse'
 
-          assert do
-            matcher_return(MockResult, proc { result })
-                         .call('')
-                         .content == [result]
-          end
+          matcher_return(MockResult, proc { result })
+                       .call('')
+                       .content == [result]
         end
 
-        group 'result of the pattern matcher is splatted into the result' do
+        assert 'result of the pattern matcher is splatted into the result' do
           result = ['This result', 'is an array', 'so it can be splatted']
 
-          assert do
-            matcher_return(MockResult, proc { result })
-                         .call('')
-                         .content == result
-          end
+          matcher_return(MockResult, proc { result })
+                       .call('')
+                       .content == result
         end
       end
 
@@ -86,8 +80,8 @@ module Lextacular
         mismatch_result = matcher_return(MockResult, proc { nil })
                                        .call(given_string, given_index)
 
-        group 'returns instance of Mismatch' do
-          assert { mismatch_result.is_a? Mismatch }
+        assert 'returns instance of Mismatch' do
+          mismatch_result.is_a? Mismatch
         end
 
         group 'Mismatch is given the string and index' do
@@ -96,14 +90,12 @@ module Lextacular
         end
       end
 
-      group 'if the pattern matcher returns a Mismatch, returns the same Mismatch' do
+      assert 'if the pattern matcher returns a Mismatch, returns the same Mismatch' do
         mismatch = Mismatch.new
 
-        assert do
-          matcher_return(MockResult, proc { mismatch })
-                       .call('')
-                       .equal?(mismatch)
-        end
+        matcher_return(MockResult, proc { mismatch })
+                     .call('')
+                     .equal?(mismatch)
       end
     end
   end

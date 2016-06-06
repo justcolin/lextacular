@@ -11,16 +11,16 @@ require_relative '../build'
 module Lextacular
   module Build
     group '.regexp_matcher' do
-      group 'given a matching string, returns match content' do
+      assert 'given a matching string, returns match content' do
         matcher = regexp_matcher(/bubbles/)
 
-        assert { matcher.call('bubbles are fun') == 'bubbles' }
+        matcher.call('bubbles are fun') == 'bubbles'
       end
 
-      group 'given a non-matching string, returns falsy' do
+      assert 'given a non-matching string, returns falsy' do
         matcher = regexp_matcher(/never found/)
 
-        assert { !matcher.call('something else') }
+        !matcher.call('something else')
       end
 
       group 'given a string that matches later' do
@@ -29,8 +29,8 @@ module Lextacular
         match       = 'bloop'
         match_index = 5
 
-        group 'returns falsy if index is not given' do
-          assert { !matcher.call(later_match) }
+        assert 'returns falsy if index is not given' do
+          !matcher.call(later_match)
         end
 
         group 'returns falsy if index is wrong' do
@@ -38,22 +38,22 @@ module Lextacular
           assert { !matcher.call(later_match, match_index - 1) }
         end
 
-        group 'returns match if index is correct' do
-          assert { matcher.call(later_match, match_index) == match }
+        assert 'returns match if index is correct' do
+          matcher.call(later_match, match_index) == match
         end
 
-        group 'does not return matches from before the given index' do
+        assert 'does not return matches from before the given index' do
           matcher     = regexp_matcher(/\d/)
           later_match = '42'
           match       = '2'
           match_index = 1
 
-          assert { matcher.call(later_match, match_index) == match }
+          matcher.call(later_match, match_index) == match
         end
       end
 
-      group 'returns falsy if the match is empty' do
-        assert { !regexp_matcher(//).call('content') }
+      assert 'returns falsy if the match is empty' do
+        !regexp_matcher(//).call('content')
       end
     end
   end
