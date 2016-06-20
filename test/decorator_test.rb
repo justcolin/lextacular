@@ -9,4 +9,6 @@ require 'tet'
 require_relative './decorator_like'
 require_relative '../decorator'
 
-decorator_like Lextacular::Decorator
+group Lextacular::Decorator do
+  decorator_like Lextacular::Decorator
+end

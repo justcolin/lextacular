@@ -32,7 +32,7 @@ def decorator_like klass
     wrapped_class = Hash
     example       = example_class.new(Hash).new
 
-    assert "returns another #{example_class}" do
+    assert "returns another #{klass}" do
       example.example_method
     end
 
