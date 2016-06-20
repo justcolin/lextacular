@@ -46,6 +46,11 @@ module Lextacular
 
           stored_proc(:funky_func, hash).call(*args) == args
         end
+
+        group 'errors properly if function is not defined at call time' do
+          stored = stored_proc(:never_defined, {})
+          err(expect: KeyError) { stored.call }
+        end
       end
     end
   end

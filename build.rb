@@ -93,7 +93,7 @@ module Lextacular
     end
 
     def stored_proc name, hash
-      proc { |*args| hash[name].call(*args) }
+      proc { |*args| hash.fetch(name).call(*args) }
     end
 
     def valid_match? match
