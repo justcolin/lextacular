@@ -8,7 +8,7 @@
 module Lextacular
   # A leaf in the abstract syntax tree
   class Token
-    def initialize content = '', &block
+    def initialize content = ''
       @content = content
     end
 

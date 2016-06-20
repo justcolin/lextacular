@@ -10,7 +10,7 @@ module Lextacular
   class Expression
     attr_reader :children
 
-    def initialize *children, &block
+    def initialize *children
       @children = children
     end
 
