@@ -22,9 +22,8 @@ module Lextacular
       end
     end
 
-    def respond_to? method_name
-      @class.instance_methods.include?(method_name) ||
-      @object.respond_to?(method_name)
+    def respond_to? method_name, include_all = false
+      @object.respond_to?(method_name, include_all)
     end
 
     def method_missing method_name, *args, &block

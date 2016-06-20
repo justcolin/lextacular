@@ -41,15 +41,9 @@ def decorator_like klass
     end
   end
 
-  group '#respond_to?' do
+  assert '#respond_to? Checks wrapped object' do
     example = example_class.new(Hash.new)
 
-    assert 'Checks wrapped object' do
-      example.respond_to?(:[])
-    end
-
-    assert "first checks #{example_class} instance" do
-      example.respond_to?(:example_method)
-    end
+    example.respond_to?(:[])
   end
 end
