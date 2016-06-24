@@ -96,6 +96,16 @@ module Lextacular
       proc { |*args| hash.fetch(name).call(*args) }
     end
 
+    def delay_pattern pattern, hash
+      pattern.map do |part|
+        if part.is_a?(Symbol)
+          stored_proc(part, hash)
+        else
+          part
+        end
+      end
+    end
+
     def valid_match? match
       match && !match.is_a?(Mismatch)
     end
