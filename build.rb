@@ -52,10 +52,10 @@ module Lextacular
     end
 
     def maybe_matcher *pattern
-      sub_matcher = pattern_matcher *pattern
+      submatcher = pattern_matcher *pattern
 
       lambda do |string, index = 0|
-        match = sub_matcher.call(string, index)
+        match = submatcher.call(string, index)
 
         if valid_match? match
           match
@@ -78,12 +78,12 @@ module Lextacular
     end
 
     def repeat_matcher *pattern
-      sub_matcher = matcher_return(SplatExpression, pattern_matcher(*pattern))
+      submatcher = matcher_return(SplatExpression, pattern_matcher(*pattern))
 
       lambda do |string, index = 0|
         result = []
 
-        while valid_nonempty_match?(match = sub_matcher.call(string, index))
+        while valid_nonempty_match?(match = submatcher.call(string, index))
           index  += match.size
           result += match.to_a
         end
