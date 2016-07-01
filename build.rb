@@ -92,6 +92,23 @@ module Lextacular
       end
     end
 
+    def inverse_matcher *pattern
+      submatcher = pattern_matcher(*pattern)
+
+      lambda do |string, index = 0|
+        starting_index = index
+        size           = string.size
+
+        while index < size && !nonempty_match?(submatcher.call(string, index))
+          index += 1
+        end
+
+        unless starting_index == index
+          string[starting_index..(index-1)]
+        end
+      end
+    end
+
     def stored_proc name, hash
       proc { |*args| hash.fetch(name).call(*args) }
     end

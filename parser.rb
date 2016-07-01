@@ -85,6 +85,7 @@ module Lextacular
     special_rule :maybe,  :maybe_matcher
     special_rule :repeat, :repeat_matcher
     special_rule :either, :either_matcher
+    special_rule :isnt,   :inverse_matcher
   end
 end
 
