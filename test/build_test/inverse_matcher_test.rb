@@ -7,6 +7,7 @@
 
 require 'tet'
 require_relative '../../build'
+require_relative '../helpers/with_falsy_and_mismatch'
 
 module Lextacular
   module Build
@@ -14,16 +15,12 @@ module Lextacular
       example = 'skiffle scuffle'
 
       group 'matches string when' do
-        group 'one of the matchers returns falsy' do
-          matcher = inverse_matcher(proc { nil })
+        group 'one of the matchers returns' do
+          with_falsy_and_mismatch do |result|
+            matcher = inverse_matcher(proc { result })
 
-          assert { matcher.call(example) == example }
-        end
-
-        group 'one of the matchers returns a Mismatch' do
-          matcher = inverse_matcher(proc { Mismatch.new })
-
-          assert { matcher.call(example) == example }
+            assert { matcher.call(example) == example }
+          end
         end
 
         group 'not all of the given matchers match' do
