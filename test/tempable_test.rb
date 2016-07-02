@@ -6,34 +6,34 @@
 # (located in root directory of this project) for details.
 
 require 'tet'
-require_relative './decorator_like'
-require_relative '../temporary'
+require_relative './helpers/decorator_like'
+require_relative '../tempable'
 require_relative '../Expression'
 
 module Lextacular
-  group Temporary do
-    decorator_like Temporary
+  group Tempable do
+    decorator_like Tempable
 
     group '#without_temps' do
       group 'if temporary returns nil' do
-        assert { Temporary.new(42, true).without_temps.nil? }
+        assert { Tempable.new(42, true).without_temps.nil? }
       end
 
       group 'if not temporary' do
         group 'and contents are not enumerable returns content' do
           content = 'something'
-          example = Temporary.new(content, false)
+          example = Tempable.new(content, false)
 
           assert { example.without_temps.equal?(content) }
         end
 
         group 'and contents are enumerable removes temporary children' do
-          example = Temporary.new(
+          example = Tempable.new(
                       Expression.new(
-                        Temporary.new(1, true),
-                        Temporary.new(2, false),
-                        Temporary.new(3, true),
-                        Temporary.new(4, false)
+                        Tempable.new(1, true),
+                        Tempable.new(2, false),
+                        Tempable.new(3, true),
+                        Tempable.new(4, false)
                       ),
                       false
                     )

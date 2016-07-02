@@ -6,8 +6,8 @@
 # (located in root directory of this project) for details.
 
 require 'tet'
-require_relative '../build'
-require_relative '../mismatch'
+require_relative '../../build'
+require_relative '../../mismatch'
 
 module Lextacular
   module Build

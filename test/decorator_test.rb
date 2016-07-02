@@ -6,7 +6,7 @@
 # (located in root directory of this project) for details.
 
 require 'tet'
-require_relative './decorator_like'
+require_relative './helpers/decorator_like'
 require_relative '../decorator'
 
 group Lextacular::Decorator do

@@ -8,7 +8,7 @@
 require_relative './decorator'
 
 module Lextacular
-  class Temporary < Decorator
+  class Tempable < Decorator
     def initialize wrapped, temp = true
       super wrapped
       @temp = temp

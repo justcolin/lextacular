@@ -6,7 +6,7 @@
 # (located in root directory of this project) for details.
 
 require 'tet'
-require_relative './expression_like'
+require_relative './helpers/expression_like'
 require_relative '../token'
 require_relative '../expression'
 

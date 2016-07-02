@@ -6,9 +6,9 @@
 # (located in root directory of this project) for details.
 
 require 'tet'
-require_relative '../build'
-require_relative '../expression'
-require_relative '../mismatch'
+require_relative '../../build'
+require_relative '../../expression'
+require_relative '../../mismatch'
 
 def with_falsy_and_mismatch
   group 'falsy' do

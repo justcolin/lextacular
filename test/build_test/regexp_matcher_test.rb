@@ -6,7 +6,7 @@
 # (located in root directory of this project) for details.
 
 require 'tet'
-require_relative '../build'
+require_relative '../../build'
 
 module Lextacular
   module Build
