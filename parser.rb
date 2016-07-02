@@ -44,7 +44,10 @@ module Lextacular
                       end
           end
 
-          @rules[name] = Build.matcher_return(result, Build.send(use, *pattern))
+          @rules[name] = Build.matcher_return(
+                           result,
+                           Build.send(use, *pattern)
+                         )
         end
 
         self
