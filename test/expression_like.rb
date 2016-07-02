@@ -5,6 +5,18 @@
 # terms of the three-clause BSD license. See LICENSE.txt
 # (located in root directory of this project) for details.
 
+def test_each enumerable:, content:
+  matches = []
+  index   = 0
+
+  enumerable.each do |item|
+    matches << (item == content[index])
+    index += 1
+  end
+
+  assert { matches.all?(&:itself) }
+end
+
 def expression_like klass
   group klass do
     content_1 = 'here is some text'
@@ -76,6 +88,28 @@ def expression_like klass
       group 'returns false if given anything else' do
         assert { expression != klass.new('something else') }
         assert { expression != expression_content }
+      end
+    end
+
+    group 'includes Enumerable' do
+      assert { expression.class.ancestors.include?(Enumerable) }
+    end
+
+    group '#each' do
+      group 'exists' do
+        assert { expression.respond_to? :each }
+      end
+
+      group 'goes over each item' do
+        test_each enumerable: expression, content: expression_content
+      end
+
+      group 'returns Enumerator when not given a block' do
+        assert { expression.each.is_a?(Enumerator) }
+      end
+
+      group 'returned Enumerator is valid' do
+        test_each enumerable: expression.each, content: expression_content
       end
     end
 

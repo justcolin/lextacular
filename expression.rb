@@ -8,6 +8,8 @@
 module Lextacular
   # Wrapper around multiple ordered Tokens and Expression
   class Expression
+    include Enumerable
+
     attr_reader :children
 
     def initialize *children
@@ -29,6 +31,16 @@ module Lextacular
     def == other
       other.is_a?(self.class) && other.children == @children
     end
+
+    def each &block
+      return enum_for :each unless block_given?
+
+      @children.each(&block)
+
+      self
+    end
+
+    undef_method :to_a rescue NameError
   end
 
   # An Expression that can be splatted into other nodes
