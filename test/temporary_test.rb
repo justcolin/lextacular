@@ -13,7 +13,7 @@ module Lextacular
   group Temporary do
     decorator_like Temporary
 
-    group 'temp?' do
+    group '#temp?' do
       assert 'normally returns true' do
         Temporary.new(Object).temp?
       end
