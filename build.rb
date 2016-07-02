@@ -39,7 +39,7 @@ module Lextacular
         result = pattern.inject([]) do |memo, part|
                    match = part.call(string, index)
 
-                   if valid_match? match
+                   if match? match
                      index += match.size
                      memo  << match
                    else
@@ -52,12 +52,12 @@ module Lextacular
     end
 
     def maybe_matcher *pattern
-      submatcher = pattern_matcher *pattern
+      submatcher = pattern_matcher(*pattern)
 
       lambda do |string, index = 0|
         match = submatcher.call(string, index)
 
-        if valid_match? match
+        if match? match
           match
         else
           []
@@ -70,7 +70,7 @@ module Lextacular
         pattern.each do |matcher|
           match = matcher.call(string, index)
 
-          return match if valid_nonempty_match? match
+          return match if nonempty_match? match
         end
 
         nil
@@ -83,7 +83,7 @@ module Lextacular
       lambda do |string, index = 0|
         result = []
 
-        while valid_nonempty_match?(match = submatcher.call(string, index))
+        while nonempty_match?(match = submatcher.call(string, index))
           index  += match.size
           result += match.to_a
         end
@@ -106,12 +106,12 @@ module Lextacular
       end
     end
 
-    def valid_match? match
+    def match? match
       match && !match.is_a?(Mismatch)
     end
 
-    def valid_nonempty_match? match
-      valid_match?(match) && !match.empty?
+    def nonempty_match? match
+      match?(match) && !match.empty?
     end
   end
 end
