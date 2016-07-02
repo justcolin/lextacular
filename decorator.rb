@@ -8,15 +8,13 @@
 module Lextacular
   class Decorator < BasicObject
     def initialize object
-      @object = object
-      @class  = class << self
-                  superclass
-                end
+      @object           = object
+      @decorator_class  = class << self; superclass; end
 
       if @object.respond_to?(:new)
         class << self
           define_method :new do |*args|
-            @class.new(@object.new(*args))
+            @decorator_class.new(@object.new(*args))
           end
         end
       end
