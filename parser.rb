@@ -79,7 +79,7 @@ module Lextacular
     def self.special_rule name, use
       define_method name do |*pattern|
         Build.matcher_return(
-          Temporary.new(Expression),
+          Temporary.new(SplatExpression),
           Build.send(use, *pattern)
         )
       end
