@@ -14,8 +14,14 @@ module Lextacular
       @temp = temp
     end
 
-    def temp?
-      @temp
+    def without_temps
+      unless @temp
+        if respond_to? :map
+          @object.class.new(*map(&:without_temps).compact)
+        else
+          @object
+        end
+      end
     end
   end
 end
