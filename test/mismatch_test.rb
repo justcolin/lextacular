@@ -8,14 +8,6 @@
 require 'tet'
 require_relative '../mismatch'
 
-class MockResult
-  attr_reader :content
-
-  def initialize *content
-    @content = content
-  end
-end
-
 module Lextacular
   group Mismatch do
     given_index  = rand

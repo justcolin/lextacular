@@ -9,16 +9,7 @@ require 'tet'
 require_relative '../../build'
 require_relative '../../expression'
 require_relative '../../mismatch'
-
-def with_falsy_and_mismatch
-  group 'falsy' do
-    yield nil
-  end
-
-  group 'a Mismatch' do
-    yield Lextacular::Mismatch.new
-  end
-end
+require_relative '../helpers/with_falsy_and_mismatch.rb'
 
 module Lextacular
   module Build

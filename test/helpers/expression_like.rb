@@ -5,17 +5,7 @@
 # terms of the three-clause BSD license. See LICENSE.txt
 # (located in root directory of this project) for details.
 
-def test_each enumerable:, content:
-  matches = []
-  index   = 0
-
-  enumerable.each do |item|
-    matches << (item == content[index])
-    index += 1
-  end
-
-  assert { matches.all?(&:itself) }
-end
+require_relative './each_works'
 
 def expression_like klass
   group klass do
@@ -101,7 +91,7 @@ def expression_like klass
       end
 
       group 'goes over each item' do
-        test_each enumerable: expression, content: expression_content
+        each_works enumerable: expression, content: expression_content
       end
 
       group 'returns Enumerator when not given a block' do
@@ -109,7 +99,7 @@ def expression_like klass
       end
 
       group 'returned Enumerator is valid' do
-        test_each enumerable: expression.each, content: expression_content
+        each_works enumerable: expression.each, content: expression_content
       end
     end
 

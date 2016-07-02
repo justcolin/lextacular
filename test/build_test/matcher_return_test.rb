@@ -7,14 +7,7 @@
 
 require 'tet'
 require_relative '../../build'
-
-class MockResult
-  attr_reader :content
-
-  def initialize *content
-    @content = content
-  end
-end
+require_relative '../helpers/mock_result.rb'
 
 module Lextacular
   module Build
