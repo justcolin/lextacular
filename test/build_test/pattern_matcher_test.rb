@@ -26,8 +26,8 @@ module Lextacular
 
       group 'if any child returns a Mismatch, return that same Mismatch' do
         mismatch = Mismatch.new
-        match      = proc { 'truthy' }
-        none       = proc { mismatch }
+        match    = proc { 'truthy' }
+        none     = proc { mismatch }
 
         assert { pattern_matcher(none              ).call('').equal?(mismatch) }
         assert { pattern_matcher(match, none       ).call('').equal?(mismatch) }
