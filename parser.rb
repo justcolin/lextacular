@@ -5,7 +5,6 @@
 # terms of the three-clause BSD license. See LICENSE.txt
 # (located in root directory of this project) for details.
 
-require_relative './temporary'
 require_relative './token'
 require_relative './expression'
 require_relative './build'
@@ -15,10 +14,6 @@ module Lextacular
     def initialize &rule_defs
       @rules = {}
 
-      temp_expression new_lines: [maybe(repeat(:new_line, :spaces)), :new_line]
-      temp_token      spaces:    /[ \t]+/,
-                      new_line:  /\n/
-
       instance_eval &rule_defs
     end
 
@@ -26,12 +21,23 @@ module Lextacular
       @rules.fetch(:start).call(string)
     end
 
-    def self.rule_method method_name, result:, use:, temp: false
+    def self.def_helper_method name, use
+      define_method name do |*pattern|
+        Build.matcher_return(
+          SplatExpression,
+          Build.send(use, *pattern)
+        )
+      end
+    end
+
+    def_helper_method :maybe,  :maybe_matcher
+    def_helper_method :repeat, :repeat_matcher
+    def_helper_method :either, :either_matcher
+    def_helper_method :isnt,   :inverse_matcher
+
+    def self.def_rule_method method_name, result:, use:, temp: false
       define_method method_name do |**rules, &class_def|
-        result = Temporary.new(
-                   class_def ? Class.new(result, &class_def) : result,
-                   temp
-                 )
+        result = class_def ? Class.new(result, &class_def) : result
 
         rules.each do |name, pattern|
           if pattern.is_a?(Array)
@@ -46,7 +52,9 @@ module Lextacular
 
           @rules[name] = Build.matcher_return(
                            result,
-                           Build.send(use, *pattern)
+                           Build.send(use, *pattern),
+                           temp: temp,
+                           name: name
                          )
         end
 
@@ -54,42 +62,26 @@ module Lextacular
       end
     end
 
-    rule_method :token,
-                result: Token,
-                use:    :regexp_matcher
+    def_rule_method :token,
+                    result: Token,
+                    use:    :regexp_matcher
 
-    rule_method :temp_token,
-                result: Token,
-                use:    :regexp_matcher,
-                temp:   true
+    def_rule_method :temp_token,
+                    result: Token,
+                    use:    :regexp_matcher,
+                    temp:   true
 
-    rule_method :expression,
-                result: Expression,
-                use:    :pattern_matcher
+    def_rule_method :expression,
+                    result: Expression,
+                    use:    :pattern_matcher
 
-    rule_method :temp_expression,
-                result: Expression,
-                use:    :pattern_matcher,
-                temp:   true
+    def_rule_method :temp_expression,
+                    result: Expression,
+                    use:    :pattern_matcher,
+                    temp:   true
 
-    rule_method :splat_expression,
-                result: SplatExpression,
-                use:    :pattern_matcher
-
-    def self.special_rule name, use
-      define_method name do |*pattern|
-        Build.matcher_return(
-          Temporary.new(SplatExpression),
-          Build.send(use, *pattern)
-        )
-      end
-    end
-
-    special_rule :maybe,  :maybe_matcher
-    special_rule :repeat, :repeat_matcher
-    special_rule :either, :either_matcher
-    special_rule :isnt,   :inverse_matcher
+    def_rule_method :splat_expression,
+                    result: SplatExpression,
+                    use:    :pattern_matcher
   end
 end
-
-
