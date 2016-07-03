@@ -135,12 +135,16 @@ module Lextacular
     end
 
     def delay_pattern pattern, hash
-      pattern.map do |part|
-        if part.is_a?(Symbol)
-          stored_proc(part, hash)
-        else
-          part
+      if pattern.respond_to?(:to_a)
+        pattern.to_a.map do |part|
+          if part.is_a?(Symbol)
+            stored_proc(part, hash)
+          else
+            part
+          end
         end
+      else
+        pattern
       end
     end
 
