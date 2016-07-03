@@ -68,7 +68,7 @@ module Lextacular
                    end
                  end
 
-        result unless result.empty? || result.all?(&:empty?)
+        result
       end
     end
 

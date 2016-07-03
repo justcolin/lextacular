@@ -24,12 +24,6 @@ module Lextacular
         assert { !pattern_matcher(match, none, match).call('') }
       end
 
-      group 'return falsy if the final result is empty' do
-        assert { !pattern_matcher().call('') }
-        assert { !pattern_matcher(proc { '' }).call('') }
-        assert { !pattern_matcher(proc { [] }).call('') }
-      end
-
       group 'if any child returns a Mismatch, return that same Mismatch' do
         mismatch = Mismatch.new
         match      = proc { 'truthy' }
