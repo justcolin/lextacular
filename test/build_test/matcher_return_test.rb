@@ -9,6 +9,7 @@ require 'tet'
 require_relative '../../build'
 require_relative '../helpers/mock_result.rb'
 require_relative '../helpers/mock_temp.rb'
+require_relative '../helpers/arrayable.rb'
 
 module Lextacular
   module Build
@@ -60,11 +61,19 @@ module Lextacular
         end
 
         assert 'result of the pattern matcher is splatted into the result' do
-          result = ['This result', 'is an array', 'so it can be splatted']
+          result = Arrayable.new(1, 2, 3)
 
           matcher_return(MockResult, proc { result })
                         .call('')
-                        .content == result
+                        .content == [1, 2, 3]
+        end
+
+        assert 'nested objects that respond to #to_a can be splatted' do
+          result = Arrayable.new(1, Arrayable.new(2, Arrayable.new(3)))
+
+          matcher_return(MockResult, proc { result })
+                        .call('')
+                        .content == [1, 2, 3]
         end
 
         group 'decorates given class' do
