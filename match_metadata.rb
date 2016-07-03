@@ -7,12 +7,10 @@
 
 module Lextacular
   module MatchMetadata
-    def name
-      self.class.name
-    end
+    attr_reader :name
 
     def without_temps
-      unless self.class.temp?
+      unless @temp
         if respond_to? :map
           self.class.new(*map(&:without_temps).compact)
         else

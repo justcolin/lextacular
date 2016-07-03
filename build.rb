@@ -16,9 +16,11 @@ module Lextacular
       return_class = Class.new(return_class) do
                        include MatchMetadata
 
-                       self.singleton_class.instance_eval do
-                         define_method(:name)  { name }
-                         define_method(:temp?) { temp }
+                       define_method :initialize do |*args|
+                         super *args
+
+                         @name = name
+                         @temp = temp
                        end
                      end
 
