@@ -17,52 +17,38 @@ module Lextacular
       group 'matches string when' do
         group 'one of the matchers returns' do
           with_falsy_and_mismatch do |result|
-            matcher = inverse_matcher(proc { result })
-
-            assert { matcher.call(example) == example }
+            assert do
+              inverse_matcher(proc { result })
+                             .call(example) == example
+            end
           end
         end
 
-        group 'not all of the given matchers match' do
-          matcher = inverse_matcher(
-                      regexp_matcher(/skiffle/),
-                      regexp_matcher(/-/),
-                    )
-
-          assert { matcher.call(example) == example }
+        assert 'not all of the given matchers match' do
+          inverse_matcher(regexp_matcher(/skiffle/), regexp_matcher(/-/))
+                         .call(example) == example
         end
 
-        group 'given an index past a match' do
-          matcher = inverse_matcher(regexp_matcher(/ /))
-
-          assert { matcher.call(example, 8) == 'scuffle' }
+        assert 'given an index past a match' do
+          inverse_matcher(regexp_matcher(/ /))
+                         .call(example, 8) == 'scuffle'
         end
       end
 
       group 'does not match when' do
-        group 'string starts with a match' do
-          matcher = inverse_matcher(regexp_matcher(/s/))
-
-          assert { !matcher.call(example) }
+        assert 'string starts with a match' do
+          !inverse_matcher(regexp_matcher(/s/))
+                          .call(example)
         end
 
-        group 'the whole pattern matches' do
-          matcher = inverse_matcher(
-                      regexp_matcher(/s/),
-                      regexp_matcher(/k/),
-                      regexp_matcher(/i/)
-                    )
-
-          assert { !matcher.call(example) }
+        assert 'the whole pattern matches' do
+          !inverse_matcher(regexp_matcher(/s/), regexp_matcher(/k/))
+                          .call(example)
         end
 
-        group 'given the index of a match' do
-          matcher = inverse_matcher(
-                      regexp_matcher(/ /),
-                      regexp_matcher(/scuffle/)
-                    )
-
-          assert { !matcher.call(example, 7) }
+        assert 'given the index of a match' do
+          !inverse_matcher(regexp_matcher(/ /), regexp_matcher(/scuffle/))
+                          .call(example, 7)
         end
       end
     end

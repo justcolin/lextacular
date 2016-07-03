@@ -81,21 +81,21 @@ def expression_like klass
       end
     end
 
-    group 'includes Enumerable' do
-      assert { expression.class.ancestors.include?(Enumerable) }
+    assert 'includes Enumerable' do
+      expression.class.ancestors.include?(Enumerable)
     end
 
     group '#each' do
-      group 'exists' do
-        assert { expression.respond_to? :each }
+      assert 'exists' do
+        expression.respond_to?(:each)
       end
 
       group 'goes over each item' do
         each_works enumerable: expression, content: expression_content
       end
 
-      group 'returns Enumerator when not given a block' do
-        assert { expression.each.is_a?(Enumerator) }
+      assert 'returns Enumerator when not given a block' do
+        expression.each.is_a?(Enumerator)
       end
 
       group 'returned Enumerator is valid' do
