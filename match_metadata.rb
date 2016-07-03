@@ -5,21 +5,18 @@
 # terms of the three-clause BSD license. See LICENSE.txt
 # (located in root directory of this project) for details.
 
-require_relative './decorator'
-
 module Lextacular
-  class Tempable < Decorator
-    def initialize wrapped, temp = true
-      super wrapped
-      @temp = temp
+  module MatchMetadata
+    def name
+      self.class.name
     end
 
     def without_temps
-      unless @temp
+      unless self.class.temp?
         if respond_to? :map
-          @object.class.new(*map(&:without_temps).compact)
+          self.class.new(*map(&:without_temps).compact)
         else
-          @object
+          self
         end
       end
     end

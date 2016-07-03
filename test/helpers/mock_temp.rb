@@ -5,18 +5,24 @@
 # terms of the three-clause BSD license. See LICENSE.txt
 # (located in root directory of this project) for details.
 
-class MockResult
+class MockTemp
   attr_reader :content
 
-  def initialize *content
+  def initialize content
     @content = content
+  end
+
+  def without_temps
+    nil
+  end
+
+  def == other
+    other.class == self.class && other.content == @content
   end
 end
 
-class EnumerableMockResult < MockResult
-  include Enumerable
-
-  def each &block
-    @content.each(&block)
+class MockNotTemp < MockTemp
+  def without_temps
+    self
   end
 end

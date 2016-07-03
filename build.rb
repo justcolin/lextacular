@@ -6,12 +6,22 @@
 # (located in root directory of this project) for details.
 
 require_relative './mismatch'
+require_relative './match_metadata'
 
 module Lextacular
   module Build
     module_function
 
-    def matcher_return return_class, pattern_matcher
+    def matcher_return return_class, pattern_matcher, name: nil, temp: nil
+      return_class = Class.new(return_class) do
+                       include MatchMetadata
+
+                       self.singleton_class.instance_eval do
+                         define_method(:name)  { name }
+                         define_method(:temp?) { temp }
+                       end
+                     end
+
       lambda do |string, index = 0|
         found = pattern_matcher.call(string, index)
 
