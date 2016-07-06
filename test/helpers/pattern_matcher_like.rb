@@ -21,6 +21,20 @@ def pattern_matcher_like make_matcher
     end
   end
 
+  group 'flattens any arrays returns by parts of the matcher' do
+    assert do
+      match_1 = "this"
+      match_2 = "is a"
+      match_3 = "match"
+
+      make_matcher.call(
+                    proc { match_1 },
+                    proc { [match_2, match_3] }
+                  )
+                  .call('') == [match_1, match_2, match_3]
+    end
+  end
+
   group 'pass string and index into children, incrementing index as it goes' do
     given_index  = 10
     given_string = "this is not a pipe"

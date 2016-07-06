@@ -68,14 +68,6 @@ module Lextacular
                         .content == [1, 2, 3]
         end
 
-        assert 'nested objects that respond to #to_a can be splatted' do
-          result = Arrayable.new(1, Arrayable.new(2, Arrayable.new(3)))
-
-          matcher_return(MockResult, proc { result })
-                        .call('')
-                        .content == [1, 2, 3]
-        end
-
         group 'decorates given class' do
           group '#name' do
             assert 'defaults to nil' do

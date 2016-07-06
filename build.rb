@@ -7,12 +7,9 @@
 
 require_relative './mismatch'
 require_relative './match_metadata'
-require_relative './recursive_flatten'
 
 module Lextacular
   module Build
-    using RecursiveFlatten
-
     module_function
 
     def matcher_return return_class, pattern_matcher, name: nil, temp: nil
@@ -33,13 +30,7 @@ module Lextacular
         if found.is_a?(Mismatch)
           found
         elsif found
-          return_class.new(
-            *if found.respond_to?(:to_a)
-               found.to_a.recursive_flatten
-             else
-               found
-             end
-          )
+          return_class.new(*found)
         else
           Mismatch.new(string, index)
         end
@@ -58,13 +49,13 @@ module Lextacular
     def pattern_matcher *pattern
       lambda do |string, index = 0|
         result = pattern.inject([]) do |memo, part|
-                   match = part.call(string, index)
+                   found = part.call(string, index)
 
-                   if match? match
-                     index += match.size
-                     memo  << match
+                   if match? found
+                     index += found.size
+                     memo.push(*found)
                    else
-                     return match
+                     return found
                    end
                  end
 
@@ -76,10 +67,10 @@ module Lextacular
       submatcher = pattern_matcher(*pattern)
 
       lambda do |string, index = 0|
-        match = submatcher.call(string, index)
+        found = submatcher.call(string, index)
 
-        if match? match
-          match
+        if match? found
+          found
         else
           []
         end
