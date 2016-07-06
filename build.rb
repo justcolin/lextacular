@@ -6,36 +6,11 @@
 # (located in root directory of this project) for details.
 
 require_relative './mismatch'
-require_relative './match_metadata'
+require_relative './match_wrapper'
 
 module Lextacular
   module Build
     module_function
-
-    def matcher_return return_class, pattern_matcher, name: nil, temp: nil
-      return_class = Class.new(return_class) do
-                       include MatchMetadata
-
-                       define_method :initialize do |*args|
-                         super *args
-
-                         @name = name
-                         @temp = temp
-                       end
-                     end
-
-      lambda do |string, index = 0|
-        found = pattern_matcher.call(string, index)
-
-        if found.is_a?(Mismatch)
-          found
-        elsif found
-          return_class.new(*found)
-        else
-          Mismatch.new(string, index)
-        end
-      end
-    end
 
     def regexp_matcher regexp
       lambda do |string, index = 0|
@@ -95,15 +70,14 @@ module Lextacular
     end
 
     def repeat_matcher *pattern
-      submatcher = matcher_return(SplatExpression, pattern_matcher(*pattern))
+      submatcher = MatchWrapper.new(SplatExpression, pattern_matcher(*pattern))
 
       lambda do |string, index = 0|
         result = []
 
-        # should this just use #match? instead?
         while nonempty_match?(found = submatcher.call(string, index))
-          index  += found.size
-          result += found.to_a
+          index += found.size
+          result.push(*found)
         end
 
         result unless result.empty?
