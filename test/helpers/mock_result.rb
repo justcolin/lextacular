@@ -6,10 +6,11 @@
 # (located in root directory of this project) for details.
 
 class MockResult
-  attr_reader :content
+  attr_reader :content, :metadata
 
-  def initialize *content
-    @content = content
+  def initialize *content, **metadata
+    @content  = content
+    @metadata = metadata
   end
 end
 

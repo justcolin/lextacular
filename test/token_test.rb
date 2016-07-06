@@ -30,7 +30,7 @@ module Lextacular
       end
 
       assert 'returns 0 if initialized with nothing' do
-         empty_token.size.zero?
+        empty_token.size.zero?
       end
     end
 
@@ -58,6 +58,34 @@ module Lextacular
 
     assert 'can not have its content splatted' do
       [*token] == [token]
+    end
+
+    group '#name' do
+      assert 'defaults to nil' do
+        Token.new.name.nil?
+      end
+
+      assert 'uses value giving at init' do
+        name = :erica
+        Token.new(name: name).name == name
+      end
+    end
+
+    group '#without_temps' do
+      assert 'returns self when temp is not set' do
+        token = Token.new
+        token.without_temps == token
+      end
+
+      assert 'returns nil when temp is true' do
+        token = Token.new(temp: true)
+        token.without_temps.nil?
+      end
+
+      assert 'returns self when temp is false' do
+        token = Token.new(temp: false)
+        token.without_temps == token
+      end
     end
   end
 end

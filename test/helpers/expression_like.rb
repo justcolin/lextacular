@@ -70,14 +70,32 @@ def expression_like klass
     end
 
     group '#==' do
-      group 'returns true if self or a expression with the same content' do
-        assert { expression == expression }
-        assert { expression == klass.new(*expression_content) }
+      group 'returns true' do
+        assert 'if given self' do
+          expression == expression
+        end
+
+        assert ' if given an expression with the same content' do
+          expression == klass.new(*expression_content)
+        end
       end
 
-      group 'returns false if given anything else' do
-        assert { expression != klass.new('something else') }
-        assert { expression != expression_content }
+      group 'returns false' do
+        assert 'if the name is different' do
+          klass.new(name: :red) != klass.new(name: :blue)
+        end
+
+        assert 'if the temp status is different' do
+          klass.new(temp: true) != klass.new(temp: false)
+        end
+
+        assert 'if given different content' do
+          expression != klass.new('something else')
+        end
+
+        assert 'if the class is different'  do
+          expression != expression_content
+        end
       end
     end
 
@@ -100,6 +118,36 @@ def expression_like klass
 
       group 'returned Enumerator is valid' do
         each_works enumerable: expression.each, content: expression_content
+      end
+    end
+
+    group '#name' do
+      assert 'defaults to nil' do
+        klass.new.name.nil?
+      end
+
+      assert 'returns the name given at init' do
+        given = :garble
+        klass.new(name: given).name == given
+      end
+    end
+
+    group '#without_temps' do
+      assert 'returns false if initialzed as temp' do
+        !klass.new(temp: true).without_temps
+      end
+
+      assert 'returns new instance of class, filtering out temp children if not temp' do
+        name     = :wilhelm
+        children = [klass.new(temp: true), klass.new(temp: false), klass.new(temp: true)]
+        filtered = children.map { |part| part.without_temps }.compact
+
+        klass.new(*children, temp: false, name: name).without_temps ==
+        klass.new(*filtered, temp: false, name: name)
+      end
+
+      assert 'temp defaults to falsy' do
+        klass.new.without_temps
       end
     end
 

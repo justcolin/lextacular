@@ -10,10 +10,12 @@ module Lextacular
   class Expression
     include Enumerable
 
-    attr_reader :children
+    attr_reader :children, :name
 
-    def initialize *children
+    def initialize *children, name: nil, temp: nil
       @children = children
+      @name     = name
+      @temp     = temp
     end
 
     def to_s
@@ -29,7 +31,10 @@ module Lextacular
     end
 
     def == other
-      other.is_a?(self.class) && other.children == @children
+      other.is_a?(self.class)     &&
+      other.children == @children &&
+      other.temp     == @temp     &&
+      other.name     == @name
     end
 
     def each &block
@@ -40,7 +45,21 @@ module Lextacular
       self
     end
 
+    def without_temps
+      unless @temp
+        self.class.new(
+          *@children.map { |part| part.without_temps }.compact,
+          name: @name,
+          temp: @temp
+        )
+      end
+    end
+
     undef_method :to_a rescue NameError
+
+    protected
+
+    attr_reader :temp
   end
 
   # An Expression that can be splatted into other nodes
