@@ -80,9 +80,14 @@ module Lextacular
     def either_matcher *pattern
       lambda do |string, index = 0|
         pattern.each do |matcher|
-          match = matcher.call(string, index)
+          found = matcher.call(string, index)
 
-          return match if nonempty_match? match
+          # should this just use #match? instead?
+          if nonempty_match? found
+            return found
+          else
+            # Gather info on possible mismatches, maybe change #each to #inject
+          end
         end
 
         nil
@@ -95,9 +100,10 @@ module Lextacular
       lambda do |string, index = 0|
         result = []
 
-        while nonempty_match?(match = submatcher.call(string, index))
-          index  += match.size
-          result += match.to_a
+        # should this just use #match? instead?
+        while nonempty_match?(found = submatcher.call(string, index))
+          index  += found.size
+          result += found.to_a
         end
 
         result unless result.empty?
@@ -139,12 +145,12 @@ module Lextacular
       end
     end
 
-    def match? match
-      match && !match.is_a?(Mismatch)
+    def match? found
+      found && !found.is_a?(Mismatch)
     end
 
-    def nonempty_match? match
-      match?(match) && !match.empty?
+    def nonempty_match? found
+      match?(found) && !found.empty?
     end
   end
 end
