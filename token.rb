@@ -8,9 +8,9 @@
 module Lextacular
   # A leaf in the abstract syntax tree
   class Token
-    attr_reader :content, :name
+    attr_reader :content, :name, :temp
 
-    def initialize content = '', name: nil, temp: false
+    def initialize content = '', name: nil, temp: nil
       @content = content
       @name    = name
       @temp    = temp
@@ -29,7 +29,10 @@ module Lextacular
     end
 
     def == other
-      other.is_a?(self.class) && other.to_s == @content
+      other.is_a?(self.class) &&
+      other.to_s == @content  &&
+      other.name == @name     &&
+      other.temp == @temp
     end
 
     def without_temps

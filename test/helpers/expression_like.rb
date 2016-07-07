@@ -6,9 +6,12 @@
 # (located in root directory of this project) for details.
 
 require_relative './each_works'
+require_relative './match_result_basics'
 
 def expression_like klass
   group klass do
+    match_result_basics klass
+
     content_1 = 'here is some text'
     content_2 = 'even more text!'
     content_3 = 'what?! more text?!'
@@ -69,36 +72,6 @@ def expression_like klass
       end
     end
 
-    group '#==' do
-      group 'returns true' do
-        assert 'if given self' do
-          expression == expression
-        end
-
-        assert ' if given an expression with the same content' do
-          expression == klass.new(*expression_content)
-        end
-      end
-
-      group 'returns false' do
-        assert 'if the name is different' do
-          klass.new(name: :red) != klass.new(name: :blue)
-        end
-
-        assert 'if the temp status is different' do
-          klass.new(temp: true) != klass.new(temp: false)
-        end
-
-        assert 'if given different content' do
-          expression != klass.new('something else')
-        end
-
-        assert 'if the class is different'  do
-          expression != expression_content
-        end
-      end
-    end
-
     assert 'includes Enumerable' do
       expression.class.ancestors.include?(Enumerable)
     end
@@ -118,17 +91,6 @@ def expression_like klass
 
       group 'returned Enumerator is valid' do
         each_works enumerable: expression.each, content: expression_content
-      end
-    end
-
-    group '#name' do
-      assert 'defaults to nil' do
-        klass.new.name.nil?
-      end
-
-      assert 'returns the name given at init' do
-        given = :garble
-        klass.new(name: given).name == given
       end
     end
 

@@ -7,9 +7,12 @@
 
 require 'tet'
 require_relative '../token'
+require_relative './helpers/match_result_basics'
 
 module Lextacular
   group Token do
+    match_result_basics Token
+
     content     = 'here is some text'
     empty_token = Token.new
     token       = Token.new(content)
@@ -44,33 +47,6 @@ module Lextacular
       end
     end
 
-    group '#==' do
-      group 'returns true if self or a Token with the same content' do
-        assert { token == token }
-        assert { token == Token.new(content) }
-      end
-
-      group 'returns false if given anything else' do
-        assert { token != Token.new('something else') }
-        assert { token != content }
-      end
-    end
-
-    assert 'can not have its content splatted' do
-      [*token] == [token]
-    end
-
-    group '#name' do
-      assert 'defaults to nil' do
-        Token.new.name.nil?
-      end
-
-      assert 'uses value giving at init' do
-        name = :erica
-        Token.new(name: name).name == name
-      end
-    end
-
     group '#without_temps' do
       assert 'returns self when temp is not set' do
         token = Token.new
@@ -86,6 +62,10 @@ module Lextacular
         token = Token.new(temp: false)
         token.without_temps == token
       end
+    end
+
+    assert 'can not have its content splatted' do
+      [*token] == [token]
     end
   end
 end

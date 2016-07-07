@@ -10,7 +10,7 @@ module Lextacular
   class Expression
     include Enumerable
 
-    attr_reader :children, :name
+    attr_reader :children, :name, :temp
 
     def initialize *children, name: nil, temp: nil
       @children = children
@@ -56,10 +56,6 @@ module Lextacular
     end
 
     undef_method :to_a rescue NameError
-
-    protected
-
-    attr_reader :temp
   end
 
   # An Expression that can be splatted into other nodes
