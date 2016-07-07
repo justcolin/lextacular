@@ -7,6 +7,7 @@
 
 require_relative './token'
 require_relative './expression'
+require_relative './match_wrapper'
 require_relative './build'
 
 module Lextacular
@@ -27,97 +28,68 @@ module Lextacular
       end
     end
 
-    def self.def_helper_method name, use
+    def rule **new_rules, &defs
+      new_rules.each do |name, pattern|
+                 @rules[name] = translate(pattern, defs).rename(name)
+               end
+               .keys
+    end
+
+    def self.def_helper name, use:, result:, temp: false
       define_method name do |*pattern|
-        Build.matcher_return(
-          SplatExpression,
+        MatchWrapper.new(
+          result,
           Build.send(
             use,
-            *Build.delay_pattern(pattern, @rules)
+            *pattern.map { |part| translate(part) }
           ),
-          name: name
+          temp: temp
         )
       end
     end
 
-    def_helper_method :maybe,  :maybe_matcher
-    def_helper_method :repeat, :repeat_matcher
-    def_helper_method :either, :either_matcher
+    def_helper :maybe,
+               use:    :maybe_matcher,
+               result: SplatExpression
 
-    def self.def_rule_method method_name, result:, use:, temp: false
-      define_method method_name do |**rules, &class_def|
-        result = class_def ? Class.new(result, &class_def) : result
+    def_helper :repeat,
+               use:    :repeat_matcher,
+               result: SplatExpression
 
-        rules.each do |name, pattern|
-          @rules[name] = Build.matcher_return(
-                           result,
-                           Build.send(
-                             use,
-                             *Build.delay_pattern(pattern, @rules)
-                           ),
-                           temp: temp,
-                           name: name
-                         )
-        end
+    def_helper :either,
+               use:    :either_matcher,
+               result: SplatExpression
 
-        self
+    def_helper :splat,
+               use:    :pattern_matcher,
+               result: SplatExpression
+
+    def_helper :temp,
+               use:    :pattern_matcher,
+               result: Expression,
+               temp:   true
+
+    def_helper :isnt,
+               use:    :inverse_matcher,
+               result: Token
+
+    private
+
+    def translate item, defs = nil
+      case item
+      when Symbol
+        proc { |*args| @rules.fetch(item).call(*args) }
+      when Array
+        MatchWrapper.new(
+          Expression,
+          Build.pattern_matcher(*item.map { |part| translate(part) }),
+          defs: defs
+        )
+      when Regexp
+        MatchWrapper.new(Token, Build.regexp_matcher(item), defs: defs)
+      else
+        item
       end
     end
-
-    def_rule_method :token,
-                    result: Token,
-                    use:    :regexp_matcher
-
-    def_rule_method :not_token,
-                    result: Token,
-                    use:    :inverse_matcher
-
-    def_rule_method :temp_token,
-                    result: Token,
-                    use:    :regexp_matcher,
-                    temp:   true
-
-    def_rule_method :expr,
-                    result: Expression,
-                    use:    :pattern_matcher
-
-    def_rule_method :temp_expr,
-                    result: Expression,
-                    use:    :pattern_matcher,
-                    temp:   true
-
-    def_rule_method :splat_expr,
-                    result: SplatExpression,
-                    use:    :pattern_matcher
   end
 end
-
-s_expr_parser = Lextacular::Parser.new do
-  expr start: [:s_expr]
-
-  expr(s_expr: [:open, :inner_s_expr, :close]) do
-    def to_s
-      "[" + @children.join(' ') + "]"
-    end
-  end
-
-  not_token(atom: either(:space, :open, :close)) do
-    def to_s
-      ":" + @content
-    end
-  end
-
-  splat_expr inner_s_expr: repeat(:space?, either(:atom, :s_expr), :space?)
-  temp_expr  space?:       maybe(:space)
-  temp_token space:        /\s+/,
-             open:         /\(/,
-             close:        /\)/
-end
-
-require 'pp'
-
-simple    = '(fizz)'
-example   = '((hello world) and (fizz buzz))'
-converted = '[[:hello :world] :and [:fizz :buzz]]'
-
-pp s_expr_parser.parse(example).to_s == converted
