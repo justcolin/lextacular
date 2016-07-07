@@ -6,5 +6,16 @@
 # (located in root directory of this project) for details.
 
 module Lextacular
-  Mismatch = Struct.new(:content, :index)
+  class Mismatch < StandardError
+    attr_reader :content, :index
+
+    def initialize(content = nil, index = nil)
+      @content = content
+      @index   = index
+    end
+
+    def message
+      "match not found at this index: #{@index}"
+    end
+  end
 end
