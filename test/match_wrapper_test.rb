@@ -18,39 +18,51 @@ module Lextacular
       matcher = proc {}
       name    = :a
       temp    = true
+      defs    = proc {}
+      example = MatchWrapper.new(wrapper, matcher, name: name, temp: temp, defs: defs)
 
       group 'returns true when given values are the same' do
         assert do
-          MatchWrapper.new(wrapper, matcher, name: name, temp: temp) ==
-          MatchWrapper.new(wrapper, matcher, name: name, temp: temp)
+          example == MatchWrapper.new(wrapper, matcher, name: name, temp: temp, defs: defs)
         end
       end
 
       group 'returns false when any value is changed' do
-        assert do
-          MatchWrapper.new(wrapper, matcher, name: name, temp: temp) !=
-          MatchWrapper.new(nil,     matcher, name: name, temp: temp)
+        assert 'class' do
+          example != MatchWrapper.new(MockArray, matcher, name: name, temp: temp, defs: defs)
         end
 
-        assert do
-          MatchWrapper.new(wrapper, matcher, name: name, temp: temp) !=
-          MatchWrapper.new(wrapper, nil,     name: name, temp: temp)
+        assert 'matcher' do
+          example != MatchWrapper.new(wrapper, nil, name: name, temp: temp, defs: defs)
         end
 
-        assert do
-          MatchWrapper.new(wrapper, matcher, name: name, temp: temp) !=
-          MatchWrapper.new(wrapper, matcher, name: nil,  temp: temp)
+        assert 'name' do
+          example != MatchWrapper.new(wrapper, matcher, name: nil, temp: temp, defs: defs)
         end
 
-        assert do
-          MatchWrapper.new(wrapper, matcher, name: name, temp: temp) !=
-          MatchWrapper.new(wrapper, matcher, name: name, temp: nil)
+        assert 'temp' do
+          example != MatchWrapper.new(wrapper, matcher, name: name, temp: nil, defs: defs)
+        end
+
+        assert 'defs' do
+          example != MatchWrapper.new(wrapper, matcher, name: name, temp: temp, defs: nil)
         end
       end
     end
 
     group '#rename' do
-      original = MatchWrapper.new(MockResult, proc { "stuff" }, name: :Abe, temp: true)
+      original = MatchWrapper.new(
+                   MockResult,
+                   proc { "stuff" },
+                   name: :Abe,
+                   temp: true,
+                   defs: proc do
+                     def returns_stuff
+                       :stuff
+                     end
+                   end
+                 )
+
       new_name = :Lincoln
       renamed  = original.rename(new_name)
 
@@ -62,12 +74,16 @@ module Lextacular
         !renamed.equal?(original)
       end
 
+      assert 'passes the class extensions given on init' do
+        renamed.call('').returns_stuff == :stuff
+      end
+
       assert 'returns the same result, but with a new name' do
         renamed_result  = renamed.call('')
         original_result = original.call('')
 
-        assert { renamed_result.content         == original_result.content }
-        assert { renamed_result.class           == original_result.class }
+        assert { renamed_result.is_a?(MockResult) && original_result.is_a?(MockResult)
+        assert { renamed_result.content         == original_result.content }}
         assert { renamed_result.metadata[:name] == new_name }
         assert { renamed_result.metadata[:temp] == original_result.metadata[:temp] }
       end

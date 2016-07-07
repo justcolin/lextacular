@@ -9,15 +9,25 @@ require_relative './mismatch'
 
 module Lextacular
   class MatchWrapper
+    attr_reader :given_class, :wrap_class, :matcher, :name, :temp, :defs
+
     def initialize wrap_class, matcher, name: nil, temp: nil, defs: nil
-      @wrap_class = defs ? Class.new(wrap_class, &defs) : wrap_class
-      @matcher    = matcher
-      @name       = name
-      @temp       = temp
+      @given_class = wrap_class
+      @wrap_class  = defs ? Class.new(wrap_class, &defs) : wrap_class
+      @matcher     = matcher
+      @name        = name
+      @temp        = temp
+      @defs        = defs
     end
 
     def rename new_name
-      self.class.new(@wrap_class, @matcher, name: new_name, temp: @temp)
+      self.class.new(
+        @given_class,
+        @matcher,
+        name: new_name,
+        temp: @temp,
+        defs: defs
+      )
     end
 
     def call string, index = 0
@@ -33,15 +43,12 @@ module Lextacular
     end
 
     def == other
-      other.is_a?(MatchWrapper)       &&
-      other.wrap_class == @wrap_class &&
-      other.matcher    == @matcher    &&
-      other.name       == @name       &&
-      other.temp       == @temp
+      other.is_a?(MatchWrapper)         &&
+      other.given_class == @given_class &&
+      other.matcher     == @matcher     &&
+      other.name        == @name        &&
+      other.temp        == @temp        &&
+      other.defs        == @defs
     end
-
-    protected
-
-    attr_reader :wrap_class, :matcher, :name, :temp
   end
 end
