@@ -8,7 +8,7 @@
 require_relative './each_works'
 require_relative './match_result_basics'
 
-def expression_like klass
+def expression_basics klass
   group klass do
     match_result_basics klass
 

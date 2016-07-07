@@ -9,7 +9,7 @@ require 'tet'
 require_relative '../match_wrapper'
 require_relative './helpers/mock_result.rb'
 require_relative './helpers/mock_temp.rb'
-require_relative './helpers/arrayable.rb'
+require_relative './helpers/mock_array.rb'
 
 module Lextacular
   group MatchWrapper do
@@ -121,7 +121,7 @@ module Lextacular
         end
 
         assert 'result of the matcher is splatted into the result' do
-          result = Arrayable.new(1, 2, 3)
+          result = MockArray.new(1, 2, 3)
 
           MatchWrapper.new(MockResult, proc { result })
                       .call('')

@@ -5,7 +5,7 @@
 # terms of the three-clause BSD license. See LICENSE.txt
 # (located in root directory of this project) for details.
 
-class Arrayable
+class MockArray
   def initialize *content
     @content = content
   end

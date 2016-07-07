@@ -6,14 +6,14 @@
 # (located in root directory of this project) for details.
 
 require 'tet'
-require_relative '../helpers/pattern_matcher_like'
+require_relative '../helpers/pattern_matcher_basics'
 require_relative '../../build'
 require_relative '../../mismatch'
 
 module Lextacular
   module Build
     group '.maybe_matcher' do
-      pattern_matcher_like method(:maybe_matcher)
+      pattern_matcher_basics method(:maybe_matcher)
 
       group 'return empty array if any of the child patterns return falsy' do
         yes = proc { 'truthy' }

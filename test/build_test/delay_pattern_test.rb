@@ -7,7 +7,7 @@
 
 require 'tet'
 require_relative '../../build'
-require_relative '../helpers/arrayable'
+require_relative '../helpers/mock_array'
 
 module Lextacular
   module Build
@@ -20,7 +20,7 @@ module Lextacular
       end
 
       assert 'works for objects which can be turned into arrays' do
-        initial = Arrayable.new(1, 2, 3)
+        initial = MockArray.new(1, 2, 3)
         result  = delay_pattern(initial, {})
 
         initial.to_a.zip(result).all? { |pair| pair.first == pair.last }
