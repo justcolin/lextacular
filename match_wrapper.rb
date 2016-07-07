@@ -9,8 +9,8 @@ require_relative './mismatch'
 
 module Lextacular
   class MatchWrapper
-    def initialize wrap_class, matcher, name: nil, temp: nil
-      @wrap_class = wrap_class
+    def initialize wrap_class, matcher, name: nil, temp: nil, defs: nil
+      @wrap_class = defs ? Class.new(wrap_class, &defs) : wrap_class
       @matcher    = matcher
       @name       = name
       @temp       = temp

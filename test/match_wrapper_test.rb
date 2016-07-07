@@ -148,6 +148,25 @@ module Lextacular
             end
           end
         end
+
+        given_class = MockResult
+        wrapper     = MatchWrapper.new(
+                        MockResult,
+                        proc { true },
+                        defs: proc do
+                          def returns_something
+                            :something
+                          end
+                        end
+                      )
+
+        assert 'extends result class if defs given' do
+          wrapper.call('').returns_something == :something
+        end
+
+        assert 'extension only applies inside the MatchWrapper' do
+          !given_class.method_defined?(:returns_something)
+        end
       end
 
       group 'if the matcher returns falsy' do
