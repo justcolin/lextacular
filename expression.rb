@@ -5,10 +5,13 @@
 # terms of the three-clause BSD license. See LICENSE.txt
 # (located in root directory of this project) for details.
 
+require_relative './falsy'
+
 module Lextacular
   # Wrapper around multiple ordered Tokens and Expression
   class Expression
     include Enumerable
+    include Falsy
 
     attr_reader :children, :name, :temp
 
@@ -31,10 +34,10 @@ module Lextacular
     end
 
     def == other
-      other.is_a?(self.class)     &&
+      other.is_a?(self.class) &&
       other.children == @children &&
-      other.temp     == @temp     &&
-      other.name     == @name
+      falsy_or_equal?(other.temp,     @temp) &&
+      falsy_or_equal?(other.name,     @name)
     end
 
     def each &block

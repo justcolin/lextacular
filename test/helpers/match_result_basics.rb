@@ -13,9 +13,19 @@ def match_result_basics klass
         token == token
       end
 
-      assert 'if given a token with the same content' do
+      assert 'if given a #{klass} with the same content' do
         content = 'here is some content'
         klass.new(content) == klass.new(content)
+      end
+
+      group 'treats nil and false as the same' do
+        assert 'for name' do
+          klass.new('', name: nil) == klass.new('', name: false)
+        end
+
+        assert 'for temp' do
+          klass.new('', temp: nil) == klass.new('', temp: false)
+        end
       end
     end
 

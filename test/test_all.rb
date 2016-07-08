@@ -6,6 +6,7 @@
 # (located in root directory of this project) for details.
 
 require 'tet'
+require_relative './falsy_test'
 require_relative './token_test'
 require_relative './expression_test'
 require_relative './mismatch_test'

@@ -3,11 +3,15 @@
 #
 # This software may be modified and distributed under the
 # terms of the three-clause BSD license. See LICENSE.txt
-# (located in root directory of this project) for details.
+# (located in root directory of this project) for details
+
+require_relative './falsy'
 
 module Lextacular
   # A leaf in the abstract syntax tree
   class Token
+    include Falsy
+
     attr_reader :content, :name, :temp
 
     def initialize content = '', name: nil, temp: nil
@@ -30,9 +34,9 @@ module Lextacular
 
     def == other
       other.is_a?(self.class) &&
-      other.to_s == @content  &&
-      other.name == @name     &&
-      other.temp == @temp
+      other.content == @content &&
+      falsy_or_equal?(other.name, @name) &&
+      falsy_or_equal?(other.temp, @temp)
     end
 
     def without_temps

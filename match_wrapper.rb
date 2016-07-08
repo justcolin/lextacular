@@ -6,9 +6,12 @@
 # (located in root directory of this project) for details.
 
 require_relative './mismatch'
+require_relative './falsy'
 
 module Lextacular
   class MatchWrapper
+    include Falsy
+
     attr_reader :given_class, :wrap_class, :matcher, :name, :temp, :defs
 
     def initialize wrap_class, matcher, name: nil, temp: nil, defs: nil
@@ -43,12 +46,12 @@ module Lextacular
     end
 
     def == other
-      other.is_a?(MatchWrapper)         &&
-      other.given_class == @given_class &&
-      other.matcher     == @matcher     &&
-      other.name        == @name        &&
-      other.temp        == @temp        &&
-      other.defs        == @defs
+      other.is_a?(MatchWrapper) &&
+      falsy_or_equal?(other.given_class, @given_class) &&
+      falsy_or_equal?(other.matcher,     @matcher) &&
+      falsy_or_equal?(other.name,        @name) &&
+      falsy_or_equal?(other.temp,        @temp) &&
+      falsy_or_equal?(other.defs,        @defs)
     end
   end
 end

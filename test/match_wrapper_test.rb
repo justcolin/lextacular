@@ -7,6 +7,7 @@
 
 require 'tet'
 require_relative '../match_wrapper'
+require_relative './helpers/with_falsy.rb'
 require_relative './helpers/mock_result.rb'
 require_relative './helpers/mock_temp.rb'
 require_relative './helpers/mock_array.rb'
@@ -24,6 +25,25 @@ module Lextacular
       group 'returns true when given values are the same' do
         assert do
           example == MatchWrapper.new(wrapper, matcher, name: name, temp: temp, defs: defs)
+        end
+
+        group 'treats nil and false as the same' do
+          with_falsy do |falsy|
+            assert 'name' do
+              MatchWrapper.new(wrapper, matcher, name: falsy, temp: temp, defs: defs) ==
+              MatchWrapper.new(wrapper, matcher, name: falsy, temp: temp, defs: defs)
+            end
+
+            assert 'temp' do
+              MatchWrapper.new(wrapper, matcher, name: name, temp: falsy, defs: defs) ==
+              MatchWrapper.new(wrapper, matcher, name: name, temp: falsy, defs: defs)
+            end
+
+            assert 'defs' do
+              MatchWrapper.new(wrapper, matcher, name: name, temp: temp, defs: falsy) ==
+              MatchWrapper.new(wrapper, matcher, name: name, temp: temp, defs: falsy)
+            end
+          end
         end
       end
 
