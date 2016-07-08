@@ -21,11 +21,15 @@ module Lextacular
     def parse string
       result = @rules.fetch(:start).call(string)
 
-      if Build.match?(result) && result.size == string.size
-        result.without_temps
-      else
-        raise result
+      if Build.match?(result)
+        if result.size == string.size
+          return result.without_temps
+        else
+          result = Mismatch.new(string, result.size)
+        end
       end
+
+      raise result
     end
 
     def rule **new_rules, &defs
