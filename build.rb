@@ -101,24 +101,6 @@ module Lextacular
       end
     end
 
-    def stored_proc name, hash
-      proc { |*args| hash.fetch(name).call(*args) }
-    end
-
-    def delay_pattern pattern, hash
-      if pattern.respond_to?(:to_a)
-        pattern.to_a.map do |part|
-          if part.is_a?(Symbol)
-            stored_proc(part, hash)
-          else
-            part
-          end
-        end
-      else
-        pattern
-      end
-    end
-
     def match? found
       found && !found.is_a?(Mismatch)
     end
