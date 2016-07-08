@@ -18,7 +18,7 @@ module Lextacular
         group 'one of the matchers returns' do
           with_falsy_and_mismatch do |result|
             assert do
-              inverse_matcher(proc { result })
+              inverse_matcher(regexp_matcher(/sk/), proc { result })
                              .call(example) == example
             end
           end
