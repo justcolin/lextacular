@@ -8,6 +8,7 @@
 require_relative './token'
 require_relative './expression'
 require_relative './match_wrapper'
+require_relative './future_wrapper'
 require_relative './build'
 
 module Lextacular
@@ -82,7 +83,7 @@ module Lextacular
     def translate item, defs = nil
       case item
       when Symbol
-        proc { |*args| @rules.fetch(item).call(*args) }
+        FutureWrapper.new(item, @rules, defs: defs)
       when Array
         MatchWrapper.new(
           Expression,
