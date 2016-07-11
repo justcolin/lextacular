@@ -9,11 +9,15 @@ require_relative './mismatch'
 require_relative './falsy'
 
 module Lextacular
+  # Wraps the output of a matcher whenever it is called.
   class MatchWrapper
     include Falsy
 
     attr_reader :given_class, :wrap_class, :matcher, :name, :temp, :defs
 
+    # Takes the return class, matcher and optionally takes a name for the
+    # output, whether or not it should be marked as temporary, and a Proc to
+    # extend the given class with.
     def initialize wrap_class, matcher, name: nil, temp: nil, defs: nil
       @given_class = wrap_class
       @wrap_class  = defs ? Class.new(wrap_class, &defs) : wrap_class
@@ -23,6 +27,7 @@ module Lextacular
       @defs        = defs
     end
 
+    # Create a new MatchWrapper with all the same values but change the name.
     def rename new_name
       self.class.new(
         @given_class,
@@ -33,6 +38,8 @@ module Lextacular
       )
     end
 
+    # Call the matcher. If there is a match, return an instance of the given
+    # class. If is no match, make sure a Mismatch is returned.
     def call string, index = 0
       found = @matcher.call(string, index)
 

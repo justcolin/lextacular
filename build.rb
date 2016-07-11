@@ -12,6 +12,7 @@ module Lextacular
   module Build
     module_function
 
+    # Create a matcher Proc which tries to match a regular expression.
     def regexp_matcher regexp
       lambda do |string, index = 0|
         found  = regexp.match(string, index)
@@ -21,6 +22,7 @@ module Lextacular
       end
     end
 
+    # Create a matcher Proc which tries to match a series of matchers.
     def pattern_matcher *pattern
       lambda do |string, index = 0|
         result = pattern.inject([]) do |memo, part|
@@ -38,6 +40,8 @@ module Lextacular
       end
     end
 
+    # Same as a pattern_matcher, but returns a valid/empty result if the pattern
+    # does not match.
     def maybe_matcher *pattern
       submatcher = pattern_matcher(*pattern)
 
@@ -52,23 +56,22 @@ module Lextacular
       end
     end
 
+    # Create a matcher Proc which returns the result of the first matcher in the
+    # pattern which returns a valid match.
     def either_matcher *pattern
       lambda do |string, index = 0|
         pattern.each do |matcher|
           found = matcher.call(string, index)
 
-          # should this just use #match? instead?
-          if nonempty_match? found
-            return found
-          else
-            # Gather info on possible mismatches, maybe change #each to #inject
-          end
+          return found if nonempty_match? found
         end
 
         nil
       end
     end
 
+    # Create a matcher Proc that runs over and over again until a matcher in the
+    # pattern does not match.
     def repeat_matcher *pattern
       submatcher = MatchWrapper.new(SplatExpression, pattern_matcher(*pattern))
 
@@ -84,6 +87,8 @@ module Lextacular
       end
     end
 
+    # Create a matcher proc which walks across the string until it finds a point
+    # where the given pattern matches.
     def inverse_matcher *pattern
       submatcher = pattern_matcher(*pattern)
 

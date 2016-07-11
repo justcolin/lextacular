@@ -9,6 +9,7 @@ module Lextacular
   module Falsy
     private
 
+    # Check that two objects are either equal or are both falsy.
     def falsy_or_equal? first, second
       (!first && !second) || first == second
     end

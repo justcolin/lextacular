@@ -12,13 +12,21 @@ require_relative './future_wrapper'
 require_relative './build'
 
 module Lextacular
+  # A little sugar to make creating parsers more pleasant.
+  def self.parser &block
+    Parser.new(&block)
+  end
+
+  # A class that composes the rest of Lextacular into an easy to use interface.
   class Parser
+    # Create a new parser and sets all the rules via the given block.
     def initialize &rule_defs
       @rules = {}
 
       instance_eval &rule_defs
     end
 
+    # Parse the given string, raising an error if no match is found.
     def parse string
       result = @rules.fetch(:start).call(string)
 
@@ -33,6 +41,9 @@ module Lextacular
       raise result
     end
 
+    private
+
+    # Create new rules using the given patterns or names.
     def rule **new_rules, &defs
       new_rules.each do |name, pattern|
                  @rules[name] = translate(pattern, defs).rename(name)
@@ -40,6 +51,25 @@ module Lextacular
                .keys
     end
 
+    # Translate the given pattern into a valid matcher.
+    def translate item, defs = nil
+      case item
+      when Symbol
+        FutureWrapper.new(item, @rules, defs: defs)
+      when Array
+        MatchWrapper.new(
+          Expression,
+          Build.pattern_matcher(*item.map { |part| translate(part) }),
+          defs: defs
+        )
+      when Regexp
+        MatchWrapper.new(Token, Build.regexp_matcher(item), defs: defs)
+      else
+        item
+      end
+    end
+
+    # Defines a helper method which creates a special matcher.
     def self.def_helper name, use:, result:, temp: false
       define_method name do |*pattern|
         MatchWrapper.new(
@@ -52,6 +82,8 @@ module Lextacular
         )
       end
     end
+
+    # Create all the helper methods.
 
     def_helper :maybe,
                use:    :maybe_matcher,
@@ -77,24 +109,5 @@ module Lextacular
     def_helper :isnt,
                use:    :inverse_matcher,
                result: Token
-
-    private
-
-    def translate item, defs = nil
-      case item
-      when Symbol
-        FutureWrapper.new(item, @rules, defs: defs)
-      when Array
-        MatchWrapper.new(
-          Expression,
-          Build.pattern_matcher(*item.map { |part| translate(part) }),
-          defs: defs
-        )
-      when Regexp
-        MatchWrapper.new(Token, Build.regexp_matcher(item), defs: defs)
-      else
-        item
-      end
-    end
   end
 end

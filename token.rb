@@ -8,7 +8,7 @@
 require_relative './falsy'
 
 module Lextacular
-  # A leaf in the abstract syntax tree
+  # Wrapper around a string which was matched. Acts as a leaf in the parse tree.
   class Token
     include Falsy
 
@@ -39,6 +39,7 @@ module Lextacular
       falsy_or_equal?(other.temp, @temp)
     end
 
+    # Returns nil if this Token is marked as temporary, else returns self.
     def without_temps
       self unless @temp
     end

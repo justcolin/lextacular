@@ -8,10 +8,12 @@
 require_relative './falsy'
 
 module Lextacular
-  # Wrapper around multiple ordered Tokens and Expression
+  # Wrapper around multiple ordered Tokens and Expressions
   class Expression
     include Enumerable
     include Falsy
+
+    undef_method :to_a rescue NameError
 
     attr_reader :children, :name, :temp
 
@@ -48,6 +50,8 @@ module Lextacular
       self
     end
 
+    # Return a new Expression, removing all children marked as temporary. Return
+    # nil if this Expression is marked as temporary.
     def without_temps
       unless @temp
         self.class.new(
@@ -57,11 +61,9 @@ module Lextacular
         )
       end
     end
-
-    undef_method :to_a rescue NameError
   end
 
-  # An Expression that can be splatted into other nodes
+  # An Expression that can be splatted.
   class SplatExpression < Expression
     def to_a
       @children

@@ -6,6 +6,7 @@
 # (located in root directory of this project) for details.
 
 module Lextacular
+  # Error raised when a mismatch occurs
   class Mismatch < StandardError
     attr_reader :content, :index
 
