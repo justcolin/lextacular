@@ -45,13 +45,14 @@ module Lextacular
       end
     end
 
+    # MatchWrappers are equal if all their instance variables are the same.
     def == other
       other.is_a?(MatchWrapper) &&
-      falsy_or_equal?(other.given_class, @given_class) &&
-      falsy_or_equal?(other.matcher,     @matcher) &&
-      falsy_or_equal?(other.name,        @name) &&
-      falsy_or_equal?(other.temp,        @temp) &&
-      falsy_or_equal?(other.defs,        @defs)
+      other.given_class == @given_class &&
+      other.matcher == @matcher &&
+      falsy_or_equal?(other.name, @name) &&
+      falsy_or_equal?(other.temp, @temp) &&
+      falsy_or_equal?(other.defs, @defs)
     end
   end
 end
