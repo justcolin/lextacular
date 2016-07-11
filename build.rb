@@ -15,28 +15,28 @@ module Lextacular
     # Create a matcher Proc which tries to match a regular expression.
     def regexp_matcher regexp
       lambda do |string, index = 0|
-        found  = regexp.match(string, index)
-        string = found.to_s
+        found         = regexp.match(string, index)
+        result_string = found.to_s
 
-        string if found && found.begin(0) == index && !string.empty?
+        result_string if found &&
+                         found.begin(0) == index &&
+                         !result_string.empty?
       end
     end
 
     # Create a matcher Proc which tries to match a series of matchers.
     def pattern_matcher *pattern
       lambda do |string, index = 0|
-        result = pattern.inject([]) do |memo, part|
-                   found = part.call(string, index)
+        pattern.inject([]) do |memo, part|
+          found = part.call(string, index)
 
-                   if match? found
-                     index += found.size
-                     memo.push(*found)
-                   else
-                     return found
-                   end
-                 end
-
-        result
+          if match? found
+            index += found.size
+            memo.push(*found)
+          else
+            return found
+          end
+        end
       end
     end
 
@@ -48,11 +48,7 @@ module Lextacular
       lambda do |string, index = 0|
         found = submatcher.call(string, index)
 
-        if match? found
-          found
-        else
-          []
-        end
+        match?(found) ? found : []
       end
     end
 
@@ -96,13 +92,10 @@ module Lextacular
         starting_index = index
         size           = string.size
 
-        while index < size && !nonempty_match?(submatcher.call(string, index))
-          index += 1
-        end
+        index += 1 while index < size &&
+                         !nonempty_match?(submatcher.call(string, index))
 
-        unless starting_index == index
-          string[starting_index..(index-1)]
-        end
+        string[starting_index..(index-1)] unless starting_index == index
       end
     end
 
