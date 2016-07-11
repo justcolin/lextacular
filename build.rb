@@ -63,7 +63,7 @@ module Lextacular
         pattern.each do |matcher|
           found = matcher.call(string, index)
 
-          return found if nonempty_match? found
+          return found if match? found
         end
 
         nil

@@ -12,10 +12,8 @@ require_relative '../../mismatch'
 module Lextacular
   module Build
     group '.either_matcher' do
-      assert 'returns falsy if all children return falsy, #empty? matches or Mismatches' do
+      assert 'returns falsy if all children return falsy or Mismatches' do
         !either_matcher(
-          proc { '' },
-          proc { [] },
           proc { nil },
           proc { false },
           proc { Mismatch.new }
