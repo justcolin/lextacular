@@ -36,8 +36,8 @@ module Lextacular
     def == other
       other.is_a?(self.class) &&
       other.children == @children &&
-      falsy_or_equal?(other.temp,     @temp) &&
-      falsy_or_equal?(other.name,     @name)
+      falsy_or_equal?(other.temp, @temp) &&
+      falsy_or_equal?(other.name, @name)
     end
 
     def each &block
