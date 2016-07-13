@@ -24,13 +24,13 @@ module Lextacular
     end
 
     # Fetch the matcher, call it, then extend the result.
-    def call *args, counts: {}
+    def call string, index = 0, counts: {}
       unless @matcher
         @matcher = @hash.fetch(@key)
         @matcher = @matcher.rename(@new_name) if @new_name
       end
 
-      @matcher.call(*args, counts: counts)
+      @matcher.call(string, index, counts: counts)
               .tap do |result|
                 result.singleton_class.class_eval(&@defs) if @defs
               end

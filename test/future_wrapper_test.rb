@@ -17,7 +17,7 @@ module Lextacular
         was_called = false
         hash       = { example: proc { was_called = true } }
 
-        FutureWrapper.new(:example, hash).call
+        FutureWrapper.new(:example, hash).call('')
 
         was_called
       end
@@ -26,7 +26,7 @@ module Lextacular
         result = 'fluffle bumble'
         hash   = { the_name: proc { result } }
 
-        FutureWrapper.new(:the_name, hash).call == result
+        FutureWrapper.new(:the_name, hash).call('') == result
       end
 
       assert 'stored matcher can be added after creating the stored_proc' do
@@ -36,36 +36,41 @@ module Lextacular
         was_called   = false
         hash[:sally] = proc { was_called = true }
 
-        stored.call
+        stored.call('')
 
         was_called
       end
 
       assert 'passes arguments to the stored matcher' do
-        given_args  = [1, 'two', :iii]
-        counts_hash = { y: :not? }
+        name         = :funky_func
+        given_string = 'nope nope nope'
+        given_index  = 88
+        given_hash   = { y: :not? }
 
-        result_args = nil
-        result_hash = nil
+        result_string = nil
+        result_index  = nil
+        result_hash   = nil
 
         hash = {
-                 funky_func: proc do |*args, counts:|
-                   result_args = args
-                   result_hash = counts
+                 name => proc do |string, index, counts:|
+                   result_string = string
+                   result_index  = index
+                   result_hash   = counts
                  end
                }
 
-        FutureWrapper.new(:funky_func, hash)
-                     .call(*given_args, counts: counts_hash)
+        FutureWrapper.new(name, hash)
+                     .call(given_string, given_index, counts: given_hash)
 
-        assert { result_args == given_args }
-        assert { result_hash == counts_hash }
+        assert { result_string == given_string }
+        assert { result_index  == given_index }
+        assert { result_hash   == given_hash }
       end
 
       group 'errs properly if matcher is not defined at call time' do
         stored = FutureWrapper.new(:never_defined, {})
 
-        err(expect: KeyError) { stored.call }
+        err(expect: KeyError) { stored.call('') }
       end
 
       group 'can extend the eigenclass of the result' do
