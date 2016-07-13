@@ -188,23 +188,25 @@ module Lextacular
           end
         end
 
-        given_class = MockResult
-        wrapper     = MatchWrapper.new(
-                        MockResult,
-                        proc { true },
-                        defs: proc do
-                          def returns_something
-                            :something
+        group 'extends result class if defs given' do
+          given_class = MockResult
+          wrapper     = MatchWrapper.new(
+                          MockResult,
+                          proc { true },
+                          defs: proc do
+                            def returns_something
+                              :something
+                            end
                           end
-                        end
-                      )
+                        )
 
-        assert 'extends result class if defs given' do
-          wrapper.call('').returns_something == :something
-        end
+          assert do
+            wrapper.call('').returns_something == :something
+          end
 
-        assert 'extension only applies inside the MatchWrapper' do
-          !given_class.method_defined?(:returns_something)
+          assert 'extension only applies inside the MatchWrapper' do
+            !given_class.method_defined?(:returns_something)
+          end
         end
 
         assert 'updates the counts hash with the length of the match if there is a name' do
