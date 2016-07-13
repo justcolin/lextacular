@@ -171,7 +171,7 @@ module Lextacular
           [:name, :temp].each do |key|
             group key do
               assert 'defaults to nil' do
-                MatchWrapper.new(MockResult, proc { true })
+                MatchWrapper.new(MockResult, proc { 'a match' })
                               .call('')
                               .metadata[key].nil?
               end
@@ -180,7 +180,7 @@ module Lextacular
                 value     = :gretta
                 init_hash = { key => value }
 
-                MatchWrapper.new(MockResult, proc { true }, **init_hash)
+                MatchWrapper.new(MockResult, proc { 'a match' }, **init_hash)
                             .call('')
                             .metadata[key] == value
               end
@@ -205,6 +205,17 @@ module Lextacular
 
         assert 'extension only applies inside the MatchWrapper' do
           !given_class.method_defined?(:returns_something)
+        end
+
+        assert 'updates the counts hash with the length of the match if there is a name' do
+          counts_hash = {}
+          result      = 'flabble-d-doop'
+          name        = :hey_hey_hey
+
+          MatchWrapper.new(MockResult, proc { result }, name: name)
+                      .call('', counts: counts_hash)
+
+          counts_hash[name] == result.size
         end
       end
 

@@ -100,7 +100,7 @@ module Lextacular
                        {
                          example: MatchWrapper.new(
                                     Token,
-                                    proc { true },
+                                    proc { 'truthy' },
                                     name: old_name
                                   )
                        }
