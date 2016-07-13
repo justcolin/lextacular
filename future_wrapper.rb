@@ -11,23 +11,23 @@ module Lextacular
   class FutureWrapper
     # Take a key and hash where the matcher can eventually be fetched, and
     # optionally take a rename value and a Proc to extend the result.
-    def initialize key, hash, defs: nil, new_name: nil
+    def initialize key, hash, defs: nil, name: nil
       @key      = key
       @hash     = hash
       @defs     = defs
-      @new_name = new_name
+      @name = name
     end
 
     # Create a new Future wrapper with all the same values but change the name.
     def rename new_name
-      self.class.new(@key, @hash, defs: @defs, new_name: new_name)
+      self.class.new(@key, @hash, defs: @defs, name: new_name)
     end
 
     # Fetch the matcher, call it, then extend the result.
     def call string, index = 0, counts: {}
       unless @matcher
         @matcher = @hash.fetch(@key)
-        @matcher = @matcher.rename(@new_name) if @new_name
+        @matcher = @matcher.rename(@name) if @name
       end
 
       @matcher.call(string, index, counts: counts)
