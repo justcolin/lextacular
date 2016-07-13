@@ -5,7 +5,6 @@
 # terms of the three-clause BSD license. See LICENSE.txt
 # (located in root directory of this project) for details.
 
-
 require 'tet'
 require_relative '../parser'
 require_relative './helpers/parser_check'

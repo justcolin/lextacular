@@ -42,10 +42,24 @@ module Lextacular
       end
 
       assert 'passes arguments to the stored matcher' do
-        args = [1, 'two', :iii]
-        hash = { funky_func: proc { |*args| args } }
+        given_args  = [1, 'two', :iii]
+        counts_hash = { y: :not? }
 
-        FutureWrapper.new(:funky_func, hash).call(*args) == args
+        result_args = nil
+        result_hash = nil
+
+        hash = {
+                 funky_func: proc do |*args, counts:|
+                   result_args = args
+                   result_hash = counts
+                 end
+               }
+
+        FutureWrapper.new(:funky_func, hash)
+                     .call(*given_args, counts: counts_hash)
+
+        assert { result_args == given_args }
+        assert { result_hash == counts_hash }
       end
 
       group 'errs properly if matcher is not defined at call time' do

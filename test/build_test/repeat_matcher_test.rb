@@ -67,6 +67,40 @@ module Lextacular
         end
       end
 
+      assert 'resets counts hash if any part of the pattern does not match' do
+        original_hash = { x: 1, y: 2 }
+        counts_hash   = original_hash.dup
+
+        repeat_matcher(
+                        proc do |counts:|
+                          counts.clear
+                          'a match'
+                        end,
+                        proc { nil }
+                      )
+                      .call('', counts: counts_hash)
+
+        counts_hash == original_hash
+      end
+
+      assert 'resets the counts hash back to the value from the last full match' do
+        counts_hash  = { iteration: 0 }
+        total_cycles = 4
+
+        repeat_matcher(
+                        proc do |counts:|
+                          counts[:iteration] += 1
+                          'a match'
+                        end,
+                        proc do |counts:|
+                          'a match' unless counts[:iteration] == total_cycles
+                        end
+                      )
+                      .call('', counts: counts_hash)
+
+        counts_hash[:iteration] == total_cycles - 1
+      end
+
       group 'passes string and index into children, incrementing the index along the way' do
         total_cycles = 4
         cycle_count  = 0
@@ -104,7 +138,6 @@ module Lextacular
         result_index = nil
         repeat_matcher(proc { |_, index| result_index = index; nil })
                     .call('')
-
 
         result_index == 0
       end

@@ -51,6 +51,28 @@ module Lextacular
                           .call(example, 7)
         end
       end
+
+      group 'does not effect the counts hash if given one' do
+        matcher  = inverse_matcher(regexp_matcher(/end/))
+        matches  = '___end'
+        no_match = 'end'
+
+        assert 'when there is a match' do
+          counts_hash   = { x: 1, y: 2 }
+          original_hash = counts_hash.dup
+          matcher.call(matches, counts: counts_hash)
+
+          counts_hash == original_hash
+        end
+
+        assert 'when there is no a match' do
+          counts_hash   = { x: 1, y: 2 }
+          original_hash = counts_hash.dup
+          matcher.call(no_match, counts: counts_hash)
+
+          counts_hash == original_hash
+        end
+      end
     end
   end
 end

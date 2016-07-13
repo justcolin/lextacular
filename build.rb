@@ -14,7 +14,7 @@ module Lextacular
 
     # Create a matcher Proc which tries to match a regular expression.
     def regexp_matcher regexp
-      lambda do |string, index = 0|
+      lambda do |string, index = 0, counts: {}|
         found         = regexp.match(string, index)
         result_string = found.to_s
 
@@ -26,14 +26,17 @@ module Lextacular
 
     # Create a matcher Proc which tries to match a series of matchers.
     def pattern_matcher *pattern
-      lambda do |string, index = 0|
+      lambda do |string, index = 0, counts: {}|
+        original_counts = counts.dup
+
         pattern.inject([]) do |memo, part|
-          found = part.call(string, index)
+          found = part.call(string, index, counts: counts)
 
           if match? found
             index += found.size
             memo.push(*found)
           else
+            counts.replace(original_counts)
             return found
           end
         end
@@ -45,8 +48,8 @@ module Lextacular
     def maybe_matcher *pattern
       submatcher = pattern_matcher(*pattern)
 
-      lambda do |string, index = 0|
-        found = submatcher.call(string, index)
+      lambda do |string, index = 0, counts: {}|
+        found = submatcher.call(string, index, counts: counts)
 
         match?(found) ? found : []
       end
@@ -55,11 +58,17 @@ module Lextacular
     # Create a matcher Proc which returns the result of the first matcher in the
     # pattern which returns a valid match.
     def either_matcher *pattern
-      lambda do |string, index = 0|
-        pattern.each do |matcher|
-          found = matcher.call(string, index)
+      lambda do |string, index = 0, counts: {}|
+        original_counts = counts.dup
 
-          return found if match? found
+        pattern.each do |matcher|
+          found = matcher.call(string, index, counts: counts)
+
+          if match? found
+            return found
+          else
+            counts.replace(original_counts)
+          end
         end
 
         nil
@@ -71,14 +80,17 @@ module Lextacular
     def repeat_matcher *pattern
       submatcher = MatchWrapper.new(SplatExpression, pattern_matcher(*pattern))
 
-      lambda do |string, index = 0|
-        result = []
+      lambda do |string, index = 0, counts: {}|
+        result      = []
+        last_counts = counts.dup
 
-        while nonempty_match?(found = submatcher.call(string, index))
+        while nonempty_match?(found = submatcher.call(string, index, counts: counts))
+          last_counts = counts.dup
           index += found.size
           result.push(*found)
         end
 
+        counts.replace(last_counts)
         result unless result.empty?
       end
     end
@@ -88,7 +100,7 @@ module Lextacular
     def inverse_matcher *pattern
       submatcher = pattern_matcher(*pattern)
 
-      lambda do |string, index = 0|
+      lambda do |string, index = 0, counts: {}|
         starting_index = index
         size           = string.size
 

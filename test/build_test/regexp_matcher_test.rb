@@ -11,16 +11,39 @@ require_relative '../../build'
 module Lextacular
   module Build
     group '.regexp_matcher' do
-      assert 'given a matching string, returns match content' do
-        matcher = regexp_matcher(/bubbles/)
+      group 'given a matching string' do
+        matcher   = regexp_matcher(/bubbles/)
+        has_match = 'bubbles are fun'
+        match     = 'bubbles'
 
-        matcher.call('bubbles are fun') == 'bubbles'
+        assert 'returns match content' do
+          matcher.call(has_match) == match
+        end
+
+        assert 'does not effect the counts hash if given one' do
+          counts_hash   = { x: 1, y: 2 }
+          original_hash = counts_hash.dup
+          matcher.call(has_match, counts: counts_hash)
+
+          counts_hash == original_hash
+        end
       end
 
-      assert 'given a non-matching string, returns falsy' do
-        matcher = regexp_matcher(/never found/)
+      group 'given a non-matching string' do
+        matcher  = regexp_matcher(/never found/)
+        no_match = 'something else'
 
-        !matcher.call('something else')
+        assert 'returns falsy' do
+          !matcher.call(no_match)
+        end
+
+        assert 'does not effect the counts hash if given one' do
+          counts_hash = { x: 1, y: 2 }
+          original_hash = counts_hash.dup
+          matcher.call(no_match, counts: counts_hash)
+
+          counts_hash == original_hash
+        end
       end
 
       group 'given a string that matches later' do

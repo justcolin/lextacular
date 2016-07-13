@@ -111,22 +111,25 @@ module Lextacular
 
     group '#call' do
       group 'arguments are passed into the given matcher' do
-        given_index  = 32
-        given_string = 'Sugar Plum Fairy'
-
+        given_index   = 32
+        given_string  = 'Sugar Plum Fairy'
+        given_counts  = { q: :terrible_character }
         result_string = nil
         result_index  = nil
+        result_counts = nil
 
-        pattern_matcher = proc do |string, index|
+        pattern_matcher = proc do |string, index, counts:|
                             result_string = string
                             result_index  = index
+                            result_counts = counts
                           end
 
         MatchWrapper.new(MockResult, pattern_matcher)
-                    .call(given_string, given_index)
+                    .call(given_string, given_index, counts: given_counts)
 
         assert { result_string == given_string }
         assert { result_index  == given_index }
+        assert { result_counts == given_counts }
       end
 
       assert 'index argument defaults to 0' do

@@ -33,6 +33,22 @@ module Lextacular
         assert { either_matcher(no, yes_1, yes_2).call('') == first_match }
       end
 
+      group 'resets the counts hash if there are no matchers' do
+        original_hash = { x:1, y: 2 }
+        counts_hash   = original_hash.dup
+        given_counts  = nil
+        checker       = proc do |counts:|
+                          given_counts = counts
+                          counts.clear
+                          false
+                        end
+
+        either_matcher(checker, checker).call('', counts: counts_hash)
+
+        assert { given_counts == original_hash }
+        assert { counts_hash  == original_hash }
+      end
+
       group 'passes string and index into children' do
         given_index  = 999
         given_string = 'Forsooth!'

@@ -6,6 +6,7 @@
 # (located in root directory of this project) for details.
 
 require 'tet'
+require_relative '../helpers/with_falsy'
 require_relative '../helpers/pattern_matcher_basics'
 require_relative '../../build'
 require_relative '../../mismatch'
@@ -15,13 +16,15 @@ module Lextacular
     group '.pattern_matcher' do
       pattern_matcher_basics method(:pattern_matcher)
 
-      group 'return falsy if any of the child patterns return falsy' do
-        match = proc { 'truthy' }
-        none  = proc { false }
+      group 'return falsy if any of the children return' do
+        with_falsy do |value|
+          match = proc { 'truthy' }
+          none  = proc { value }
 
-        assert { !pattern_matcher(none              ).call('') }
-        assert { !pattern_matcher(match, none       ).call('') }
-        assert { !pattern_matcher(match, none, match).call('') }
+          assert { !pattern_matcher(none              ).call('') }
+          assert { !pattern_matcher(match, none       ).call('') }
+          assert { !pattern_matcher(match, none, match).call('') }
+        end
       end
 
       group 'if any child returns a Mismatch, return that same Mismatch' do
