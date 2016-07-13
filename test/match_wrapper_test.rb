@@ -7,7 +7,6 @@
 
 require 'tet'
 require_relative '../match_wrapper'
-require_relative './helpers/with_falsy.rb'
 require_relative './helpers/mock_result.rb'
 require_relative './helpers/mock_temp.rb'
 require_relative './helpers/mock_array.rb'
@@ -20,52 +19,92 @@ module Lextacular
       name    = :a
       temp    = true
       defs    = proc {}
-      example = MatchWrapper.new(wrapper, matcher, name: name, temp: temp, defs: defs)
+      example = MatchWrapper.new(
+                  wrapper,
+                  matcher,
+                  name: name,
+                  temp: temp,
+                  defs: defs
+                )
 
       group 'returns true when given values are the same' do
         assert do
-          example == MatchWrapper.new(wrapper, matcher, name: name, temp: temp, defs: defs)
+          example == MatchWrapper.new(
+                       wrapper,
+                       matcher,
+                       name: name,
+                       temp: temp,
+                       defs: defs
+                     )
         end
 
         group 'treats nil and false as the same' do
-          with_falsy do |falsy|
-            assert 'name' do
-              MatchWrapper.new(wrapper, matcher, name: falsy, temp: temp, defs: defs) ==
-              MatchWrapper.new(wrapper, matcher, name: falsy, temp: temp, defs: defs)
-            end
+          assert 'name' do
+            MatchWrapper.new(wrapper, matcher, name: false, temp: temp, defs: defs) ==
+            MatchWrapper.new(wrapper, matcher, name: nil,   temp: temp, defs: defs)
+          end
 
-            assert 'temp' do
-              MatchWrapper.new(wrapper, matcher, name: name, temp: falsy, defs: defs) ==
-              MatchWrapper.new(wrapper, matcher, name: name, temp: falsy, defs: defs)
-            end
+          assert 'temp' do
+            MatchWrapper.new(wrapper, matcher, name: name, temp: false, defs: defs) ==
+            MatchWrapper.new(wrapper, matcher, name: name, temp: nil,   defs: defs)
+          end
 
-            assert 'defs' do
-              MatchWrapper.new(wrapper, matcher, name: name, temp: temp, defs: falsy) ==
-              MatchWrapper.new(wrapper, matcher, name: name, temp: temp, defs: falsy)
-            end
+          assert 'defs' do
+            MatchWrapper.new(wrapper, matcher, name: name, temp: temp, defs: false) ==
+            MatchWrapper.new(wrapper, matcher, name: name, temp: temp, defs: nil)
           end
         end
       end
 
       group 'returns false when any value is changed' do
         assert 'class' do
-          example != MatchWrapper.new(MockArray, matcher, name: name, temp: temp, defs: defs)
+          example != MatchWrapper.new(
+                       MockArray,
+                       matcher,
+                       name: name,
+                       temp: temp,
+                       defs: defs
+                     )
         end
 
         assert 'matcher' do
-          example != MatchWrapper.new(wrapper, nil, name: name, temp: temp, defs: defs)
+          example != MatchWrapper.new(
+                       wrapper,
+                       nil,
+                       name: name,
+                       temp: temp,
+                       defs: defs
+                     )
         end
 
         assert 'name' do
-          example != MatchWrapper.new(wrapper, matcher, name: nil, temp: temp, defs: defs)
+          example != MatchWrapper.new(
+                       wrapper,
+                       matcher,
+                       name: nil,
+                       temp: temp,
+                       defs: defs
+                     )
         end
 
         assert 'temp' do
-          example != MatchWrapper.new(wrapper, matcher, name: name, temp: nil, defs: defs)
+          example != MatchWrapper.new(
+                       wrapper,
+                       matcher,
+                       name: name,
+                       temp: nil,
+                       defs: defs
+                     )
         end
 
         assert 'defs' do
-          example != MatchWrapper.new(wrapper, matcher, name: name, temp: temp, defs: nil)
+          example != MatchWrapper.new(
+                       wrapper,
+                       matcher,
+                       name: name,
+                       temp: temp,
+                       defs: nil
+                     )
         end
       end
     end
