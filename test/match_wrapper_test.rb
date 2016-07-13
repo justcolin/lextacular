@@ -77,10 +77,10 @@ module Lextacular
                    name: :Abe,
                    temp: true,
                    defs: proc do
-                     def returns_stuff
-                       :stuff
-                     end
-                   end
+                           def returns_stuff
+                             :stuff
+                           end
+                         end
                  )
 
       new_name = :Lincoln
@@ -194,10 +194,10 @@ module Lextacular
                           MockResult,
                           proc { true },
                           defs: proc do
-                            def returns_something
-                              :something
-                            end
-                          end
+                                  def returns_something
+                                    :something
+                                  end
+                                end
                         )
 
           assert do
