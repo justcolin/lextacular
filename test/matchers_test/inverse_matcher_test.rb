@@ -6,11 +6,11 @@
 # (located in root directory of this project) for details.
 
 require 'tet'
-require_relative '../../build'
+require_relative '../../matchers'
 require_relative '../helpers/with_falsy_and_mismatch'
 
 module Lextacular
-  module Build
+  module Matchers
     group '.inverse_matcher' do
       example = 'skiffle scuffle'
 

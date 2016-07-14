@@ -6,13 +6,13 @@
 # (located in root directory of this project) for details.
 
 require 'tet'
-require_relative '../../build'
+require_relative '../../matchers'
 require_relative '../../expression'
 require_relative '../../mismatch'
 require_relative '../helpers/with_falsy_and_mismatch.rb'
 
 module Lextacular
-  module Build
+  module Matchers
     group '.repeat_matcher' do
       group 'returns falsy if children immediately return...' do
         with_falsy_and_mismatch do |value|

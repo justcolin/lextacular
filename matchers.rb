@@ -9,7 +9,7 @@ require_relative './mismatch'
 require_relative './match_wrapper'
 
 module Lextacular
-  module Build
+  module Matchers
     module_function
 
     # Create a matcher Proc which tries to match a regular expression.

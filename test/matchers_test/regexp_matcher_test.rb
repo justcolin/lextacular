@@ -6,10 +6,10 @@
 # (located in root directory of this project) for details.
 
 require 'tet'
-require_relative '../../build'
+require_relative '../../matchers'
 
 module Lextacular
-  module Build
+  module Matchers
     group '.regexp_matcher' do
       group 'given a matching string' do
         matcher   = regexp_matcher(/bubbles/)

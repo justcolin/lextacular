@@ -6,11 +6,11 @@
 # (located in root directory of this project) for details.
 
 require 'tet'
-require_relative '../../build'
+require_relative '../../matchers'
 require_relative '../../mismatch'
 
 module Lextacular
-  module Build
+  module Matchers
     group '.either_matcher' do
       assert 'returns falsy if all children return falsy or Mismatches' do
         !either_matcher(

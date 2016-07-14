@@ -8,11 +8,11 @@
 require 'tet'
 require_relative '../helpers/with_falsy'
 require_relative '../helpers/pattern_matcher_basics'
-require_relative '../../build'
+require_relative '../../matchers'
 require_relative '../../mismatch'
 
 module Lextacular
-  module Build
+  module Matchers
     group '.pattern_matcher' do
       pattern_matcher_basics method(:pattern_matcher)
 

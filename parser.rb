@@ -9,7 +9,7 @@ require_relative './token'
 require_relative './expression'
 require_relative './match_wrapper'
 require_relative './future_wrapper'
-require_relative './build'
+require_relative './matchers'
 
 module Lextacular
   # A little sugar to make creating parsers more pleasant.
@@ -30,7 +30,7 @@ module Lextacular
     def parse string
       result = @rules.fetch(:start).call(string)
 
-      if Build.match?(result)
+      if Matchers.match?(result)
         if result.size == string.size
           return result.without_temps
         else
@@ -59,11 +59,11 @@ module Lextacular
       when Array
         MatchWrapper.new(
           Expression,
-          Build.pattern_matcher(*item.map { |part| translate(part) }),
+          Matchers.pattern_matcher(*item.map { |part| translate(part) }),
           defs: defs
         )
       when Regexp
-        MatchWrapper.new(Token, Build.regexp_matcher(item), defs: defs)
+        MatchWrapper.new(Token, Matchers.regexp_matcher(item), defs: defs)
       else
         item
       end
@@ -74,7 +74,7 @@ module Lextacular
       define_method name do |*pattern|
         MatchWrapper.new(
           result,
-          Build.send(
+          Matchers.send(
             use,
             *pattern.map { |part| translate(part) }
           ),
