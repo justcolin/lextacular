@@ -7,6 +7,7 @@
 
 require 'tet'
 require_relative '../match_wrapper'
+require_relative './helpers/with_falsy.rb'
 require_relative './helpers/mock_result.rb'
 require_relative './helpers/mock_temp.rb'
 require_relative './helpers/mock_array.rb'
@@ -260,20 +261,22 @@ module Lextacular
         end
       end
 
-      group 'if the matcher returns falsy' do
-        given_index  = 'Snorlax'
-        given_string = 222
+      group 'if the matcher returns' do
+        with_falsy do |falsy|
+          given_index  = 'Snorlax'
+          given_string = 222
 
-        mismatch_result = MatchWrapper.new(MockResult, proc { nil })
-                                      .call(given_string, given_index)
+          mismatch_result = MatchWrapper.new(MockResult, proc { falsy })
+                                        .call(given_string, given_index)
 
-        assert 'returns instance of Mismatch' do
-          mismatch_result.is_a?(Mismatch)
-        end
+          assert 'returns instance of Mismatch' do
+            mismatch_result.is_a?(Mismatch)
+          end
 
-        group 'Mismatch is given the string and index' do
-          assert { mismatch_result.content == given_string }
-          assert { mismatch_result.index   == given_index  }
+          group 'Mismatch is given the string and index' do
+            assert { mismatch_result.content == given_string }
+            assert { mismatch_result.index   == given_index  }
+          end
         end
       end
 
