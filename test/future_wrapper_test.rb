@@ -29,14 +29,14 @@ module Lextacular
         FutureWrapper.new(:the_name, hash).call('') == result
       end
 
-      assert 'stored matcher can be added after creating the stored_proc' do
-        hash   = {}
-        stored = FutureWrapper.new(:sally, hash)
+      assert 'stored matcher can be added after creating the wrapper' do
+        hash    = {}
+        wrapper = FutureWrapper.new(:sally, hash)
 
         was_called   = false
         hash[:sally] = proc { was_called = true }
 
-        stored.call('')
+        wrapper.call('')
 
         was_called
       end
