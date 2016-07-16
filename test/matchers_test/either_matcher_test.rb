@@ -17,7 +17,7 @@ module Lextacular
           proc { nil },
           proc { false },
           proc { Mismatch.new }
-        ).call('')
+        ).call('', counts: {})
       end
 
       group 'returns the first match if any child matches' do
@@ -28,9 +28,9 @@ module Lextacular
         yes_1 = proc { first_match }
         yes_2 = proc { second_match }
 
-        assert { either_matcher(yes_1           ).call('') == first_match }
-        assert { either_matcher(yes_1, yes_2    ).call('') == first_match }
-        assert { either_matcher(no, yes_1, yes_2).call('') == first_match }
+        assert { either_matcher(yes_1           ).call('', counts: {}) == first_match }
+        assert { either_matcher(yes_1, yes_2    ).call('', counts: {}) == first_match }
+        assert { either_matcher(no, yes_1, yes_2).call('', counts: {}) == first_match }
       end
 
       group 'resets the counts hash if there are no matchers' do
@@ -69,7 +69,7 @@ module Lextacular
                     end
                   ]
 
-        either_matcher(*pattern).call(given_string, given_index)
+        either_matcher(*pattern).call(given_string, given_index, counts: {})
 
         assert { result_strings == [given_string, given_string] }
         assert { result_indices == [given_index,  given_index ] }

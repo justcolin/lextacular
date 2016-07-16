@@ -21,9 +21,9 @@ module Lextacular
           match = proc { 'truthy' }
           none  = proc { value }
 
-          assert { !pattern_matcher(none              ).call('') }
-          assert { !pattern_matcher(match, none       ).call('') }
-          assert { !pattern_matcher(match, none, match).call('') }
+          assert { !pattern_matcher(none              ).call('', counts: {}) }
+          assert { !pattern_matcher(match, none       ).call('', counts: {}) }
+          assert { !pattern_matcher(match, none, match).call('', counts: {}) }
         end
       end
 
@@ -32,9 +32,9 @@ module Lextacular
         match    = proc { 'truthy' }
         none     = proc { mismatch }
 
-        assert { pattern_matcher(none              ).call('').equal?(mismatch) }
-        assert { pattern_matcher(match, none       ).call('').equal?(mismatch) }
-        assert { pattern_matcher(match, none, match).call('').equal?(mismatch) }
+        assert { pattern_matcher(none              ).call('', counts: {}).equal?(mismatch) }
+        assert { pattern_matcher(match, none       ).call('', counts: {}).equal?(mismatch) }
+        assert { pattern_matcher(match, none, match).call('', counts: {}).equal?(mismatch) }
       end
     end
   end

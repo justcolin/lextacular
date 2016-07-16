@@ -21,9 +21,9 @@ module Lextacular
           yes = proc { 'truthy' }
           no  = proc { falsy }
 
-          assert { maybe_matcher(no          ).call('') == [] }
-          assert { maybe_matcher(yes, no     ).call('') == [] }
-          assert { maybe_matcher(yes, no, yes).call('') == [] }
+          assert { maybe_matcher(no          ).call('', counts: {}) == [] }
+          assert { maybe_matcher(yes, no     ).call('', counts: {}) == [] }
+          assert { maybe_matcher(yes, no, yes).call('', counts: {}) == [] }
         end
       end
 
@@ -32,9 +32,9 @@ module Lextacular
         yes      = proc { 'truthy' }
         no       = proc { mismatch }
 
-        assert { maybe_matcher(no          ).call('') == [] }
-        assert { maybe_matcher(yes, no     ).call('') == [] }
-        assert { maybe_matcher(yes, no, yes).call('') == [] }
+        assert { maybe_matcher(no          ).call('', counts: {}) == [] }
+        assert { maybe_matcher(yes, no     ).call('', counts: {}) == [] }
+        assert { maybe_matcher(yes, no, yes).call('', counts: {}) == [] }
       end
     end
   end

@@ -43,7 +43,7 @@ def pattern_matcher_basics make_matcher
                     proc { match_2 },
                     proc { match_3 }
                   )
-                  .call('') == [match_1, match_2, match_3]
+                  .call('', counts: {}) == [match_1, match_2, match_3]
     end
 
     assert 'flattens any arrays returns by parts of the matcher' do
@@ -55,7 +55,7 @@ def pattern_matcher_basics make_matcher
                     proc { match_1 },
                     proc { [match_2, match_3] }
                   )
-                  .call('') == [match_1, match_2, match_3]
+                  .call('', counts: {}) == [match_1, match_2, match_3]
     end
 
     assert 'lets children change the counts hash' do
@@ -122,7 +122,7 @@ def pattern_matcher_basics make_matcher
                 end
               ]
 
-    make_matcher.call(*pattern).call(given_string, given_index)
+    make_matcher.call(*pattern).call(given_string, given_index, counts: {})
 
     assert { result_strings == [given_string] * 3 }
     assert { result_indices == [given_index, given_index + 8, given_index + 11] }

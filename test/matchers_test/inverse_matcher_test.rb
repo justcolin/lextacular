@@ -19,40 +19,40 @@ module Lextacular
           with_falsy_and_mismatch do |result|
             assert do
               inverse_matcher(regexp_matcher(/sk/), proc { result })
-                             .call(example) == example
+                             .call(example, counts: {}) == example
             end
           end
         end
 
         assert 'not all of the given matchers match' do
           inverse_matcher(regexp_matcher(/skiffle/), regexp_matcher(/-/))
-                         .call(example) == example
+                         .call(example, counts: {}) == example
         end
 
         assert 'given an index past a match' do
           inverse_matcher(regexp_matcher(/ /))
-                         .call(example, 8) == 'scuffle'
+                         .call(example, 8, counts: {}) == 'scuffle'
         end
       end
 
       group 'does not match when' do
         assert 'string starts with a match' do
           !inverse_matcher(regexp_matcher(/s/))
-                          .call(example)
+                          .call(example, counts: {})
         end
 
         assert 'the whole pattern matches' do
           !inverse_matcher(regexp_matcher(/s/), regexp_matcher(/k/))
-                          .call(example)
+                          .call(example, counts: {})
         end
 
         assert 'given the index of a match' do
           !inverse_matcher(regexp_matcher(/ /), regexp_matcher(/scuffle/))
-                          .call(example, 7)
+                          .call(example, 7, counts: {})
         end
       end
 
-      group 'does not effect the counts hash if given one' do
+      group 'does not effect the counts hash' do
         matcher  = inverse_matcher(regexp_matcher(/end/))
         matches  = '___end'
         no_match = 'end'

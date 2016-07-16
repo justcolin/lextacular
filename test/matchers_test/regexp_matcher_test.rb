@@ -17,10 +17,10 @@ module Lextacular
         match     = 'bubbles'
 
         assert 'returns match content' do
-          matcher.call(has_match) == match
+          matcher.call(has_match, counts: {}) == match
         end
 
-        assert 'does not effect the counts hash if given one' do
+        assert 'does not effect the counts hash' do
           counts_hash   = { x: 1, y: 2 }
           original_hash = counts_hash.dup
           matcher.call(has_match, counts: counts_hash)
@@ -34,10 +34,10 @@ module Lextacular
         no_match = 'something else'
 
         assert 'returns falsy' do
-          !matcher.call(no_match)
+          !matcher.call(no_match, counts: {})
         end
 
-        assert 'does not effect the counts hash if given one' do
+        assert 'does not effect the counts hash' do
           counts_hash = { x: 1, y: 2 }
           original_hash = counts_hash.dup
           matcher.call(no_match, counts: counts_hash)
@@ -53,16 +53,16 @@ module Lextacular
         match_index = 5
 
         assert 'returns falsy if index is not given' do
-          !matcher.call(later_match)
+          !matcher.call(later_match, counts: {})
         end
 
         group 'returns falsy if index is wrong' do
-          assert { !matcher.call(later_match, match_index + 1) }
-          assert { !matcher.call(later_match, match_index - 1) }
+          assert { !matcher.call(later_match, match_index + 1, counts: {}) }
+          assert { !matcher.call(later_match, match_index - 1, counts: {}) }
         end
 
         assert 'returns match if index is correct' do
-          matcher.call(later_match, match_index) == match
+          matcher.call(later_match, match_index, counts: {}) == match
         end
 
         assert 'does not return matches from before the given index' do
@@ -71,12 +71,12 @@ module Lextacular
           match       = '2'
           match_index = 1
 
-          matcher.call(later_match, match_index) == match
+          matcher.call(later_match, match_index, counts: {}) == match
         end
       end
 
       assert 'returns falsy if the match is empty' do
-        !regexp_matcher(//).call('content')
+        !regexp_matcher(//).call('content', counts: {})
       end
     end
   end

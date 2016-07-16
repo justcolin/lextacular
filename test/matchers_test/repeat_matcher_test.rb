@@ -19,9 +19,9 @@ module Lextacular
           match = proc { 'truthy' }
           none  = proc { value }
 
-          assert { !repeat_matcher(none              ).call('') }
-          assert { !repeat_matcher(match, none       ).call('') }
-          assert { !repeat_matcher(match, none, match).call('') }
+          assert { !repeat_matcher(none              ).call('', counts: {}) }
+          assert { !repeat_matcher(match, none       ).call('', counts: {}) }
+          assert { !repeat_matcher(match, none, match).call('', counts: {}) }
         end
       end
 
@@ -40,7 +40,7 @@ module Lextacular
                                end
                              end
 
-          repeat_matcher(empty, eventually_empty, empty).call('')
+          repeat_matcher(empty, eventually_empty, empty).call('', counts: {})
 
           cycle_count == total_cycles
         end
@@ -62,7 +62,7 @@ module Lextacular
 
           assert do
             repeat_matcher(always_true, eventually_falsy, always_true)
-                          .call('') == ([match] * total_cycles * 3)
+                          .call('', counts: {}) == ([match] * total_cycles * 3)
           end
         end
       end
@@ -123,7 +123,7 @@ module Lextacular
                     end
                   end
 
-        repeat_matcher(pattern).call(given_string, given_index)
+        repeat_matcher(pattern).call(given_string, given_index, counts: {})
 
         assert { result_strings == ([given_string] * total_cycles) }
         assert do

@@ -14,7 +14,7 @@ module Lextacular
 
     # Create a matcher Proc which tries to match a regular expression.
     def regexp_matcher regexp
-      lambda do |string, index = 0, counts: {}|
+      lambda do |string, index = 0, counts:|
         found         = regexp.match(string, index)
         result_string = found.to_s
 
@@ -26,7 +26,7 @@ module Lextacular
 
     # Create a matcher Proc which tries to match a series of matchers.
     def pattern_matcher *pattern
-      lambda do |string, index = 0, counts: {}|
+      lambda do |string, index = 0, counts:|
         original_counts = counts.dup
 
         pattern.inject([]) do |memo, part|
@@ -48,7 +48,7 @@ module Lextacular
     def maybe_matcher *pattern
       submatcher = pattern_matcher(*pattern)
 
-      lambda do |string, index = 0, counts: {}|
+      lambda do |string, index = 0, counts:|
         found = submatcher.call(string, index, counts: counts)
 
         match?(found) ? found : []
@@ -58,7 +58,7 @@ module Lextacular
     # Create a matcher Proc which returns the result of the first matcher in the
     # pattern which returns a valid match.
     def either_matcher *pattern
-      lambda do |string, index = 0, counts: {}|
+      lambda do |string, index = 0, counts:|
         original_counts = counts.dup
 
         pattern.each do |matcher|
@@ -80,7 +80,7 @@ module Lextacular
     def repeat_matcher *pattern
       submatcher = MatchWrapper.new(SplatExpression, pattern_matcher(*pattern))
 
-      lambda do |string, index = 0, counts: {}|
+      lambda do |string, index = 0, counts:|
         result      = []
         last_counts = counts.dup
 
@@ -100,12 +100,12 @@ module Lextacular
     def inverse_matcher *pattern
       submatcher = pattern_matcher(*pattern)
 
-      lambda do |string, index = 0, counts: {}|
+      lambda do |string, index = 0, counts:|
         starting_index = index
         size           = string.size
 
         index += 1 while index < size &&
-                         !nonempty_match?(submatcher.call(string, index))
+                         !nonempty_match?(submatcher.call(string, index, counts: counts))
 
         string[starting_index..(index-1)] unless starting_index == index
       end
