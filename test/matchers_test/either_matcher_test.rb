@@ -74,15 +74,6 @@ module Lextacular
         assert { result_strings == [given_string, given_string] }
         assert { result_indices == [given_index,  given_index ] }
       end
-
-      assert 'index defaults to 0' do
-        result     = nil
-        index_proc = proc { |_, index| result = index; '' }
-
-        either_matcher(index_proc).call('')
-
-        result.zero?
-      end
     end
   end
 end

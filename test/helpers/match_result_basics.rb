@@ -50,8 +50,8 @@ def match_result_basics klass
   end
 
   group '#name' do
-    assert 'defaults to nil' do
-      klass.new.name.nil?
+    assert 'defaults to falsy' do
+      !klass.new.name
     end
 
     assert 'uses value giving at init' do
@@ -61,8 +61,8 @@ def match_result_basics klass
   end
 
   group '#temp' do
-    assert 'defaults to nil' do
-      klass.new.temp.nil?
+    assert 'defaults to falsy' do
+      !klass.new.temp
     end
 
     assert 'uses value giving at init' do

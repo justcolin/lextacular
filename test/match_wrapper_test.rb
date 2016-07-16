@@ -172,16 +172,6 @@ module Lextacular
         assert { result_counts == given_counts }
       end
 
-      assert 'index argument defaults to 0' do
-        result_index    = nil
-        pattern_matcher = proc { |_, index| result_index = index }
-
-         MatchWrapper.new(MockResult, pattern_matcher)
-                     .call('here is a string to match')
-
-        result_index.zero?
-      end
-
       group 'if the matcher returns truthy' do
         assert 'returns instance of the given class' do
           given_class = Class.new { def initialize *_; end }
@@ -210,10 +200,10 @@ module Lextacular
         group 'passes metadata into result' do
           [:name, :temp].each do |key|
             group key do
-              assert 'defaults to nil' do
-                MatchWrapper.new(MockResult, proc { 'a match' })
-                              .call('')
-                              .metadata[key].nil?
+              assert 'defaults to falsy' do
+                !MatchWrapper.new(MockResult, proc { 'a match' })
+                             .call('')
+                             .metadata[key]
               end
 
               assert 'returns value given at init' do

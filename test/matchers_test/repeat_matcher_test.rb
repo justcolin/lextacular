@@ -133,14 +133,6 @@ module Lextacular
                             ]
         end
       end
-
-      assert 'index defaults to 0' do
-        result_index = nil
-        repeat_matcher(proc { |_, index| result_index = index; nil })
-                    .call('')
-
-        result_index == 0
-      end
     end
   end
 end

@@ -127,16 +127,4 @@ def pattern_matcher_basics make_matcher
     assert { result_strings == [given_string] * 3 }
     assert { result_indices == [given_index, given_index + 8, given_index + 11] }
   end
-
-  assert 'index defaults to 0' do
-    result_index = nil
-    index_proc   = proc do |_, index|
-                     result_index = index
-                     'stringy stringle string'
-                   end
-
-    make_matcher.call(index_proc).call('')
-
-    result_index.zero?
-  end
 end
