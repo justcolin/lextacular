@@ -12,59 +12,35 @@ require_relative '../future_wrapper'
 
 module Lextacular
   group FutureWrapper do
+    key = :funky_func
+
     group '#call' do
       assert 'calls the matcher stored in the hash' do
         was_called = false
-        hash       = { example: proc { was_called = true } }
+        hash       = { key => proc { was_called = true } }
 
-        FutureWrapper.new(:example, hash).call('')
+        FutureWrapper.new(key, hash).call('')
 
         was_called
       end
 
       assert 'returns whatever the stored matcher returns' do
         result = 'fluffle bumble'
-        hash   = { the_name: proc { result } }
+        hash   = { key => proc { result } }
 
-        FutureWrapper.new(:the_name, hash).call('') == result
+        FutureWrapper.new(key, hash).call('') == result
       end
 
       assert 'stored matcher can be added after creating the wrapper' do
         hash    = {}
-        wrapper = FutureWrapper.new(:sally, hash)
+        wrapper = FutureWrapper.new(key, hash)
 
-        was_called   = false
-        hash[:sally] = proc { was_called = true }
+        was_called = false
+        hash[key]  = proc { was_called = true }
 
         wrapper.call('')
 
         was_called
-      end
-
-      assert 'passes arguments to the stored matcher' do
-        name         = :funky_func
-        given_string = 'nope nope nope'
-        given_index  = 88
-        given_hash   = { y: :not? }
-
-        result_string = nil
-        result_index  = nil
-        result_hash   = nil
-
-        hash = {
-                 name => proc do |string, index, counts:|
-                   result_string = string
-                   result_index  = index
-                   result_hash   = counts
-                 end
-               }
-
-        FutureWrapper.new(name, hash)
-                     .call(given_string, given_index, counts: given_hash)
-
-        assert { result_string == given_string }
-        assert { result_index  == given_index }
-        assert { result_hash   == given_hash }
       end
 
       group 'errs properly if matcher is not defined at call time' do
@@ -73,41 +49,71 @@ module Lextacular
         err(expect: KeyError) { stored.call('') }
       end
 
-      group 'can extend the eigenclass of the result' do
-        result = FutureWrapper.new(
-                   :a,
-                   { a: proc { 'hello' } },
-                   defs: proc { def return_2; 2; end }
-                 ).call('')
+      assert 'passes arguments to the stored matcher' do
+        given_string = 'nope nope nope'
+        given_index  = 88
+        given_counts = { example: 34 }
 
-        assert { result.return_2 == 2 }
+        result_string = nil
+        result_index  = nil
+        result_counts = nil
+
+        hash = {
+                 key => proc do |string, index, counts:|
+                   result_string = string
+                   result_index  = index
+                   result_counts = counts
+                 end
+               }
+
+        FutureWrapper.new(key, hash)
+                     .call(given_string, given_index, counts: given_counts)
+
+        assert { result_string == given_string }
+        assert { result_index  == given_index }
+        assert { result_counts == given_counts }
+      end
+
+      group 'can extend the eigenclass of the result' do
+        assert do
+          FutureWrapper.new(
+                         key,
+                         { key => proc { 'a match' } },
+                         defs: proc { def return_2; 2; end }
+                       )
+                       .call('')
+                       .return_2 == 2
+        end
+
         err(expect: NoMethodError) { 'other string'.return_2 }
       end
     end
 
     group '#rename' do
       assert 'returns a new FutureWrapper' do
-        FutureWrapper.new(:a, {}).rename(:x).is_a?(FutureWrapper)
+        FutureWrapper.new(key, {}).rename(:x).is_a?(FutureWrapper)
       end
 
       assert 'returns a different object' do
-        original = FutureWrapper.new(:a, {})
+        key      = :something
+        original = FutureWrapper.new(key, {})
 
-        FutureWrapper.new(:a, {}).rename(:x) != original
+        FutureWrapper.new(key, {}).rename(:x) != original
       end
 
       assert 'renames output of matcher' do
         old_name = :wrong
         new_name = :correct
+        key      = :example
 
         FutureWrapper.new(
-                       :example,
+                       key,
                        {
-                         example: MatchWrapper.new(
-                                    Token,
-                                    proc { 'truthy' },
-                                    name: old_name
-                                  )
+                         key => MatchWrapper.new(
+                                  Token,
+                                  proc { 'truthy' },
+                                  name: old_name
+                                )
                        }
                      )
                      .rename(new_name)

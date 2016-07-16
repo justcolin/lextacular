@@ -5,6 +5,8 @@
 # terms of the three-clause BSD license. See LICENSE.txt
 # (located in root directory of this project) for details.
 
+require_relative './matchers'
+
 module Lextacular
   # Create a reference to a matcher that may not exist at the time this object
   # was initialized.
@@ -12,9 +14,9 @@ module Lextacular
     # Take a key and hash where the matcher can eventually be fetched, and
     # optionally take a rename value and a Proc to extend the result.
     def initialize key, hash, defs: nil, name: nil
-      @key      = key
-      @hash     = hash
-      @defs     = defs
+      @key  = key
+      @hash = hash
+      @defs = defs
       @name = name
     end
 
@@ -32,7 +34,9 @@ module Lextacular
 
       @matcher.call(string, index, counts: counts)
               .tap do |result|
-                result.singleton_class.class_eval(&@defs) if @defs
+                if @defs && Matchers.match?(result)
+                  result.singleton_class.class_eval(&@defs)
+                end
               end
     end
   end
