@@ -111,6 +111,17 @@ module Lextacular
       end
     end
 
+    def context_matcher *pattern
+      submatcher = pattern_matcher(*pattern)
+
+      lambda do |string, index = 0, counts:|
+        counts.push_context
+
+        submatcher.call(string, index, counts: counts)
+                  .tap { counts.pop_context }
+      end
+    end
+
     def match? found
       found && !found.is_a?(Mismatch)
     end
