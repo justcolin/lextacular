@@ -13,8 +13,6 @@ module Lextacular
   class MatchWrapper
     include Falsy
 
-    attr_reader :given_class, :wrap_class, :matcher, :name, :temp, :defs
-
     # Takes the return class, matcher and optionally takes a name for the
     # output, whether or not it should be marked as temporary, and a Proc to
     # extend the given class with.
@@ -61,5 +59,9 @@ module Lextacular
       falsy_or_equal?(other.temp, @temp) &&
       falsy_or_equal?(other.defs, @defs)
     end
+
+    protected
+
+    attr_reader :given_class, :temp, :defs, :matcher, :name
   end
 end
