@@ -238,17 +238,6 @@ module Lextacular
             !given_class.method_defined?(:returns_something)
           end
         end
-
-        assert 'updates the counts hash with the length of the match if there is a name' do
-          counts_hash = {}
-          result      = 'flabble-d-doop'
-          name        = :hey_hey_hey
-
-          MatchWrapper.new(MockResult, proc { result }, name: name)
-                      .call('', counts: counts_hash)
-
-          counts_hash[name] == result.size
-        end
       end
 
       group 'if the matcher returns' do

@@ -6,10 +6,11 @@
 # (located in root directory of this project) for details.
 
 require_relative './with_falsy_and_mismatch'
+require_relative '../../counts'
 
-def pattern_matcher_basics make_matcher
+def pattern_matcher_basics make_matcher, preserves_count: true
   group 'passes counts hash into children' do
-    counts_hash  = { x: 1 }
+    counts_hash  = Lextacular::Counts.new
     given_string = 'yuppers'
     given_index  = 7
 
@@ -43,7 +44,8 @@ def pattern_matcher_basics make_matcher
                     proc { match_2 },
                     proc { match_3 }
                   )
-                  .call('', counts: {}) == [match_1, match_2, match_3]
+                  .call('', counts: Lextacular::Counts.new)
+                  .==([match_1, match_2, match_3])
     end
 
     assert 'flattens any arrays returns by parts of the matcher' do
@@ -55,35 +57,41 @@ def pattern_matcher_basics make_matcher
                     proc { match_1 },
                     proc { [match_2, match_3] }
                   )
-                  .call('', counts: {}) == [match_1, match_2, match_3]
+                  .call('', counts: Lextacular::Counts.new)
+                  .==([match_1, match_2, match_3])
     end
 
-    assert 'lets children change the counts hash' do
-      counts_hash     = { x: 1, y: 2 }
-      updated_values  = { x: 2, y: 8 }
+    if preserves_count
+      assert 'lets children change the counts hash' do
+        counts_hash = Lextacular::Counts.new
+        expected    = Lextacular::Counts.new
+        key         = :example_key
+        value       = 56
 
-      make_matcher.call(
-                    proc do |counts:|
-                      counts.merge!(updated_values)
-                      'something'
-                    end
-                  )
-                  .call('', counts: counts_hash)
+        expected[key] = value
 
-      counts_hash == updated_values
+        make_matcher.call(
+                      proc do |counts:|
+                        counts[key] = value
+                        'something'
+                      end
+                    )
+                    .call('', counts: counts_hash)
+
+        counts_hash == expected
+      end
     end
   end
 
   group 'resets the counts hash if any children return' do
     with_falsy_and_mismatch do |value|
       assert do
-        original_values = { x: 1, y: 2 }
-        updated_values  = { x: 2, y: 8 }
-        counts_hash     = original_values.dup
+        counts_hash     = Lextacular::Counts.new
+        original_values = counts_hash.dup
 
         make_matcher.call(
                       proc do |counts:|
-                        counts.merge!(updated_values)
+                        counts[:anything] = 11
                         value
                       end
                     )
@@ -122,7 +130,8 @@ def pattern_matcher_basics make_matcher
                 end
               ]
 
-    make_matcher.call(*pattern).call(given_string, given_index, counts: {})
+    make_matcher.call(*pattern)
+                .call(given_string, given_index, counts: Lextacular::Counts.new)
 
     assert { result_strings == [given_string] * 3 }
     assert { result_indices == [given_index, given_index + 8, given_index + 11] }

@@ -46,8 +46,6 @@ module Lextacular
       if found.is_a?(Mismatch)
         found
       elsif found
-        counts[@name] = found.size if @name
-
         @wrap_class.new(*found, name: @name, temp: @temp)
       else
         Mismatch.new(string, index)
