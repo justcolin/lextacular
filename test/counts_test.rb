@@ -85,5 +85,89 @@ module Lextacular
         assert { example[key] == prev_value }
       end
     end
+
+    group '#replace' do
+      assert 'returns self' do
+        example = Counts.new
+
+        example.replace(Counts.new) == example
+      end
+
+      group 'replaces content with content of other Counts object' do
+        example   = Counts.new
+        other     = Counts.new
+        key       = :an_example_key
+        other_key = :another_example_key
+        new_value = 46
+
+        example[key]       = new_value + 1
+        example[other_key] = new_value + 2
+        other[key]         = new_value
+
+        example.replace(other)
+
+        assert { example[key] == new_value }
+        assert { example[other_key] < 0 }
+      end
+    end
+
+    group '#==' do
+      assert 'returns true if values are the same' do
+        example_1 = Counts.new
+        example_2 = Counts.new
+
+        [example_1, example_2].each do |example|
+          example[:key]         = 39
+          example[:another_key] = 100
+        end
+
+        example_1 == example_2
+      end
+
+      assert 'returns false if values are not the same' do
+        example_1 = Counts.new
+        example_2 = Counts.new
+        key       = :this_is_a_key
+
+        [example_1, example_2].each do |example|
+          example[key]          = 624
+          example[:another_key] = 232
+        end
+
+        example_1[key] += 1
+
+        example_1 != example_2
+      end
+    end
+
+    group '#dup' do
+      assert 'returns an object with the same content' do
+        example             = Counts.new
+        example[:something] = 2034
+
+        example.dup == example
+      end
+
+      assert 'does not return self' do
+        example = Counts.new
+
+        !example.dup.equal?(example)
+      end
+
+      group 'editing the duped copy does not effect the original' do
+        key       = :something_something
+        old_value = 3
+        new_value = old_value + 1
+
+        example      = Counts.new
+        example[key] = old_value
+
+        duped      = example.dup
+        duped[key] = new_value
+
+        assert { example[key] == old_value }
+        assert { duped[key]   == new_value }
+      end
+    end
   end
 end

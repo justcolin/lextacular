@@ -33,5 +33,34 @@ module Lextacular
 
       self
     end
+
+    def == other
+      other.is_a?(self.class) && @hash == other.internal_hash
+    end
+
+    def dup
+      Counts.new.replace_hash(
+        @hash.inject({}) do |memo, (key, value)|
+          memo[key] = value.dup
+          memo
+        end
+      )
+    end
+
+    def replace other
+      replace_hash(other.internal_hash)
+    end
+
+    protected
+
+    def internal_hash
+      @hash
+    end
+
+    def replace_hash other
+      @hash.replace(other)
+
+      self
+    end
   end
 end
