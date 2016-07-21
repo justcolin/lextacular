@@ -106,6 +106,10 @@ def pattern_matcher_basics make_matcher, preserves_count: true
     given_index  = 10
     given_string = "this is not a pipe"
 
+    match_1 = "12345678"
+    match_2 = "123"
+    match_3 = "something else"
+
     result_indices = []
     result_strings = []
 
@@ -114,19 +118,19 @@ def pattern_matcher_basics make_matcher, preserves_count: true
                   result_strings << string
                   result_indices << index
 
-                  "12345678"
+                  match_1
                 end,
                 proc do |string, index|
                   result_strings << string
                   result_indices << index
 
-                  "123"
+                  match_2
                 end,
                 proc do |string, index|
                   result_strings << string
                   result_indices << index
 
-                  "something else"
+                  match_3
                 end
               ]
 
@@ -134,6 +138,12 @@ def pattern_matcher_basics make_matcher, preserves_count: true
                 .call(given_string, given_index, counts: Lextacular::Counts.new)
 
     assert { result_strings == [given_string] * 3 }
-    assert { result_indices == [given_index, given_index + 8, given_index + 11] }
+    assert do
+      result_indices == [
+                          given_index,
+                          given_index + match_1.size,
+                          given_index + match_1.size + match_2.size
+                        ]
+    end
   end
 end

@@ -11,8 +11,10 @@ module Lextacular
   # Create a reference to a matcher that may not exist at the time this object
   # was initialized.
   class FutureWrapper
-    # Take a key and hash where the matcher can eventually be fetched, and
-    # optionally take a rename value and a Proc to extend the result.
+    # Takes a +key+ which will be used to lookup a matcher from the +hash+ when
+    # called. Optionally takes the named arguments +defs+, which takes a proc
+    # used to extend whatever matches are returned, and +name+, which is used to
+    # rename the results from the matcher.
     def initialize key, hash, defs: nil, name: nil
       @key  = key
       @hash = hash
@@ -20,12 +22,13 @@ module Lextacular
       @name = name
     end
 
-    # Create a new Future wrapper with all the same values but change the name.
+    # Create a new Future wrapper with all the same values but changes the name.
     def rename new_name
       self.class.new(@key, @hash, defs: @defs, name: new_name)
     end
 
-    # Fetch the matcher, call it, then extend the result.
+    # Fetch the matcher, call it passing in a +string+ and optionally an +index+
+    # and +counts+ hash.
     def call string, index = 0, counts: {}
       unless @matcher
         @matcher = @hash.fetch(@key)
