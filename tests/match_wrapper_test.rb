@@ -7,19 +7,21 @@
 
 require 'tet'
 require_relative '../match_wrapper'
-require_relative './helpers/with_falsy.rb'
-require_relative './helpers/mock_result.rb'
-require_relative './helpers/mock_temp.rb'
-require_relative './helpers/mock_array.rb'
+require_relative '../counts'
+require_relative './helpers/with_falsy'
+require_relative './helpers/mocks/mock_result'
+require_relative './helpers/mocks/mock_matcher'
+require_relative './helpers/mocks/mock_temp'
 
 module Lextacular
   group MatchWrapper do
     group '#==' do
       wrapper = MockResult
-      matcher = proc {}
+      matcher = MockMatcher.new
       name    = :a
       temp    = true
       defs    = proc {}
+
       example = MatchWrapper.new(
                   wrapper,
                   matcher,
@@ -60,7 +62,7 @@ module Lextacular
       group 'returns false when any value is changed' do
         assert 'class' do
           example != MatchWrapper.new(
-                       MockArray,
+                       Class.new,
                        matcher,
                        name: name,
                        temp: temp,
@@ -111,17 +113,18 @@ module Lextacular
     end
 
     group '#rename' do
-      original = MatchWrapper.new(
-                   MockResult,
-                   proc { "stuff" },
-                   name: :Abe,
-                   temp: true,
-                   defs: proc do
-                           def returns_stuff
-                             :stuff
-                           end
-                         end
-                 )
+      result_class = MockResult
+      original     = MatchWrapper.new(
+                       result_class,
+                       MockMatcher.new,
+                       name: :Abe,
+                       temp: true,
+                       defs: proc do
+                               def returns_stuff
+                                 :stuff
+                               end
+                             end
+                     )
 
       new_name = :Lincoln
       renamed  = original.rename(new_name)
@@ -135,74 +138,65 @@ module Lextacular
       end
 
       assert 'passes the class extensions given on init' do
-        renamed.call('').returns_stuff == :stuff
+        renamed.call('', counts: Counts.new).returns_stuff == :stuff
       end
 
       assert 'returns the same result, but with a new name' do
-        renamed_result  = renamed.call('')
-        original_result = original.call('')
+        renamed_result  = renamed.call('', counts: Counts.new)
+        original_result = original.call('', counts: Counts.new)
 
-        assert { renamed_result.is_a?(MockResult) && original_result.is_a?(MockResult)
-        assert { renamed_result.content         == original_result.content }}
-        assert { renamed_result.metadata[:name] == new_name }
+        assert { renamed_result.is_a?(result_class) }
+        assert { original_result.is_a?(result_class) }
+        assert { renamed_result.content         == original_result.content }
         assert { renamed_result.metadata[:temp] == original_result.metadata[:temp] }
+        assert { renamed_result.metadata[:name] == new_name }
       end
     end
 
     group '#call' do
-      group 'arguments are passed into the given matcher' do
-        given_index   = 32
-        given_string  = 'Sugar Plum Fairy'
-        given_counts  = { q: :terrible_character }
-        result_string = nil
-        result_index  = nil
-        result_counts = nil
+      assert 'arguments are passed into the given matcher' do
+        string  = 'Sugar Plum Fairy'
+        index   = 32
+        counts  = Counts.new
+        matcher = MockMatcher.new
 
-        pattern_matcher = proc do |string, index, counts:|
-                            result_string = string
-                            result_index  = index
-                            result_counts = counts
-                          end
+        MatchWrapper.new(MockResult, matcher)
+                    .call(string, index, counts: counts)
 
-        MatchWrapper.new(MockResult, pattern_matcher)
-                    .call(given_string, given_index, counts: given_counts)
-
-        assert { result_string == given_string }
-        assert { result_index  == given_index }
-        assert { result_counts == given_counts }
+        matcher.given?(string, index, counts)
       end
 
       group 'if the matcher returns truthy' do
         assert 'returns instance of the given class' do
-          given_class = Class.new { def initialize *_; end }
+          given_class = MockResult
 
-          MatchWrapper.new(given_class, proc { true })
-                      .call('')
+          MatchWrapper.new(given_class, MockMatcher.new)
+                      .call('', counts: Counts.new)
                       .is_a?(given_class)
         end
 
         assert 'returned object is initialized with the result of the matcher' do
           result = 'Hey there little mouse'
 
-          MatchWrapper.new(MockResult, proc { result })
-                      .call('')
+          MatchWrapper.new(MockResult, MockMatcher.new(result))
+                      .call('', counts: Counts.new)
                       .content == [result]
         end
 
         assert 'result of the matcher is splatted into the result' do
-          result = MockArray.new(1, 2, 3)
+          array = [1, 2, 3]
 
-          MatchWrapper.new(MockResult, proc { result })
-                      .call('')
-                      .content == [1, 2, 3]
+          MatchWrapper.new(MockResult, MockMatcher.new(MockArrayResult.new(*array)))
+                      .call('', counts: Counts.new)
+                      .content == array
         end
 
         group 'passes metadata into result' do
           [:name, :temp].each do |key|
             group key do
               assert 'defaults to falsy' do
-                !MatchWrapper.new(MockResult, proc { 'a match' })
-                             .call('')
+                !MatchWrapper.new(MockResult, MockMatcher.new)
+                             .call('', counts: Counts.new)
                              .metadata[key]
               end
 
@@ -210,8 +204,8 @@ module Lextacular
                 value     = :gretta
                 init_hash = { key => value }
 
-                MatchWrapper.new(MockResult, proc { 'a match' }, **init_hash)
-                            .call('')
+                MatchWrapper.new(MockResult, MockMatcher.new, **init_hash)
+                            .call('', counts: Counts.new)
                             .metadata[key] == value
               end
             end
@@ -222,7 +216,7 @@ module Lextacular
           given_class = MockResult
           wrapper     = MatchWrapper.new(
                           MockResult,
-                          proc { true },
+                          MockMatcher.new,
                           defs: proc do
                                   def returns_something
                                     :something
@@ -231,7 +225,7 @@ module Lextacular
                         )
 
           assert do
-            wrapper.call('').returns_something == :something
+            wrapper.call('', counts: Counts.new).returns_something == :something
           end
 
           assert 'extension only applies inside the MatchWrapper' do
@@ -245,8 +239,8 @@ module Lextacular
           given_index  = 'Snorlax'
           given_string = 222
 
-          mismatch_result = MatchWrapper.new(MockResult, proc { falsy })
-                                        .call(given_string, given_index)
+          mismatch_result = MatchWrapper.new(MockResult, MockMatcher.new(falsy))
+                                        .call(given_string, given_index, counts: Counts.new)
 
           assert 'returns instance of Mismatch' do
             mismatch_result.is_a?(Mismatch)
@@ -262,8 +256,8 @@ module Lextacular
       assert 'if the matcher returns a Mismatch, returns the same Mismatch' do
         mismatch = Mismatch.new
 
-        MatchWrapper.new(MockResult, proc { mismatch })
-                    .call('')
+        MatchWrapper.new(MockResult, MockMatcher.new(mismatch))
+                    .call('', counts: Counts.new)
                     .equal?(mismatch)
       end
     end

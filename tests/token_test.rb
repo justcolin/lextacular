@@ -7,7 +7,7 @@
 
 require 'tet'
 require_relative '../token'
-require_relative './helpers/match_result_basics'
+require_relative './helpers/generic_tests/match_result_basics'
 
 module Lextacular
   group Token do

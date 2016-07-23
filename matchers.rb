@@ -81,16 +81,13 @@ module Lextacular
       submatcher = MatchWrapper.new(SplatExpression, pattern_matcher(*pattern))
 
       lambda do |string, index = 0, counts:|
-        result      = []
-        last_counts = counts.dup
+        result = []
 
         while nonempty_match?(found = submatcher.call(string, index, counts: counts))
-          last_counts = counts.dup
           index += found.size
           result.push(*found)
         end
 
-        counts.replace(last_counts)
         result unless result.empty?
       end
     end
@@ -111,6 +108,7 @@ module Lextacular
       end
     end
 
+    # Create a pattern matcher which creates a new context for counts
     def context_matcher *pattern
       submatcher = pattern_matcher(*pattern)
 

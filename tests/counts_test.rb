@@ -32,7 +32,7 @@ module Lextacular
     end
 
     group '#push_context and #pop_context' do
-      group '#pop_context removes all counts if #push_context not called before' do
+      assert '#pop_context removes all counts if #push_context not called before' do
         example      = Counts.new
         key          = :skeleton
         value        = 72
@@ -40,10 +40,10 @@ module Lextacular
 
         example.pop_context
 
-        assert { example[key] < 0 }
+        example[key] < 0
       end
 
-      group '#pop_context resets to state before last #push_context' do
+      assert '#pop_context resets to state before last #push_context' do
         example      = Counts.new
         key          = :under_test
         prev_value   = 45
@@ -58,10 +58,10 @@ module Lextacular
 
         example.pop_context
 
-        assert { example[key] == prev_value }
+        example[key] == prev_value
       end
 
-      group 'resets values to be less than zero if they were only set after #push_context' do
+      assert 'resets values to be less than zero if they were only set after #push_context' do
         example        = Counts.new
         key            = :set_midway
 
@@ -71,10 +71,10 @@ module Lextacular
 
         example.pop_context
 
-        assert { example[key] < 0 }
+        example[key] < 0
       end
 
-      group 'values can be recovered from before #push_context' do
+      assert 'values can be recovered from before #push_context' do
         example      = Counts.new
         key          = :set_before_push
         prev_value   = 6
@@ -82,7 +82,7 @@ module Lextacular
 
         example.push_context
 
-        assert { example[key] == prev_value }
+        example[key] == prev_value
       end
     end
 
@@ -165,6 +165,8 @@ module Lextacular
         duped      = example.dup
         duped[key] = new_value
 
+
+        assert { example      != old_value }
         assert { example[key] == old_value }
         assert { duped[key]   == new_value }
       end

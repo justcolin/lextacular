@@ -5,6 +5,8 @@
 # terms of the three-clause BSD license. See LICENSE.txt
 # (located in root directory of this project) for details.
 
+require_relative '../../mismatch'
+
 def with_falsy_and_mismatch
   group 'false' do
     yield false

@@ -6,7 +6,8 @@
 # (located in root directory of this project) for details.
 
 require 'tet'
-require_relative '../helpers/pattern_matcher_basics'
+require_relative '../helpers/generic_tests/pattern_matcher_basics'
+require_relative '../helpers/mocks/mock_matcher'
 require_relative '../../matchers'
 require_relative '../../counts'
 
@@ -20,20 +21,20 @@ module Lextacular
         key      = :test_item
         value_1  = 4
         value_2  = 12
-        value_3  = 1
+
         result_1 = nil
         result_2 = nil
 
         counts[key] = value_1
 
         context_matcher(
-                         proc do |counts:|
+                         MockMatcher.new do |counts:|
                            result_1    = counts[key]
                            counts[key] = value_2
                          end,
-                         proc do |counts:|
+                         MockMatcher.new do |counts:|
                            result_2    = counts[key]
-                           counts[key] = value_3
+                           counts[key] = 83402
                          end
                        )
                        .call('', counts: counts)
@@ -42,17 +43,17 @@ module Lextacular
         assert { result_2 == value_2 }
       end
 
-      group 'resets counts after running the pattern' do
+      assert 'resets counts after running the pattern' do
         counts = Counts.new
         key    = :something
         value  = 872
 
         counts[key] = value
 
-        context_matcher(proc { |counts:| counts[key] = value + 1 })
+        context_matcher(MockMatcher.new { |counts:| counts[key] += 1 })
                        .call('', counts: counts)
 
-        assert { counts[key] == value }
+        counts[key] == value
       end
     end
   end

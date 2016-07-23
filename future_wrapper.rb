@@ -29,7 +29,7 @@ module Lextacular
 
     # Fetch the matcher, call it passing in a +string+ and optionally an +index+
     # and +counts+ hash.
-    def call string, index = 0, counts: {}
+    def call string, index = 0, counts:
       unless @matcher
         @matcher = @hash.fetch(@key)
         @matcher = @matcher.rename(@name) if @name

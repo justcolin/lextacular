@@ -10,6 +10,7 @@ require_relative './expression'
 require_relative './match_wrapper'
 require_relative './future_wrapper'
 require_relative './matchers'
+require_relative './counts'
 
 module Lextacular
   # A little sugar to make creating parsers more pleasant.
@@ -28,7 +29,7 @@ module Lextacular
 
     # Parse the given string, raising an error if no match is found.
     def parse string
-      result = @rules.fetch(:start).call(string)
+      result = @rules.fetch(:start).call(string, counts: Counts.new)
 
       if Matchers.match?(result)
         if result.size == string.size

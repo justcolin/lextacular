@@ -5,7 +5,7 @@
 # terms of the three-clause BSD license. See LICENSE.txt
 # (located in root directory of this project) for details.
 
-require_relative '../../mismatch'
+require_relative '../../../mismatch'
 
 def parser_check name, parser:, correct:, gives:, incorrect:, at:
   group name do

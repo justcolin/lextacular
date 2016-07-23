@@ -38,7 +38,7 @@ module Lextacular
 
     # Call the matcher. If there is a match, return an instance of the given
     # class. If is no match, make sure a Mismatch is returned.
-    def call string, index = 0, counts: {}
+    def call string, index = 0, counts:
       found = @matcher.call(string, index, counts: counts)
 
       if found.is_a?(Mismatch)

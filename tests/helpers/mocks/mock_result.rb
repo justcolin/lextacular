@@ -15,9 +15,18 @@ class MockResult
 end
 
 class EnumerableMockResult < MockResult
+
+
+end
+
+class MockArrayResult < MockResult
   include Enumerable
 
   def each &block
     @content.each(&block)
+  end
+
+  def size
+    @content.map(&:size).inject(:+)
   end
 end

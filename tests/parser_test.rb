@@ -7,7 +7,7 @@
 
 require 'tet'
 require_relative '../parser'
-require_relative './helpers/parser_check'
+require_relative './helpers/generic_tests/parser_check'
 
 module Lextacular
   group Parser do
