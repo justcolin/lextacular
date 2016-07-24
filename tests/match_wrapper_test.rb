@@ -147,9 +147,9 @@ module Lextacular
 
         assert { renamed_result.is_a?(result_class) }
         assert { original_result.is_a?(result_class) }
-        assert { renamed_result.content         == original_result.content }
-        assert { renamed_result.metadata[:temp] == original_result.metadata[:temp] }
-        assert { renamed_result.metadata[:name] == new_name }
+        assert { renamed_result.content == original_result.content }
+        assert { renamed_result.temp    == original_result.temp }
+        assert { renamed_result.name    == new_name }
       end
     end
 
@@ -205,7 +205,7 @@ module Lextacular
               assert 'defaults to falsy' do
                 !MatchWrapper.new(MockMatcher.new, MockResult)
                              .call('', counts: Counts.new)
-                             .metadata[key]
+                             .send(key)
               end
 
               assert 'returns value given at init' do
@@ -214,7 +214,7 @@ module Lextacular
 
                 MatchWrapper.new(MockMatcher.new, MockResult, **init_hash)
                             .call('', counts: Counts.new)
-                            .metadata[key] == value
+                            .send(key) == value
               end
             end
           end

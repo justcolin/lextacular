@@ -6,17 +6,19 @@
 # (located in root directory of this project) for details.
 
 class MockResult
-  attr_reader :content, :metadata
+  Unset = Object.new
 
-  def initialize *content, **metadata
-    @content  = content
-    @metadata = metadata
+  attr_reader :content, :name, :temp
+
+  def initialize *content, name: Unset, temp: Unset
+    @content = content
+    @name    = name
+    @temp    = temp
   end
-end
 
-class EnumerableMockResult < MockResult
-
-
+  def size
+    @content.size
+  end
 end
 
 class MockArrayResult < MockResult
