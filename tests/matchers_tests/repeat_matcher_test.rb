@@ -7,8 +7,6 @@
 
 require 'tet'
 require_relative '../../matchers'
-require_relative '../../expression'
-require_relative '../../mismatch'
 require_relative '../../counts'
 require_relative '../helpers/with_falsy_and_mismatch.rb'
 require_relative '../helpers/mocks/mock_matcher.rb'
