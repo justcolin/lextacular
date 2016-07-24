@@ -121,6 +121,17 @@ module Lextacular
       end
     end
 
+    # Create a pattern matcher which returns the child matchers match if a
+    # comparison between the matches length and the counts hash returns true.
+    def count_matcher submatcher, method
+      lambda do |string, index = 0, counts:|
+        result = submatcher.call(string, index, counts: counts)
+
+        result if !Matchers.match?(result) ||
+                   result.size.send(method, counts[result.name])
+      end
+    end
+
     def match? found
       found && !found.is_a?(Mismatch)
     end
