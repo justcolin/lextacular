@@ -59,12 +59,12 @@ module Lextacular
         FutureWrapper.new(item, @rules, defs: defs)
       when Array
         MatchWrapper.new(
-          Expression,
           Matchers.pattern_matcher(*item.map { |part| translate(part) }),
+          Expression,
           defs: defs
         )
       when Regexp
-        MatchWrapper.new(Token, Matchers.regexp_matcher(item), defs: defs)
+        MatchWrapper.new(Matchers.regexp_matcher(item), Token, defs: defs)
       else
         item
       end
@@ -74,11 +74,11 @@ module Lextacular
     def self.def_helper name, use:, result:, temp: false
       define_method name do |*pattern|
         MatchWrapper.new(
-          result,
           Matchers.send(
             use,
             *pattern.map { |part| translate(part) }
           ),
+          result,
           temp: temp
         )
       end

@@ -78,7 +78,7 @@ module Lextacular
     # Create a matcher Proc that runs over and over again until a matcher in the
     # pattern does not match.
     def repeat_matcher *pattern
-      submatcher = MatchWrapper.new(SplatExpression, pattern_matcher(*pattern))
+      submatcher = MatchWrapper.new(pattern_matcher(*pattern), SplatExpression)
 
       lambda do |string, index = 0, counts:|
         result = []

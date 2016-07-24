@@ -92,7 +92,7 @@ module Lextacular
         old_name = :wrong
         new_name = :correct
         key      = :example
-        hash     = { key => MatchWrapper.new(Token, MockMatcher.new, name: old_name) }
+        hash     = { key => MatchWrapper.new(MockMatcher.new, Token, name: old_name) }
 
         result = FutureWrapper.new(key, hash)
                               .rename(new_name)

@@ -23,8 +23,8 @@ module Lextacular
       defs    = proc {}
 
       example = MatchWrapper.new(
-                  wrapper,
                   matcher,
+                  wrapper,
                   name: name,
                   temp: temp,
                   defs: defs
@@ -33,8 +33,8 @@ module Lextacular
       group 'returns true when given values are the same' do
         assert do
           example == MatchWrapper.new(
-                       wrapper,
                        matcher,
+                       wrapper,
                        name: name,
                        temp: temp,
                        defs: defs
@@ -43,18 +43,18 @@ module Lextacular
 
         group 'treats nil and false as the same' do
           assert 'name' do
-            MatchWrapper.new(wrapper, matcher, name: false, temp: temp, defs: defs) ==
-            MatchWrapper.new(wrapper, matcher, name: nil,   temp: temp, defs: defs)
+            MatchWrapper.new(matcher, wrapper, name: false, temp: temp, defs: defs) ==
+            MatchWrapper.new(matcher, wrapper, name: nil,   temp: temp, defs: defs)
           end
 
           assert 'temp' do
-            MatchWrapper.new(wrapper, matcher, name: name, temp: false, defs: defs) ==
-            MatchWrapper.new(wrapper, matcher, name: name, temp: nil,   defs: defs)
+            MatchWrapper.new(matcher, wrapper, name: name, temp: false, defs: defs) ==
+            MatchWrapper.new(matcher, wrapper, name: name, temp: nil,   defs: defs)
           end
 
           assert 'defs' do
-            MatchWrapper.new(wrapper, matcher, name: name, temp: temp, defs: false) ==
-            MatchWrapper.new(wrapper, matcher, name: name, temp: temp, defs: nil)
+            MatchWrapper.new(matcher, wrapper, name: name, temp: temp, defs: false) ==
+            MatchWrapper.new(matcher, wrapper, name: name, temp: temp, defs: nil)
           end
         end
       end
@@ -62,8 +62,8 @@ module Lextacular
       group 'returns false when any value is changed' do
         assert 'class' do
           example != MatchWrapper.new(
-                       Class.new,
                        matcher,
+                       Class.new,
                        name: name,
                        temp: temp,
                        defs: defs
@@ -72,8 +72,8 @@ module Lextacular
 
         assert 'matcher' do
           example != MatchWrapper.new(
-                       wrapper,
                        nil,
+                       wrapper,
                        name: name,
                        temp: temp,
                        defs: defs
@@ -82,8 +82,8 @@ module Lextacular
 
         assert 'name' do
           example != MatchWrapper.new(
-                       wrapper,
                        matcher,
+                       wrapper,
                        name: nil,
                        temp: temp,
                        defs: defs
@@ -92,8 +92,8 @@ module Lextacular
 
         assert 'temp' do
           example != MatchWrapper.new(
-                       wrapper,
                        matcher,
+                       wrapper,
                        name: name,
                        temp: nil,
                        defs: defs
@@ -102,8 +102,8 @@ module Lextacular
 
         assert 'defs' do
           example != MatchWrapper.new(
-                       wrapper,
                        matcher,
+                       wrapper,
                        name: name,
                        temp: temp,
                        defs: nil
@@ -115,8 +115,8 @@ module Lextacular
     group '#rename' do
       result_class = MockResult
       original     = MatchWrapper.new(
-                       result_class,
                        MockMatcher.new,
+                       result_class,
                        name: :Abe,
                        temp: true,
                        defs: proc do
@@ -160,7 +160,7 @@ module Lextacular
         counts  = Counts.new
         matcher = MockMatcher.new
 
-        MatchWrapper.new(MockResult, matcher)
+        MatchWrapper.new(matcher, MockResult)
                     .call(string, index, counts: counts)
 
         matcher.given?(string, index, counts)
@@ -170,15 +170,23 @@ module Lextacular
         assert 'returns instance of the given class' do
           given_class = MockResult
 
-          MatchWrapper.new(given_class, MockMatcher.new)
+          MatchWrapper.new(MockMatcher.new, given_class)
                       .call('', counts: Counts.new)
                       .is_a?(given_class)
+        end
+
+        assert 'returns whatever the matcher returned if no class was given' do
+          matcher = MockMatcher.new
+          result  = MatchWrapper.new(matcher)
+                                .call('', counts: Counts.new)
+
+          result == matcher.result
         end
 
         assert 'returned object is initialized with the result of the matcher' do
           result = 'Hey there little mouse'
 
-          MatchWrapper.new(MockResult, MockMatcher.new(result))
+          MatchWrapper.new(MockMatcher.new(result), MockResult)
                       .call('', counts: Counts.new)
                       .content == [result]
         end
@@ -186,7 +194,7 @@ module Lextacular
         assert 'result of the matcher is splatted into the result' do
           array = [1, 2, 3]
 
-          MatchWrapper.new(MockResult, MockMatcher.new(MockArrayResult.new(*array)))
+          MatchWrapper.new(MockMatcher.new(MockArrayResult.new(*array)), MockResult)
                       .call('', counts: Counts.new)
                       .content == array
         end
@@ -195,7 +203,7 @@ module Lextacular
           [:name, :temp].each do |key|
             group key do
               assert 'defaults to falsy' do
-                !MatchWrapper.new(MockResult, MockMatcher.new)
+                !MatchWrapper.new(MockMatcher.new, MockResult)
                              .call('', counts: Counts.new)
                              .metadata[key]
               end
@@ -204,7 +212,7 @@ module Lextacular
                 value     = :gretta
                 init_hash = { key => value }
 
-                MatchWrapper.new(MockResult, MockMatcher.new, **init_hash)
+                MatchWrapper.new(MockMatcher.new, MockResult, **init_hash)
                             .call('', counts: Counts.new)
                             .metadata[key] == value
               end
@@ -215,8 +223,8 @@ module Lextacular
         group 'extends result class if defs given' do
           given_class = MockResult
           wrapper     = MatchWrapper.new(
-                          MockResult,
                           MockMatcher.new,
+                          MockResult,
                           defs: proc do
                                   def returns_something
                                     :something
@@ -239,7 +247,7 @@ module Lextacular
           given_index  = 'Snorlax'
           given_string = 222
 
-          mismatch_result = MatchWrapper.new(MockResult, MockMatcher.new(falsy))
+          mismatch_result = MatchWrapper.new(MockMatcher.new(falsy), MockResult)
                                         .call(given_string, given_index, counts: Counts.new)
 
           assert 'returns instance of Mismatch' do
@@ -256,7 +264,7 @@ module Lextacular
       assert 'if the matcher returns a Mismatch, returns the same Mismatch' do
         mismatch = Mismatch.new
 
-        MatchWrapper.new(MockResult, MockMatcher.new(mismatch))
+        MatchWrapper.new(MockMatcher.new(mismatch), MockResult)
                     .call('', counts: Counts.new)
                     .equal?(mismatch)
       end

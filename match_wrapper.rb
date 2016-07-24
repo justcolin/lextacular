@@ -16,9 +16,9 @@ module Lextacular
     # Takes the return class, matcher and optionally takes a name for the
     # output, whether or not it should be marked as temporary, and a Proc to
     # extend the given class with.
-    def initialize wrap_class, matcher, name: nil, temp: nil, defs: nil
+    def initialize matcher, wrap_class = nil, name: nil, temp: nil, defs: nil
       @given_class = wrap_class
-      @wrap_class  = defs ? Class.new(wrap_class, &defs) : wrap_class
+      @wrap_class  = defs && wrap_class ? Class.new(wrap_class, &defs) : wrap_class
       @matcher     = matcher
       @name        = name
       @temp        = temp
@@ -28,8 +28,8 @@ module Lextacular
     # Create a new MatchWrapper with all the same values but change the name.
     def rename new_name
       self.class.new(
-        @given_class,
         @matcher,
+        @given_class,
         name: new_name,
         temp: @temp,
         defs: defs
@@ -44,7 +44,11 @@ module Lextacular
       if found.is_a?(Mismatch)
         found
       elsif found
-        @wrap_class.new(*found, name: @name, temp: @temp)
+        if @wrap_class
+          @wrap_class.new(*found, name: @name, temp: @temp)
+        else
+          found
+        end
       else
         Mismatch.new(string, index)
       end
