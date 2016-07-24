@@ -51,6 +51,16 @@ module Lextacular
           inverse_matcher(regexp_matcher(/ /))
                          .call(example, 8, counts: Counts.new) == 'scuffle'
         end
+
+        assert 'given pattern which eventually matches' do
+          inverse_matcher(regexp_matcher(/ /))
+                         .call(example, counts: Counts.new) == 'skiffle'
+        end
+
+        assert 'pattern returns an array of empty elements' do
+          inverse_matcher(MockMatcher.new(['', '']))
+                         .call(example, counts: Counts.new) == example
+        end
       end
 
       group 'does not match when' do

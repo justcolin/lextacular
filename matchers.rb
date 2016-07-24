@@ -7,6 +7,7 @@
 
 require_relative './mismatch'
 require_relative './match_wrapper'
+require_relative './expression'
 
 module Lextacular
   module Matchers
@@ -95,7 +96,7 @@ module Lextacular
     # Create a matcher proc which walks across the string until it finds a point
     # where the given pattern matches.
     def inverse_matcher *pattern
-      submatcher = pattern_matcher(*pattern)
+      submatcher = MatchWrapper.new(pattern_matcher(*pattern), SplatExpression)
 
       lambda do |string, index = 0, counts:|
         starting_index = index
