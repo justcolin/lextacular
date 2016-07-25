@@ -13,8 +13,8 @@ require_relative '../../counts'
 
 module Lextacular
   module Matchers
-    group '.context_matcher' do
-      pattern_matcher_basics method(:context_matcher), preserves_count: false
+    group '.context_setter' do
+      pattern_matcher_basics method(:context_setter), preserves_count: false
 
       group 'passes counts between children' do
         counts   = Counts.new
@@ -27,7 +27,7 @@ module Lextacular
 
         counts[key] = value_1
 
-        context_matcher(
+        context_setter(
                          MockMatcher.new do |counts:|
                            result_1    = counts[key]
                            counts[key] = value_2
@@ -50,7 +50,7 @@ module Lextacular
 
         counts[key] = value
 
-        context_matcher(MockMatcher.new { |counts:| counts[key] += 1 })
+        context_setter(MockMatcher.new { |counts:| counts[key] += 1 })
                        .call('', counts: counts)
 
         counts[key] == value

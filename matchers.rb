@@ -110,7 +110,7 @@ module Lextacular
     end
 
     # Create a pattern matcher which creates a new context for counts
-    def context_matcher *pattern
+    def context_setter *pattern
       submatcher = pattern_matcher(*pattern)
 
       lambda do |string, index = 0, counts:|

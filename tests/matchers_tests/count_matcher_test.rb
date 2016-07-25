@@ -27,7 +27,7 @@ module Lextacular
         matcher.given?(string, index, counts)
       end
 
-      group 'returns what child matcher returned if' do
+      group 'returns whatever the child matcher returned if' do
         group 'child returns' do
           with_falsy_and_mismatch do |falsy|
             result = count_matcher(MockMatcher.new(falsy), :==)
