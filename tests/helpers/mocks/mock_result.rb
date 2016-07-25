@@ -17,7 +17,7 @@ class MockResult
   end
 
   def size
-    @content.size
+    @content.map(&:size).inject(:+)
   end
 end
 
@@ -26,9 +26,5 @@ class MockArrayResult < MockResult
 
   def each &block
     @content.each(&block)
-  end
-
-  def size
-    @content.map(&:size).inject(:+)
   end
 end
