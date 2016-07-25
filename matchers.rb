@@ -19,9 +19,9 @@ module Lextacular
         found         = regexp.match(string, index)
         result_string = found.to_s
 
-        result_string if found &&
-                         found.begin(0) == index &&
-                         !result_string.empty?
+        if found && found.begin(0) == index && !result_string.empty?
+          result_string
+        end
       end
     end
 
@@ -52,7 +52,11 @@ module Lextacular
       lambda do |string, index = 0, counts:|
         found = submatcher.call(string, index, counts: counts)
 
-        match?(found) ? found : []
+        if match? found
+          found
+        else
+          []
+        end
       end
     end
 
@@ -102,8 +106,10 @@ module Lextacular
         starting_index = index
         size           = string.size
 
-        index += 1 while index < size &&
-                         !nonempty_match?(submatcher.call(string, index, counts: counts))
+        while index < size &&
+              !nonempty_match?(submatcher.call(string, index, counts: counts))
+          index += 1
+        end
 
         string[starting_index..(index-1)] unless starting_index == index
       end
@@ -137,8 +143,9 @@ module Lextacular
       lambda do |string, index = 0, counts:|
         result = submatcher.call(string, index, counts: counts)
 
-        result if !Matchers.match?(result) ||
-                   result.size.send(method, counts[result.name])
+        if !Matchers.match?(result) || result.size.send(method, counts[result.name])
+          result
+        end
       end
     end
 
