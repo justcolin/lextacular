@@ -71,7 +71,7 @@ module Lextacular
     end
 
     # Defines a helper method which creates a special matcher.
-    def self.def_helper name, use:, result:, temp: false
+    def self.def_helper name, use:, result: SplatExpression, temp: false
       define_method name do |*pattern|
         MatchWrapper.new(
           Matchers.send(
@@ -84,31 +84,13 @@ module Lextacular
       end
     end
 
-    # Create all the helper methods.
+    # Create the basic helper methods.
 
-    def_helper :maybe,
-               use:    :maybe_matcher,
-               result: SplatExpression
-
-    def_helper :repeat,
-               use:    :repeat_matcher,
-               result: SplatExpression
-
-    def_helper :either,
-               use:    :either_matcher,
-               result: SplatExpression
-
-    def_helper :splat,
-               use:    :pattern_matcher,
-               result: SplatExpression
-
-    def_helper :temp,
-               use:    :pattern_matcher,
-               result: Expression,
-               temp:   true
-
-    def_helper :isnt,
-               use:    :inverse_matcher,
-               result: Token
+    def_helper :maybe,  use: :maybe_matcher
+    def_helper :repeat, use: :repeat_matcher
+    def_helper :either, use: :either_matcher
+    def_helper :splat,  use: :pattern_matcher
+    def_helper :temp,   use: :pattern_matcher, result: Expression, temp: true
+    def_helper :isnt,   use: :inverse_matcher, result: Token
   end
 end
