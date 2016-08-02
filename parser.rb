@@ -71,13 +71,21 @@ module Lextacular
     end
 
     # Defines a helper method which creates a special matcher.
-    def self.def_helper name, use:, result: SplatExpression, temp: false
+    def self.def_helper name,
+                        use:,
+                        result:  SplatExpression,
+                        temp:    false,
+                        wrapper: false,
+                        args:    []
+
       define_method name do |*pattern|
+        if wrapper
+          raise "#{name} only takes one argument" unless pattern.size == 1
+          raise "#{name} only accepts a Symbol"   unless pattern.last.is_a? Symbol
+        end
+
         MatchWrapper.new(
-          Matchers.send(
-            use,
-            *pattern.map { |part| translate(part) }
-          ),
+          Matchers.send(use, *pattern.map { |part| translate(part) }, *args),
           result,
           temp: temp
         )
@@ -85,12 +93,17 @@ module Lextacular
     end
 
     # Create the basic helper methods.
-
     def_helper :maybe,  use: :maybe_matcher
     def_helper :repeat, use: :repeat_matcher
     def_helper :either, use: :either_matcher
     def_helper :splat,  use: :pattern_matcher
     def_helper :temp,   use: :pattern_matcher, result: Expression, temp: true
     def_helper :isnt,   use: :inverse_matcher, result: Token
+
+    # Create the count sensitive helper methods.
+    def_helper :context, use: :context_setter
+    def_helper :count,   use: :count_setter,   wrapper: true
+    def_helper :more,    use: :count_matcher,  wrapper: true, args: :>
+    def_helper :same,    use: :count_matcher,  wrapper: true, args: :==
   end
 end

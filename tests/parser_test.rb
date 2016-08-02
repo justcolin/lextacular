@@ -42,7 +42,7 @@ module Lextacular
         'can parse based on subexpressions',
         parser:    Parser.new do
                      rule start: [:first, :last],
-                          first: [:one, :two],
+                          first: [:one,   :two],
                           last:  [:three, :four],
                           one:   /1/,
                           two:   /2/,
@@ -137,8 +137,10 @@ module Lextacular
                    end,
         correct:   '1234',
         gives:     Expression.new(
-                     Token.new('1', name: :one), Token.new('2', name: :two),
-                     Token.new('3'), Token.new('4'),
+                     Token.new('1', name: :one),
+                     Token.new('2', name: :two),
+                     Token.new('3'),
+                     Token.new('4'),
                      name: :start
                    ),
         incorrect: '1237', at: 3
@@ -196,6 +198,65 @@ module Lextacular
                      name: :start
                    ),
         incorrect: '121', at: 2
+      )
+
+      parser_check(
+        'can match based on increasing length',
+        parser:    Parser.new do
+                     rule start:     [count(:numbers), :separator, more(:numbers)],
+                          numbers:   /\w+/,
+                          separator: temp(/\W/)
+                   end,
+        correct:   '123:1234',
+        gives:     SplatExpression.new(
+                     Token.new('123',  name: :numbers),
+                     Token.new('1234', name: :numbers),
+                     name: :start
+                   ),
+        incorrect: '123:123', at: 4
+      )
+
+      parser_check(
+        'can match based on equal length',
+        parser:    Parser.new do
+                     rule start:     [count(:numbers), :separator, same(:numbers)],
+                          numbers:   /\w+/,
+                          separator: temp(/\W/)
+                   end,
+        correct:   '123:123',
+        gives:     SplatExpression.new(
+                     Token.new('123', name: :numbers),
+                     Token.new('123', name: :numbers),
+                     name: :start
+                   ),
+        incorrect: '123:1234', at: 4
+      )
+
+      parser_check(
+        'can set contexts for counts',
+        parser:    Parser.new do
+                     rule start: context(
+                                   :open,
+                                   count(:plus),
+                                   :dot,
+                                   maybe(:start, :dot),
+                                   more(:plus),
+                                   :close
+                                 ),
+                          plus:  /\++/,
+                          dot:   temp(/\./),
+                          open:  temp(/\(/),
+                          close: temp(/\)/)
+                   end,
+        correct:   '(+.(++++.++++++).++)',
+        gives:     SplatExpression.new(
+                     Token.new('+',      name: :plus),
+                     Token.new('++++',   name: :plus),
+                     Token.new('++++++', name: :plus),
+                     Token.new('++',     name: :plus),
+                     name: :start
+                   ),
+        incorrect: '(+++.(+.++).+)', at: 12
       )
     end
 
