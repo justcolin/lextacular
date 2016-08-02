@@ -175,14 +175,6 @@ module Lextacular
                       .is_a?(given_class)
         end
 
-        assert 'returns whatever the matcher returned if no class was given' do
-          matcher = MockMatcher.new
-          result  = MatchWrapper.new(matcher)
-                                .call('', counts: Counts.new)
-
-          result == matcher.result
-        end
-
         assert 'returned object is initialized with the result of the matcher' do
           result = 'Hey there little mouse'
 

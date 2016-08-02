@@ -18,7 +18,7 @@ module Lextacular
     # extend the given class with.
     def initialize matcher, wrap_class = nil, name: nil, temp: nil, defs: nil
       @given_class = wrap_class
-      @wrap_class  = defs && wrap_class ? Class.new(wrap_class, &defs) : wrap_class
+      @wrap_class  = defs ? Class.new(wrap_class, &defs) : wrap_class
       @matcher     = matcher
       @name        = name
       @temp        = temp
@@ -44,11 +44,7 @@ module Lextacular
       if found.is_a?(Mismatch)
         found
       elsif found
-        if @wrap_class
-          @wrap_class.new(*found, name: @name, temp: @temp)
-        else
-          found
-        end
+        @wrap_class.new(*found, name: @name, temp: @temp)
       else
         Mismatch.new(string, index)
       end
