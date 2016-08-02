@@ -13,20 +13,28 @@ module Lextacular
   group Parser do
     group 'rules' do
       parser_check(
-        'can parse based on a regular expression',
-        parser:    Parser.new { rule start: /hello/ },
-        correct:   'hello',
-        gives:     Token.new('hello', name: :start),
-        incorrect: 'he', at: 0
+        'can parse based on a string',
+        parser:    Parser.new { rule start: '...' },
+        correct:   '...',
+        gives:     Token.new('...', name: :start),
+        incorrect: '+++', at: 0
       )
 
       parser_check(
-        'can parse based on a series of regular expressions',
+        'can parse based on a regular expression',
+        parser:    Parser.new { rule start: /world/ },
+        correct:   'world',
+        gives:     Token.new('world', name: :start),
+        incorrect: 'wo', at: 0
+      )
+
+      parser_check(
+        'can parse based on a series of regular expressions or strings',
         parser:    Parser.new do
                      rule start:  [:first, :second, :third],
-                          first:  /hello/,
+                          first:  'hello',
                           second: /\s+/,
-                          third:  /world/
+                          third:  'world'
                    end,
         correct:   'hello world',
         gives:     Expression.new(
@@ -44,10 +52,10 @@ module Lextacular
                      rule start: [:first, :last],
                           first: [:one,   :two],
                           last:  [:three, :four],
-                          one:   /1/,
-                          two:   /2/,
-                          three: /3/,
-                          four:  /4/
+                          one:   '1',
+                          two:   '2',
+                          three: '3',
+                          four:  '4'
                    end,
         correct:   '1234',
         gives:     Expression.new(
@@ -71,7 +79,7 @@ module Lextacular
         parser:    Parser.new do
                      rule start: [:one],
                           one:   :uno,
-                          uno:   /1/
+                          uno:   '1'
                    end,
         correct:   '1',
         gives:     Expression.new(Token.new('1', name: :one), name: :start),
@@ -81,9 +89,9 @@ module Lextacular
       parser_check(
         'can have optional expressions',
         parser:    Parser.new do
-                     rule start: [maybe(/a/, /b/), :last],
-                          last:  maybe(:x, /Y/),
-                          x:     /X/
+                     rule start: [maybe('a', 'b'), :last],
+                          last:  maybe(:x, 'Y'),
+                          x:     'X'
                    end,
         correct:   'ab',
         gives:     Expression.new(
@@ -97,9 +105,9 @@ module Lextacular
       parser_check(
         'can repeat subexpressions',
         parser:    Parser.new do
-                     rule start: [repeat(/a/, /b/), :last],
-                          last:  repeat(/Y/, :z),
-                          z:     /Z/
+                     rule start: [repeat('a', 'b'), :last],
+                          last:  repeat('Y', :z),
+                          z:     'Z'
                    end,
         correct:   'ababYZ',
         gives:     Expression.new(
@@ -114,9 +122,9 @@ module Lextacular
       parser_check(
         'can offer multiple alternative expressions',
         parser:    Parser.new do
-                     rule start: [either(/a/, /b/, /c/), :last],
-                          last:  either(/X/, :y, /Z/),
-                          y:     /Y/
+                     rule start: [either('a', 'b', 'c'), :last],
+                          last:  either('X', :y, 'Z'),
+                          y:     'Y'
                    end,
         correct:   'aY',
         gives:     Expression.new(
@@ -131,9 +139,9 @@ module Lextacular
         'can splat subexpressions',
         parser:    Parser.new do
                      rule start: [splat(:one, :two), :last],
-                          last:  splat(/3/, /4/),
-                          one:   /1/,
-                          two:   /2/
+                          last:  splat('3', '4'),
+                          one:   '1',
+                          two:   '2'
                    end,
         correct:   '1234',
         gives:     Expression.new(
@@ -149,7 +157,7 @@ module Lextacular
       parser_check(
         'can make temporary subexpressions',
         parser:    Parser.new do
-                     rule start:      [temp(/\(/), /secret/, :temp_close],
+                     rule start:      [temp('('), /secret/, :temp_close],
                           temp_close: temp(:close),
                           close:      /\)/
                    end,
@@ -162,12 +170,12 @@ module Lextacular
         'can make inverse subexpressions',
         parser:    Parser.new do
                      rule start:     [
-                                       temp(/\(/),
-                                       :not_space, temp(:space), isnt(/\)/),
-                                       temp(/\)/)
+                                       temp('('),
+                                       :not_space, temp(:space), isnt(')'),
+                                       temp(')')
                                      ],
                           not_space: isnt(:space),
-                          space:     / /
+                          space:     ' '
                    end,
         correct:   '(foo bar)',
         gives:     Expression.new(
@@ -183,9 +191,9 @@ module Lextacular
         parser:    Parser.new do
                      rule start: repeat(
                                    either(
-                                     splat(/a/, temp(/b/)),
+                                     splat('a', temp('b')),
                                      temp(isnt(/\w/)),
-                                     splat(/1/, temp(/2/))
+                                     splat('1', temp('2'))
                                    )
                                  )
                    end,
@@ -244,9 +252,9 @@ module Lextacular
                                    :close
                                  ),
                           plus:  /\++/,
-                          dot:   temp(/\./),
-                          open:  temp(/\(/),
-                          close: temp(/\)/)
+                          dot:   temp('.'),
+                          open:  temp('('),
+                          close: temp(')')
                    end,
         correct:   '(+.(++++.++++++).++)',
         gives:     SplatExpression.new(
@@ -262,7 +270,7 @@ module Lextacular
 
     assert 'result objects can have methods added to them' do
       Parser.new do
-              rule start: /hello/ do
+              rule start: 'hello' do
                 def return_5
                   5
                 end
@@ -275,7 +283,7 @@ module Lextacular
     group 'aliases can have methods added to them' do
       result = Parser.new do
                  rule start: splat(:one, :uno),
-                      uno:   /1/
+                      uno:   '1'
 
                  rule one: :uno do
                    def return_5

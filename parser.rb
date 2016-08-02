@@ -64,7 +64,17 @@ module Lextacular
           defs: defs
         )
       when Regexp
-        MatchWrapper.new(Matchers.regexp_matcher(item), Token, defs: defs)
+        MatchWrapper.new(
+          Matchers.regexp_matcher(item),
+          Token,
+          defs: defs
+        )
+      when String
+        MatchWrapper.new(
+          Matchers.regexp_matcher(Regexp.new(Regexp.escape(item))),
+          Token,
+          defs: defs
+        )
       else
         item
       end
